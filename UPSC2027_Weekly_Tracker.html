@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSC 2027 — Integrated Weekly Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0eb;
+  --surface: #fdfaf7;
+  --surface2: #f0ebe4;
+  --surface3: #e8e1d8;
+  --border: rgba(60,40,20,0.1);
+  --border2: rgba(60,40,20,0.18);
+  --text: #2d2318;
+  --text2: rgba(45,35,24,0.65);
+  --text3: rgba(45,35,24,0.38);
+  --gold: #9b6e2a;
+  --gold-dim: rgba(155,110,42,0.1);
+  --gold-border: rgba(155,110,42,0.28);
+  --red: #c0392b;
+  --red-dim: rgba(192,57,43,0.08);
+  --teal: #2d7a6a;
+  --teal-dim: rgba(45,122,106,0.1);
+  --blue: #3b6cb0;
+  --blue-dim: rgba(59,108,176,0.09);
+  --purple: #7251a8;
+  --purple-dim: rgba(114,81,168,0.09);
+  --amber: #b07d10;
+  --amber-dim: rgba(176,125,16,0.1);
+  --pastel-rose: #fce8e8;
+  --pastel-mint: #e2f5f0;
+  --pastel-sky: #e4eef9;
+  --pastel-lavender: #ede8f7;
+  --pastel-amber: #fdf3dc;
+  --pastel-sage: #e8f2e8;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+/* ── LAYOUT ── */
+.shell { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px; min-width: 220px;
+  background: #ede7df;
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow-y: auto; overflow-x: hidden;
+}
+
+.brand {
+  padding: 22px 18px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #e6ddd3;
+}
+
+.brand-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 17px; color: var(--gold);
+  letter-spacing: 0.2px; line-height: 1.2;
+}
+
+.brand-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; color: var(--text3);
+  margin-top: 5px; letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.week-meta {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.week-meta label {
+  font-size: 9px; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1px;
+  display: block; margin-bottom: 5px;
+}
+
+.week-meta input {
+  width: 100%; background: var(--surface);
+  border: 1px solid var(--border2); border-radius: 6px;
+  color: var(--text); font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; padding: 6px 9px;
+  outline: none; margin-bottom: 6px;
+}
+
+.week-meta input:focus { border-color: var(--gold-border); }
+
+.nav-section { padding: 12px 0; }
+.nav-label {
+  font-size: 9px; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1.2px;
+  padding: 0 18px; margin-bottom: 5px;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 18px; cursor: pointer;
+  font-size: 12.5px; color: var(--text2);
+  transition: all 0.15s; border-left: 2px solid transparent;
+}
+
+.nav-item:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+.nav-item.active { color: var(--gold); border-left-color: var(--gold); background: var(--gold-dim); }
+.nav-icon { font-size: 13px; width: 17px; text-align: center; flex-shrink: 0; }
+
+.phase-panel {
+  margin: 0 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.phase-item {
+  padding: 8px 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: var(--text3);
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between;
+}
+
+.phase-item:last-child { border-bottom: none; }
+.phase-item.active-phase { color: var(--gold); background: var(--gold-dim); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 7px; flex-direction: column;
+  background: #e6ddd3;
+}
+
+.save-btn {
+  background: var(--gold); color: #fff;
+  border: none; border-radius: 7px;
+  padding: 8px 12px; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; width: 100%;
+}
+
+.save-btn:hover { background: #7d5520; }
+
+.clear-btn {
+  background: transparent; color: var(--text3);
+  border: 1px solid var(--border); border-radius: 7px;
+  padding: 6px 12px; font-family: 'DM Sans', sans-serif;
+  font-size: 11px; cursor: pointer; width: 100%;
+  transition: all 0.15s;
+}
+
+.clear-btn:hover { color: var(--red); border-color: var(--red); }
+
+.dl-btn {
+  background: var(--surface2); color: var(--text2);
+  border: 1px solid var(--border2); border-radius: 7px;
+  padding: 7px 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; text-align: center;
+}
+
+.dl-btn:hover { background: var(--pastel-amber); color: var(--gold); border-color: var(--gold-border); }
+
+/* ── PRINT STYLES ── */
+@media print {
+  * { box-sizing: border-box !important; }
+  body {
+    background: white !important; color: #111 !important;
+    font-family: 'DM Sans', Georgia, serif !important;
+    font-size: 11px !important;
+  }
+  .shell { display: block !important; height: auto !important; overflow: visible !important; }
+  .sidebar { display: none !important; }
+  .main { display: block !important; overflow: visible !important; }
+  .topbar { display: none !important; }
+  .content { overflow: visible !important; padding: 10px 16px !important; }
+  .page { display: block !important; }
+  .card {
+    background: white !important; border: 1px solid #ccc !important;
+    margin-bottom: 14px !important; padding: 14px !important;
+    page-break-inside: avoid !important;
+  }
+  .card-title { color: #8a6010 !important; font-size: 14px !important; }
+  .schedule-grid { background: #ccc !important; }
+  .sg-header, .sg-day { background: #f5f5f5 !important; color: #333 !important; }
+  .sg-cell { background: white !important; }
+  .method-badge { border: 1px solid #bbb !important; color: #333 !important; background: #f0f0f0 !important; }
+  .topic-row { background: #f9f9f9 !important; border-color: #ddd !important; }
+  .topic-row.done { background: #e8f5f0 !important; }
+  .topic-row.partial { background: #fef9e8 !important; }
+  .status-btn { display: none !important; }
+  .topic-status-print { display: inline !important; font-size: 10px; font-weight: 600; }
+  .metric-card { background: #f9f9f9 !important; border-color: #ddd !important; }
+  .metric-input, .metric-num { color: #8a6010 !important; }
+  .gap-item { background: #f9f9f9 !important; border-color: #ddd !important; }
+  .gap-btn { display: none !important; }
+  .gap-status-print { display: block !important; font-weight: 700; font-size: 13px; }
+  .mock-bucket { background: #f9f9f9 !important; }
+  .review-q { background: #f9f9f9 !important; }
+  .theme-box { background: #f9f9f9 !important; border-color: #ddd !important; }
+  .pip { border-color: #bbb !important; color: #bbb !important; }
+  .pip.answered { background: #3a9b8a !important; color: white !important; }
+  .news-table td, .mains-table td, .example-table td { background: white !important; }
+  input, select, textarea {
+    border: none !important; background: transparent !important;
+    color: #111 !important; font-size: 11px !important;
+  }
+  .phase-row { display: none !important; }
+  .conf-btn { border: 1px solid #ccc !important; color: #ccc !important; }
+  .conf-btn.active { background: #8a6010 !important; color: white !important; }
+  .rules-list li { border-color: #eee !important; }
+  .rule-num { background: #fef3d8 !important; color: #8a6010 !important; border-color: #d4a849 !important; }
+  h2, .page-title { display: none !important; }
+  .print-page-title {
+    display: block !important; font-size: 18px; font-weight: bold;
+    color: #8a6010; margin-bottom: 16px; border-bottom: 2px solid #d4a849;
+    padding-bottom: 8px;
+  }
+  .toast { display: none !important; }
+  .phase-panel { display: none !important; }
+}
+
+/* ── MAIN ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 15px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(60,40,20,0.06);
+}
+
+.page-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 22px; color: var(--text);
+  letter-spacing: 0.2px;
+}
+
+.page-subtitle { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.content {
+  flex: 1; overflow-y: auto; padding: 28px;
+}
+
+/* ── PAGE SECTIONS ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 6px rgba(60,40,20,0.06);
+}
+
+.card-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 17px; color: var(--gold);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.card-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── SCHEDULE GRID ── */
+.schedule-grid {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr;
+  gap: 1px;
+  background: var(--border2);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border2);
+}
+
+.sg-header {
+  background: var(--surface2);
+  padding: 9px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px; color: var(--text3);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.sg-day {
+  background: var(--pastel-amber);
+  padding: 12px 14px;
+  display: flex; align-items: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  color: var(--gold); letter-spacing: 0.5px;
+}
+
+.sg-cell {
+  background: var(--surface);
+  padding: 10px 14px;
+}
+
+.method-badge {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; padding: 2px 7px;
+  border-radius: 4px; margin-bottom: 4px;
+  font-weight: 500; letter-spacing: 0.3px;
+}
+
+.mb-pyq { background: var(--pastel-rose); color: #a82020; border: 1px solid rgba(192,57,43,0.2); }
+.mb-ca { background: var(--pastel-mint); color: #1d6b5a; border: 1px solid rgba(45,122,106,0.2); }
+.mb-teach { background: var(--pastel-lavender); color: #5a3d8c; border: 1px solid rgba(114,81,168,0.2); }
+.mb-test { background: var(--pastel-amber); color: #8a5e00; border: 1px solid rgba(176,125,16,0.2); }
+.mb-write { background: var(--pastel-sky); color: #2b538a; border: 1px solid rgba(59,108,176,0.2); }
+.mb-mind { background: var(--pastel-sage); color: #2a6030; border: 1px solid rgba(60,140,60,0.2); }
+
+.sg-cell-desc { font-size: 12px; color: var(--text2); }
+.sg-cell-sub { font-size: 11px; color: var(--text3); margin-top: 2px; font-style: italic; }
+
+/* ── NEWSPAPER LOG ── */
+.news-table {
+  width: 100%; border-collapse: separate; border-spacing: 0 5px;
+}
+
+.news-table th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  text-align: left; padding: 4px 10px;
+}
+
+.news-table td {
+  background: var(--surface);
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.news-table td:first-child { border-radius: 6px 0 0 6px; border-left: 1px solid var(--border); }
+.news-table td:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--border); }
+
+.news-table input, .news-table select {
+  background: transparent; border: none; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  width: 100%; outline: none;
+}
+
+.news-table select option { background: var(--surface2); }
+.news-table td select { cursor: pointer; }
+
+/* ── CHECKLIST ── */
+.cluster-block { margin-bottom: 24px; }
+
+.cluster-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--gold-border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.cluster-progress {
+  font-size: 10px; color: var(--text3);
+  background: var(--surface2); border-radius: 10px; padding: 2px 8px;
+}
+
+.topic-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 10px; align-items: center;
+  padding: 8px 12px;
+  border-radius: 7px;
+  margin-bottom: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: border-color 0.15s;
+}
+
+.topic-row:hover { border-color: var(--border2); }
+.topic-row.done { background: var(--pastel-mint); border-color: rgba(45,122,106,0.25); }
+.topic-row.partial { background: var(--pastel-amber); border-color: rgba(176,125,16,0.25); }
+
+.topic-name { font-size: 12.5px; color: var(--text); }
+
+.topic-methods { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+
+.status-btn {
+  padding: 3px 9px; border-radius: 5px; border: none; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 500;
+  transition: all 0.15s;
+}
+
+.status-btn.covered { background: var(--pastel-mint); color: #1d6b5a; border: 1px solid rgba(45,122,106,0.3); }
+.status-btn.partial { background: var(--pastel-amber); color: #8a5e00; border: 1px solid rgba(176,125,16,0.3); }
+.status-btn.not-done { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+.status-btn.active-status { font-weight: 700; transform: scale(1.05); }
+
+/* ── MAINS LOG ── */
+.mains-table {
+  width: 100%; border-collapse: separate; border-spacing: 0 5px;
+}
+
+.mains-table th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  text-align: left; padding: 4px 10px;
+}
+
+.mains-table td {
+  background: var(--surface);
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.mains-table td:first-child { border-radius: 6px 0 0 6px; border-left: 1px solid var(--border); }
+.mains-table td:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--border); }
+
+.mains-table input, .mains-table select {
+  background: transparent; border: none; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  width: 100%; outline: none;
+}
+
+/* ── THEME GRID ── */
+.theme-36-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.theme-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 10px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all 0.15s;
+  cursor: default;
+}
+
+.theme-box:hover { border-color: var(--border2); background: var(--surface2); }
+.theme-box.t-done { border-color: rgba(45,122,106,0.4); background: var(--pastel-mint); }
+
+.theme-box-name { font-size: 11.5px; color: var(--text2); flex: 1; margin-right: 10px; }
+.theme-box-name .tnum { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text3); margin-right: 5px; }
+
+.theme-pips { display: flex; gap: 5px; }
+
+.pip {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; cursor: pointer; color: var(--text3);
+  transition: all 0.15s; font-family: 'IBM Plex Mono', monospace;
+  flex-shrink: 0;
+}
+
+.pip.answered { background: var(--teal); border-color: var(--teal); color: white; }
+.pip:hover { border-color: var(--teal); }
+
+/* ── METRICS GRID ── */
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin-bottom: 20px;
+}
+
+.metric-card {
+  background: var(--pastel-sky); border: 1px solid rgba(59,108,176,0.15);
+  border-radius: var(--radius); padding: 16px 18px;
+}
+
+.metric-num {
+  font-family: 'Instrument Serif', serif;
+  font-size: 32px; color: var(--gold);
+  line-height: 1; margin-bottom: 4px;
+}
+
+.metric-label { font-size: 11px; color: var(--text3); }
+
+.metric-input {
+  background: transparent; border: none; color: var(--gold);
+  font-family: 'Instrument Serif', serif; font-size: 32px;
+  line-height: 1; width: 100%; outline: none;
+}
+
+.metric-input::placeholder { color: rgba(155,110,42,0.25); }
+
+/* ── GAP DETECTION ── */
+.gap-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+  margin-bottom: 16px;
+}
+
+.gap-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 7px; padding: 10px 8px; text-align: center;
+}
+
+.gap-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text3); margin-bottom: 8px; }
+
+.gap-btn-group { display: flex; flex-direction: column; gap: 3px; }
+
+.gap-btn {
+  padding: 3px 0; border-radius: 4px; border: 1px solid var(--border);
+  cursor: pointer; font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; background: transparent; color: var(--text3);
+  transition: all 0.12s;
+}
+
+.gap-btn.O.selected { background: var(--pastel-mint); color: #1d6b5a; border-color: rgba(45,122,106,0.4); font-weight: 700; }
+.gap-btn.tilde.selected { background: var(--pastel-amber); color: #8a5e00; border-color: rgba(176,125,16,0.4); font-weight: 700; }
+.gap-btn.X.selected { background: var(--pastel-rose); color: #a82020; border-color: rgba(192,57,43,0.4); font-weight: 700; }
+
+/* ── SUNDAY REVIEW ── */
+.review-q {
+  background: var(--pastel-lavender); border: 1px solid rgba(114,81,168,0.15);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 10px;
+}
+
+.review-q-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  color: var(--gold); letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.review-q-text { font-size: 12.5px; color: var(--text2); margin-bottom: 8px; }
+
+.review-q textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px; padding: 8px 10px; outline: none; resize: vertical;
+  min-height: 60px; line-height: 1.5;
+}
+
+.review-q textarea:focus { border-color: var(--gold-border); }
+
+/* ── RULES ── */
+.rules-list { list-style: none; }
+.rules-list li {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+
+.rules-list li:last-child { border-bottom: none; }
+
+.rule-num {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--gold); background: var(--gold-dim); border: 1px solid var(--gold-border);
+  border-radius: 50%; width: 22px; height: 22px; min-width: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.rule-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.rule-text strong { color: var(--text); }
+
+/* ── CONFIDENCE ── */
+.conf-slider {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;
+}
+
+.conf-btn {
+  width: 36px; height: 36px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--text2);
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  cursor: pointer; transition: all 0.15s; display: flex;
+  align-items: center; justify-content: center;
+}
+
+.conf-btn.active { background: var(--gold); color: white; border-color: var(--gold); font-weight: 700; }
+.conf-btn:hover { border-color: var(--gold-border); background: var(--pastel-amber); }
+
+/* ── EXAMPLE BANK ── */
+.example-table {
+  width: 100%; border-collapse: separate; border-spacing: 0 5px;
+}
+
+.example-table th {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+  color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px;
+  text-align: left; padding: 4px 10px;
+}
+
+.example-table td {
+  background: var(--surface); padding: 8px 10px;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+
+.example-table td:first-child { border-radius: 6px 0 0 6px; border-left: 1px solid var(--border); }
+.example-table td:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid var(--border); }
+
+.example-table input {
+  background: transparent; border: none; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  width: 100%; outline: none;
+}
+
+/* ── MOCK LOG ── */
+.mock-bucket {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 10px;
+}
+
+.mock-bucket-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+  color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
+}
+
+.mock-bucket textarea {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px; padding: 8px 10px; outline: none; resize: vertical;
+  min-height: 55px; line-height: 1.5;
+}
+
+.mock-bucket textarea:focus { border-color: var(--border2); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(60,40,20,0.15); border-radius: 2px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--teal); color: white;
+  padding: 11px 18px; border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  transform: translateY(20px); opacity: 0;
+  transition: all 0.3s; pointer-events: none; z-index: 999;
+}
+
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── PHASE BADGE ── */
+.phase-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+}
+
+.phase-badge {
+  padding: 6px 14px; border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  border: 1px solid var(--border); color: var(--text3);
+  letter-spacing: 0.5px;
+}
+
+.phase-badge.current {
+  background: var(--gold-dim); color: var(--gold);
+  border-color: var(--gold-border);
+}
+
+/* ── SECTION DIVIDER ── */
+.s-divider {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; color: var(--text3);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin: 22px 0 12px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── MAINS QUALITY CHECK ── */
+.quality-checks { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.qc-item {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 7px 12px; cursor: pointer;
+  transition: all 0.15s;
+}
+
+.qc-item.checked { border-color: rgba(45,122,106,0.4); background: var(--pastel-mint); }
+.qc-item.checked .qc-label { color: var(--teal); }
+
+.qc-label { font-size: 11.5px; color: var(--text3); }
+.qc-check { font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-title">UPSC 2027<br>Weekly Tracker</div>
+      <div class="brand-sub">Prelims + Mains Integrated</div>
+    </div>
+
+    <div class="week-meta">
+      <label>Week #</label>
+      <input type="number" id="meta-week" placeholder="e.g. 1" min="1" max="60">
+      <label>Date Range</label>
+      <input type="text" id="meta-dates" placeholder="e.g. Apr 14 – Apr 20">
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Pages</div>
+      <div class="nav-item active" onclick="showPage('schedule')">
+        <span class="nav-icon">📅</span> Weekly Schedule
+      </div>
+      <div class="nav-item" onclick="showPage('checklist')">
+        <span class="nav-icon">✅</span> Prelims Backbone
+      </div>
+      <div class="nav-item" onclick="showPage('mains')">
+        <span class="nav-icon">✍️</span> Mains Log
+      </div>
+      <div class="nav-item" onclick="showPage('metrics')">
+        <span class="nav-icon">📊</span> Metrics & Gaps
+      </div>
+      <div class="nav-item" onclick="showPage('review')">
+        <span class="nav-icon">🔁</span> Sunday Review
+      </div>
+    </div>
+
+    <div class="nav-section" style="padding-top:0">
+      <div class="nav-label" style="margin-bottom:8px">Phase</div>
+      <div class="phase-panel">
+        <div class="phase-item active-phase">Ph1 Foundation <span>Apr–Aug 26</span></div>
+        <div class="phase-item">Ph2 Depth+Tests <span>Sep–Dec 26</span></div>
+        <div class="phase-item">Ph3 Revision <span>Jan–Mar 27</span></div>
+        <div class="phase-item">Ph4 Sprint <span>Apr–May 27</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="save-btn" onclick="saveAll()">💾 Save Progress</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <button class="dl-btn" onclick="downloadPDF()" title="Print-friendly PDF of current week">⬇ PDF</button>
+        <button class="dl-btn" onclick="downloadCSV()" title="Export to CSV for Notion import">→ CSV</button>
+      </div>
+      <button class="clear-btn" onclick="clearWeek()">↺ New Week</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="page-title">Weekly Schedule</div>
+        <div class="page-subtitle" id="page-subtitle">Morning Prelims · Evening Mains · Newspaper Log</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="print-page-title" style="display:none" id="print-title">UPSC 2027 — Weekly Tracker &nbsp;|&nbsp; Week #<span id="print-week-num"></span> &nbsp;|&nbsp; <span id="print-week-dates"></span></div>
+
+      <!-- PAGE 1: SCHEDULE -->
+      <div class="page active" id="page-schedule">
+
+        <div class="phase-row">
+          <div class="phase-badge current">● Ph1: Foundation — Apr–Aug 2026</div>
+          <div class="phase-badge">Ph2: Depth+Tests — Sep–Dec 26</div>
+          <div class="phase-badge">Ph3: Revision — Jan–Mar 27</div>
+          <div class="phase-badge">Ph4: Sprint — Apr–May 27</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Daily Schedule</div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px">
+            <div style="background:var(--pastel-amber);border:1px solid rgba(176,125,16,0.2);border-radius:8px;padding:10px 14px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--teal);letter-spacing:1px;margin-bottom:4px">MORNING — 5:30–7:30 AM</div>
+              <div style="font-size:12px;color:var(--text2)">Prelims focused sessions</div>
+            </div>
+            <div style="background:var(--pastel-lavender);border:1px solid rgba(114,81,168,0.2);border-radius:8px;padding:10px 14px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);letter-spacing:1px;margin-bottom:4px">EVENING — 9:00–10:00 PM</div>
+              <div style="font-size:12px;color:var(--text2)">Mains answer writing</div>
+            </div>
+          </div>
+
+          <div class="schedule-grid">
+            <div class="sg-header"></div>
+            <div class="sg-header">🌅 Morning — Prelims</div>
+            <div class="sg-header">🌙 Evening — Mains</div>
+
+            <!-- MON -->
+            <div class="sg-day">MON</div>
+            <div class="sg-cell">
+              <span class="method-badge mb-pyq">PYQ-First</span>
+              <div class="sg-cell-desc">PYQ-first session</div>
+              <div class="sg-cell-sub">Subject: Economy</div>
+            </div>
+            <div class="sg-cell">
+              <span class="method-badge mb-write">Answer-Write</span>
+              <div class="sg-cell-desc">1 GS3 PYQ — 13 min timed</div>
+            </div>
+
+            <!-- TUE -->
+            <div class="sg-day">TUE</div>
+            <div class="sg-cell">
+              <span class="method-badge mb-ca">CA-Anchor</span>
+              <div class="sg-cell-desc">News → static link + 3-line note</div>
+            </div>
+            <div class="sg-cell">
+              <span class="method-badge mb-write">Example Bank</span>
+              <div class="sg-cell-desc">Add 1 data point + 1 example</div>
+            </div>
+
+            <!-- WED -->
+            <div class="sg-day">WED</div>
+            <div class="sg-cell">
+              <span class="method-badge mb-mind">Video+Recall</span>
+              <div class="sg-cell-desc">Video lecture (20 min) → recall notes</div>
+            </div>
+            <div class="sg-cell">
+              <span class="method-badge mb-teach">Teach-Back</span>
+              <div class="sg-cell-desc">Solo voice note (5 min) · File it</div>
+            </div>
+
+            <!-- THU -->
+            <div class="sg-day">THU</div>
+            <div class="sg-cell">
+              <span class="method-badge mb-pyq">PYQ-First</span>
+              <div class="sg-cell-desc">PYQ-first session</div>
+              <div class="sg-cell-sub">Subject: Polity / History</div>
+            </div>
+            <div class="sg-cell">
+              <span class="method-badge mb-write">Model-Compare</span>
+              <div class="sg-cell-desc">Read model answer for Tue's question</div>
+            </div>
+
+            <!-- FRI -->
+            <div class="sg-day">FRI</div>
+            <div class="sg-cell">
+              <span class="method-badge mb-ca">CA + Mind Map</span>
+              <div class="sg-cell-desc">CA-anchor · Mind map of week's hardest concept</div>
+            </div>
+            <div class="sg-cell">
+              <span class="method-badge mb-write">Answer-Write</span>
+              <div class="sg-cell-desc">1 GS2 or GS4 PYQ — timed</div>
+            </div>
+
+            <!-- SAT -->
+            <div class="sg-day">SAT</div>
+            <div class="sg-cell">
+              <span class="method-badge mb-test">Test-Driven</span>
+              <div class="sg-cell-desc">Deep block 6–10 AM</div>
+              <div class="sg-cell-sub">Pre-test → read → post-test</div>
+            </div>
+            <div class="sg-cell">
+              <span class="method-badge mb-write">Full Mains Session</span>
+              <div class="sg-cell-desc">11 AM–1 PM · 2 answers, timed</div>
+            </div>
+
+            <!-- SUN -->
+            <div class="sg-day">SUN</div>
+            <div class="sg-cell">
+              <span class="method-badge mb-test">Mock + Analysis</span>
+              <div class="sg-cell-desc">7–9 AM · Full/sectional mock</div>
+              <div class="sg-cell-sub">Phase 2 onward</div>
+            </div>
+            <div class="sg-cell">
+              <span class="method-badge mb-teach">Review + File</span>
+              <div class="sg-cell-desc">5 PM: Weekly review with A · File answers · Update example bank</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEWSPAPER LOG -->
+        <div class="card">
+          <div class="card-title">Newspaper Log (Mon–Sat)</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:14px">Tag every CA story to a GS paper + static topic</div>
+          <table class="news-table" id="news-table">
+            <thead>
+              <tr>
+                <th style="width:50px">Day</th>
+                <th>Story (1 line)</th>
+                <th style="width:80px">GS Paper</th>
+                <th style="width:140px">Static Topic Tagged</th>
+                <th style="width:100px">Prelims/Mains?</th>
+              </tr>
+            </thead>
+            <tbody id="news-tbody"></tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- PAGE 2: PRELIMS BACKBONE -->
+      <div class="page" id="page-checklist">
+        <div id="checklist-area"></div>
+      </div>
+
+      <!-- PAGE 3: MAINS LOG -->
+      <div class="page" id="page-mains">
+
+        <div class="card">
+          <div class="card-title">Weekly Mains Answer Log</div>
+          <table class="mains-table" id="mains-table">
+            <thead>
+              <tr>
+                <th style="width:60px">Day</th>
+                <th style="width:70px">GS Paper</th>
+                <th>Question / Theme</th>
+                <th style="width:100px">Directive Word</th>
+                <th style="width:85px">Time Taken</th>
+                <th style="width:80px">Model?</th>
+              </tr>
+            </thead>
+            <tbody id="mains-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Example Bank Additions This Week</div>
+          <table class="example-table" id="example-table">
+            <thead>
+              <tr>
+                <th>Example / Data Point</th>
+                <th style="width:110px">Source</th>
+                <th style="width:120px">GS Paper(s)</th>
+              </tr>
+            </thead>
+            <tbody id="example-tbody"></tbody>
+          </table>
+          <button onclick="addExampleRow()" style="margin-top:10px;background:transparent;border:1px dashed var(--border2);color:var(--text3);padding:7px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all 0.15s" onmouseover="this.style.borderColor='var(--gold-border)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text3)'">+ Add Row</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Mains Answer Quality Check</div>
+          <div class="quality-checks" id="quality-checks">
+            <div class="qc-item" onclick="toggleQC(this)"><span class="qc-check">○</span><span class="qc-label">Addressed the directive word</span></div>
+            <div class="qc-item" onclick="toggleQC(this)"><span class="qc-check">○</span><span class="qc-label">Used a data point</span></div>
+            <div class="qc-item" onclick="toggleQC(this)"><span class="qc-check">○</span><span class="qc-label">Covered 2+ dimensions</span></div>
+            <div class="qc-item" onclick="toggleQC(this)"><span class="qc-check">○</span><span class="qc-label">Conclusion is forward-looking</span></div>
+            <div class="qc-item" onclick="toggleQC(this)"><span class="qc-check">○</span><span class="qc-label">Compared with model answer</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">36-Theme Backbone — Mark Answered PYQs</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:14px">Target: minimum 2 answered PYQs per theme before exam. Click pip to mark answered.</div>
+          <div class="theme-36-grid" id="theme-36-grid"></div>
+        </div>
+
+      </div>
+
+      <!-- PAGE 4: METRICS & GAPS -->
+      <div class="page" id="page-metrics">
+
+        <div class="card">
+          <div class="card-title">Weekly Progress Metrics</div>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <input class="metric-input" id="m-studydays" type="number" placeholder="0" min="0" max="7">
+              <div class="metric-label">Study Days (Prelims) / 7</div>
+            </div>
+            <div class="metric-card">
+              <input class="metric-input" id="m-clusters" type="number" placeholder="0" min="0" max="16">
+              <div class="metric-label">Prelims Clusters / 16</div>
+            </div>
+            <div class="metric-card">
+              <input class="metric-input" id="m-pyqacc" type="number" placeholder="0" min="0" max="100">
+              <div class="metric-label">PYQ Accuracy %</div>
+            </div>
+            <div class="metric-card">
+              <input class="metric-input" id="m-mainsans" type="number" placeholder="0" min="0">
+              <div class="metric-label">Mains Answers Written</div>
+            </div>
+            <div class="metric-card">
+              <input class="metric-input" id="m-themes" type="number" placeholder="0" min="0" max="36">
+              <div class="metric-label">Mains Themes Covered / 36</div>
+            </div>
+            <div class="metric-card">
+              <input class="metric-input" id="m-examples" type="number" placeholder="0" min="0">
+              <div class="metric-label">Example Bank Total Entries</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Layer 1 — Prelims Cluster Check</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:14px">O = Covered &nbsp;·&nbsp; ~ = Partial &nbsp;·&nbsp; X = Not Done</div>
+          <div class="gap-grid" id="gap-grid"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Layer 1B — Mains Theme Gap</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="review-q" style="margin-bottom:0">
+              <div class="review-q-label">Themes with 0 answers this week</div>
+              <textarea id="gap-themes-zero" placeholder="List themes that had no answers written..."></textarea>
+            </div>
+            <div class="review-q" style="margin-bottom:0">
+              <div class="review-q-label">→ These become Monday's first session</div>
+              <textarea id="gap-themes-plan" placeholder="Next week's Mains priority themes..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Layer 2 — Mock Error Buckets</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+            <div class="mock-bucket" style="background:var(--pastel-rose);">
+              <div class="mock-bucket-label" style="color:#a82020">Bucket A — Never Studied</div>
+              <textarea id="bucket-a" placeholder="Topics to add to backbone this week..."></textarea>
+            </div>
+            <div class="mock-bucket" style="background:var(--pastel-amber);">
+              <div class="mock-bucket-label" style="color:#8a5e00">Bucket B — Studied, Confused</div>
+              <textarea id="bucket-b" placeholder="Topics for teach-back voice note..."></textarea>
+            </div>
+            <div class="mock-bucket" style="background:var(--pastel-mint);">
+              <div class="mock-bucket-label" style="color:#1d6b5a">Bucket C — Knew, Wrong Elimination</div>
+              <textarea id="bucket-c" placeholder="Do more PYQs on these topics..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Layer 3 — Phase-End Syllabus Audit</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+            <div class="review-q" style="margin-bottom:0;background:var(--pastel-mint)">
+              <div class="review-q-label" style="color:var(--teal)">Ph1 Audit (Aug 2026)</div>
+              <textarea id="ph1-audit" placeholder="Green = scoring · Amber = needs revision · Red = major gap..."></textarea>
+            </div>
+            <div class="review-q" style="margin-bottom:0;background:var(--pastel-amber)">
+              <div class="review-q-label" style="color:var(--amber)">Ph2 Audit (Dec 2026)</div>
+              <textarea id="ph2-audit" placeholder="Rate every topic against syllabus PDF..."></textarea>
+            </div>
+            <div class="review-q" style="margin-bottom:0;background:var(--pastel-rose)">
+              <div class="review-q-label" style="color:var(--red)">Ph3 Audit (Mar 2027)</div>
+              <textarea id="ph3-audit" placeholder="Final gaps before sprint phase..."></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PAGE 5: SUNDAY REVIEW -->
+      <div class="page" id="page-review">
+
+        <div class="card">
+          <div class="card-title">Sunday Review — A asks U these questions</div>
+
+          <div class="review-q">
+            <div class="review-q-label">Prelims</div>
+            <div class="review-q-text">Which clusters did you cover this week? (check against backbone)</div>
+            <textarea id="r-clusters" placeholder="List clusters covered..."></textarea>
+          </div>
+
+          <div class="review-q">
+            <div class="review-q-label">Prelims — Mock Score</div>
+            <div class="review-q-text">Mock score this week: ___/200. Better/worse? Why?</div>
+            <textarea id="r-mock" placeholder="Score: __ / 200. Better/worse because..."></textarea>
+          </div>
+
+          <div class="review-q">
+            <div class="review-q-label">Mains</div>
+            <div class="review-q-text">How many Mains answers written? Which themes now have 2+ answers?</div>
+            <textarea id="r-mains" placeholder="Answers written: __ . Themes with 2+: ..."></textarea>
+          </div>
+
+          <div class="review-q">
+            <div class="review-q-label">Mains — Answer Read-Aloud</div>
+            <div class="review-q-text">Read U one answer from this week. A asks: what dimension is missing?</div>
+            <textarea id="r-missing" placeholder="Missing dimension: ..."></textarea>
+          </div>
+
+          <div class="review-q">
+            <div class="review-q-label">Both — Confidence Temperature</div>
+            <div class="review-q-text">Rate 1–10 honest. If below 5, name one win first.</div>
+            <div class="conf-slider" id="conf-slider">
+              <button class="conf-btn" onclick="setConf(1)">1</button>
+              <button class="conf-btn" onclick="setConf(2)">2</button>
+              <button class="conf-btn" onclick="setConf(3)">3</button>
+              <button class="conf-btn" onclick="setConf(4)">4</button>
+              <button class="conf-btn" onclick="setConf(5)">5</button>
+              <button class="conf-btn" onclick="setConf(6)">6</button>
+              <button class="conf-btn" onclick="setConf(7)">7</button>
+              <button class="conf-btn" onclick="setConf(8)">8</button>
+              <button class="conf-btn" onclick="setConf(9)">9</button>
+              <button class="conf-btn" onclick="setConf(10)">10</button>
+            </div>
+            <textarea id="r-confidence" placeholder="If below 5: name one win this week first..." style="margin-top:10px"></textarea>
+          </div>
+
+          <div class="review-q">
+            <div class="review-q-label">Both — Next Week Plan</div>
+            <div class="review-q-text">What is the plan for next week — specific subjects + which answers to write?</div>
+            <textarea id="r-plan" placeholder="Next week: subjects → answers → mocks..."></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">The 5 Non-Negotiable Rules</div>
+          <ul class="rules-list">
+            <li>
+              <div class="rule-num">1</div>
+              <div class="rule-text"><strong>Coverage before depth</strong> — touch all 16 Prelims clusters before going deep into any.</div>
+            </li>
+            <li>
+              <div class="rule-num">2</div>
+              <div class="rule-text"><strong>No method without a cluster</strong> — every session tagged to backbone. Floating study doesn't count.</div>
+            </li>
+            <li>
+              <div class="rule-num">3</div>
+              <div class="rule-text"><strong>Sunday red flag</strong> — any cluster untouched 2+ weeks = Monday's first session, no exceptions.</div>
+            </li>
+            <li>
+              <div class="rule-num">4</div>
+              <div class="rule-text"><strong>Mains minimum</strong> — at least 1 written answer per week, every week, from Month 1.</div>
+            </li>
+            <li>
+              <div class="rule-num">5</div>
+              <div class="rule-text"><strong>Bad score protocol</strong> — after a bad mock, 48-hr reflection only. Then reset. No spiralling.</div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Progress saved!</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const DAYS_SHORT = ['MON','TUE','WED','THU','FRI','SAT'];
+
+const CHECKLIST_DATA = [
+  {
+    label: 'ECONOMY ★ — U\'s Native Domain',
+    color: 'gold',
+    topics: [
+      {name:'Banking — RBI, monetary policy, instruments', methods:['PYQ-first','CA-anchor']},
+      {name:'Fiscal policy, budget, taxation, deficit', methods:['CA-anchor','Test-driven']},
+      {name:'Inflation, CPI/WPI, GDP concepts', methods:['PYQ-first']},
+      {name:'Financial markets — SEBI, bonds, capital', methods:['CA-anchor']},
+      {name:'Poverty, inclusion, welfare schemes', methods:['PYQ-first','CA-anchor']},
+      {name:'Agriculture — MSP, APMC, food security', methods:['CA-anchor','PYQ-first']},
+      {name:'International trade, WTO, BoP', methods:['CA-anchor','PYQ-first']},
+      {name:'Infrastructure, PPP, digital economy', methods:['CA-anchor']},
+    ]
+  },
+  {
+    label: 'POLITY',
+    topics: [
+      {name:'Constitution basics — Preamble, features, schedules', methods:['PYQ-first','Teach-back']},
+      {name:'Fundamental Rights, DPSP, Duties', methods:['PYQ-first','Mind map']},
+      {name:'Parliament — structure, sessions, bills', methods:['Test-driven','Teach-back']},
+      {name:'Executive — President, PM, Council', methods:['PYQ-first']},
+      {name:'Judiciary — SC, HC, tribunals, PIL', methods:['Test-driven','PYQ-first']},
+      {name:'Federalism, local governance, panchayati raj', methods:['PYQ-first','Teach-back']},
+      {name:'Constitutional bodies — CAG, EC, UPSC', methods:['PYQ-first']},
+      {name:'Recent amendments, governance schemes', methods:['CA-anchor','PYQ-first']},
+    ]
+  },
+  {
+    label: 'HISTORY',
+    topics: [
+      {name:'Ancient — Indus, Vedic, Mauryan, Gupta', methods:['PYQ-first']},
+      {name:'Ancient — Buddhism, Jainism, philosophy', methods:['PYQ-first','Mind map']},
+      {name:'Medieval — Sultanate, Mughal (selective)', methods:['PYQ-first']},
+      {name:'Modern — Company rule, 1857, social reforms', methods:['Test-driven']},
+      {name:'Modern — Freedom struggle, Gandhi, INC', methods:['PYQ-first','Teach-back']},
+      {name:'Modern — Constitutional development, partition', methods:['PYQ-first']},
+      {name:'Post-independence, integration', methods:['CA-anchor','PYQ-first']},
+    ]
+  },
+  {
+    label: 'GEOGRAPHY',
+    topics: [
+      {name:'Physical — Geomorphology, landforms', methods:['Mind map','Test-driven']},
+      {name:'Physical — Climate, monsoon, ocean currents', methods:['Mind map','PYQ-first']},
+      {name:'Physical — Drainage systems, rivers', methods:['Mind map']},
+      {name:'India — Agriculture, soils, vegetation', methods:['CA-anchor','PYQ-first']},
+      {name:'India — Minerals, industries, energy', methods:['CA-anchor','PYQ-first']},
+      {name:'India — Population, urbanisation', methods:['CA-anchor']},
+      {name:'World geography — continents, map-based', methods:['Mind map','Test-driven']},
+    ]
+  },
+  {
+    label: 'ENVIRONMENT & ECOLOGY',
+    topics: [
+      {name:'Biodiversity — types, hotspots, species', methods:['PYQ-first','CA-anchor']},
+      {name:'Protected areas — NPs, sanctuaries, biospheres', methods:['PYQ-first']},
+      {name:'International treaties — Paris, CBD, CITES, Ramsar', methods:['CA-anchor','PYQ-first']},
+      {name:'Pollution — types, regulation, NGT', methods:['CA-anchor','Test-driven']},
+      {name:'Climate change — IPCC, NDC, loss & damage', methods:['CA-anchor']},
+      {name:'Environmental law, EIA', methods:['PYQ-first']},
+    ]
+  },
+  {
+    label: 'SCIENCE & TECHNOLOGY',
+    topics: [
+      {name:'Space — ISRO missions, satellites, launchers', methods:['CA-anchor']},
+      {name:'Defence — DRDO, indigenisation', methods:['CA-anchor']},
+      {name:'Biotech — GM crops, gene therapy, vaccines', methods:['CA-anchor','PYQ-first']},
+      {name:'IT & AI — emerging tech, cyber policy', methods:['CA-anchor']},
+      {name:'Health — national programmes, NCD policies', methods:['CA-anchor','PYQ-first']},
+      {name:'Nuclear, energy, nanotechnology basics', methods:['PYQ-first']},
+    ]
+  },
+  {
+    label: 'INTERNATIONAL RELATIONS',
+    topics: [
+      {name:'India bilateral — USA, China, Russia, neighbours', methods:['CA-anchor','PYQ-first']},
+      {name:'Multilateral — UN, WTO, G20, BRICS, SCO', methods:['CA-anchor']},
+      {name:'Regional — SAARC, ASEAN, African Union', methods:['CA-anchor','PYQ-first']},
+      {name:'India\'s foreign policy principles', methods:['PYQ-first','Teach-back']},
+    ]
+  },
+  {
+    label: 'CSAT — Qualifying Floor (33%)',
+    topics: [
+      {name:'Reading comprehension — 2 passages/week', methods:['Test-driven']},
+      {name:'Logical reasoning — sets, arrangements', methods:['Test-driven']},
+      {name:'Basic numeracy — percentages, ratios, P&L', methods:['Test-driven']},
+    ]
+  },
+];
+
+const THEMES_36 = [
+  'Federalism & Centre-State','Judicial activism & overreach','India\'s neighbourhood policy',
+  'Economic inequality & inclusion','Women\'s empowerment & GBV','Climate change & India\'s NDCs',
+  'Technology governance & AI','Agricultural distress & reforms','Urban governance & smart cities',
+  'Internal security & LWE','Social movements & reforms','Monetary policy & RBI',
+  'Globalisation & discontents','Ethics in public service','Biodiversity & conservation',
+  'Science, innovation & startups','Constitutional morality','Disaster management',
+  'Food security & nutrition','India\'s multilateral diplomacy','Corruption & accountability',
+  'Education & human development','Health policy & UHC','Caste, identity & social justice',
+  'Infrastructure & PPP','Freedom struggle themes','Media, democracy & disinformation',
+  'Fiscal federalism','Civil services reform','India\'s demographic dividend',
+  'Governance & implementation gap','Parliamentary & electoral processes','Geopolitics & great power relations',
+  'Digital economy & data governance','Industrial policy & manufacturing','Rural economy & migration',
+];
+
+const GAP_CLUSTERS = ['Economy','Polity','History','Geography','Environment','Sci & Tech','IR'];
+const METHOD_COLORS = {
+  'PYQ-first':'mb-pyq','CA-anchor':'mb-ca','Teach-back':'mb-teach',
+  'Mind map':'mb-mind','Test-driven':'mb-test','Answer-write':'mb-write',
+};
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let state = loadState();
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('upsc2027_tracker');
+    if (saved) return JSON.parse(saved);
+  } catch(e){}
+  return {
+    week: '', dates: '',
+    news: DAYS_SHORT.map(d => ({day:d, story:'', gspaper:'', static:'', type:''})),
+    checklist: {},  // key: "section-topicIdx" → 'covered'|'partial'|'not'
+    mains: Array(9).fill(null).map((_,i) => ({day:'',gspaper:'',question:'',directive:'',time:'',model:''})),
+    examples: Array(4).fill(null).map(() => ({text:'',source:'',papers:''})),
+    qc: [],
+    themes36: {},  // key: idx → [1,2] answered
+    metrics: {studydays:'',clusters:'',pyqacc:'',mainsans:'',themes:'',examples:''},
+    gapStatus: {},  // key: cluster → 'O'|'~'|'X'
+    gapZero:'', gapPlan:'',
+    buckets:{a:'',b:'',c:''},
+    ph1:'', ph2:'', ph3:'',
+    review:{clusters:'',mock:'',mains:'',missing:'',confidence:'',plan:''},
+    conf: null,
+  };
+}
+
+// ── NAV ──────────────────────────────────────────────────────────────────
+const PAGE_META = {
+  schedule: {title:'Weekly Schedule', sub:'Morning Prelims · Evening Mains · Newspaper Log'},
+  checklist: {title:'Prelims Backbone Coverage', sub:'16 clusters · Check every topic this week'},
+  mains: {title:'Mains Answer Log & Themes', sub:'Answer writing · Example bank · 36-theme backbone'},
+  metrics: {title:'Metrics, Gaps & Audits', sub:'3-layer gap detection · Error buckets · Phase audits'},
+  review: {title:'Sunday Review', sub:'A asks U · Confidence check · Next week plan'},
+};
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_META[id].title;
+  document.getElementById('page-subtitle').textContent = PAGE_META[id].sub;
+}
+
+// ── BUILD NEWS TABLE ──────────────────────────────────────────────────────
+function buildNewsTable() {
+  const tbody = document.getElementById('news-tbody');
+  tbody.innerHTML = '';
+  DAYS_SHORT.forEach((day, i) => {
+    const d = state.news[i];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold);font-weight:500">${day}</td>
+      <td><input type="text" placeholder="Key story from today's paper…" value="${d.story}" oninput="state.news[${i}].story=this.value"></td>
+      <td>
+        <select onchange="state.news[${i}].gspaper=this.value">
+          <option value="" ${!d.gspaper?'selected':''}>—</option>
+          <option ${d.gspaper==='GS1'?'selected':''}>GS1</option>
+          <option ${d.gspaper==='GS2'?'selected':''}>GS2</option>
+          <option ${d.gspaper==='GS3'?'selected':''}>GS3</option>
+          <option ${d.gspaper==='GS4'?'selected':''}>GS4</option>
+          <option ${d.gspaper==='Both'?'selected':''}>Both</option>
+        </select>
+      </td>
+      <td><input type="text" placeholder="Static topic linked…" value="${d.static}" oninput="state.news[${i}].static=this.value"></td>
+      <td>
+        <select onchange="state.news[${i}].type=this.value">
+          <option value="" ${!d.type?'selected':''}>—</option>
+          <option ${d.type==='Prelims'?'selected':''}>Prelims</option>
+          <option ${d.type==='Mains'?'selected':''}>Mains</option>
+          <option ${d.type==='Both'?'selected':''}>Both</option>
+        </select>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── BUILD CHECKLIST ───────────────────────────────────────────────────────
+function buildChecklist() {
+  const area = document.getElementById('checklist-area');
+  area.innerHTML = '';
+  CHECKLIST_DATA.forEach((cluster, ci) => {
+    const block = document.createElement('div');
+    block.className = 'card';
+
+    const coveredCount = cluster.topics.filter((_,ti) => state.checklist[`${ci}-${ti}`] === 'covered').length;
+    const partialCount = cluster.topics.filter((_,ti) => state.checklist[`${ci}-${ti}`] === 'partial').length;
+
+    block.innerHTML = `
+      <div class="card-title" style="color:${ci===0?'var(--gold)':'var(--text)'}">
+        ${cluster.label}
+        <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text3);font-weight:normal">
+          ${coveredCount}✓ ${partialCount}~ / ${cluster.topics.length}
+        </span>
+      </div>
+      <div class="checklist-topics"></div>
+    `;
+
+    const topicsWrap = block.querySelector('.checklist-topics');
+    cluster.topics.forEach((topic, ti) => {
+      const key = `${ci}-${ti}`;
+      const status = state.checklist[key] || 'not';
+      const row = document.createElement('div');
+      row.className = `topic-row ${status === 'covered' ? 'done' : status === 'partial' ? 'partial' : ''}`;
+      row.id = `topic-${key}`;
+      row.innerHTML = `
+        <div class="topic-name">${topic.name}</div>
+        <div class="topic-methods">${topic.methods.map(m => `<span class="method-badge ${METHOD_COLORS[m]||'mb-pyq'}">${m}</span>`).join('')}</div>
+        <div style="display:flex;gap:4px">
+          <button class="status-btn covered ${status==='covered'?'active-status':''}" onclick="setTopicStatus('${key}','covered',this)">✓ Done</button>
+          <button class="status-btn partial ${status==='partial'?'active-status':''}" onclick="setTopicStatus('${key}','partial',this)">~ Part</button>
+          <button class="status-btn not-done ${status==='not'?'active-status':''}" onclick="setTopicStatus('${key}','not',this)">✕</button>
+        </div>
+      `;
+      topicsWrap.appendChild(row);
+    });
+
+    area.appendChild(block);
+  });
+}
+
+function setTopicStatus(key, status, btn) {
+  state.checklist[key] = status;
+  const row = document.getElementById('topic-'+key);
+  row.className = `topic-row ${status==='covered'?'done':status==='partial'?'partial':''}`;
+  row.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active-status'));
+  btn.classList.add('active-status');
+}
+
+// ── BUILD MAINS TABLE ─────────────────────────────────────────────────────
+function buildMainsTable() {
+  const tbody = document.getElementById('mains-tbody');
+  tbody.innerHTML = '';
+  const allDays = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  state.mains.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <select onchange="state.mains[${i}].day=this.value" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--gold)">
+          <option value="" ${!row.day?'selected':''}>—</option>
+          ${allDays.map(d=>`<option ${row.day===d?'selected':''}>${d}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select onchange="state.mains[${i}].gspaper=this.value">
+          <option value="" ${!row.gspaper?'selected':''}>—</option>
+          <option ${row.gspaper==='GS1'?'selected':''}>GS1</option>
+          <option ${row.gspaper==='GS2'?'selected':''}>GS2</option>
+          <option ${row.gspaper==='GS3'?'selected':''}>GS3</option>
+          <option ${row.gspaper==='GS4'?'selected':''}>GS4</option>
+        </select>
+      </td>
+      <td><input type="text" placeholder="Question / theme…" value="${row.question}" oninput="state.mains[${i}].question=this.value"></td>
+      <td><input type="text" placeholder="Discuss / Analyse…" value="${row.directive}" oninput="state.mains[${i}].directive=this.value"></td>
+      <td><input type="text" placeholder="e.g. 11 min" value="${row.time}" oninput="state.mains[${i}].time=this.value"></td>
+      <td>
+        <select onchange="state.mains[${i}].model=this.value" style="color:${row.model==='Y'?'var(--teal)':'var(--text3)'}">
+          <option value="" ${!row.model?'selected':''}>—</option>
+          <option ${row.model==='Y'?'selected':''} style="color:#5db8a7">Y</option>
+          <option ${row.model==='N'?'selected':''} style="color:#e06b52">N</option>
+        </select>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── EXAMPLE BANK ───────────────────────────────────────────────────────────
+function buildExampleTable() {
+  const tbody = document.getElementById('example-tbody');
+  tbody.innerHTML = '';
+  state.examples.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" placeholder="e.g. India literacy rate 77.7% (Census 2011)" value="${row.text}" oninput="state.examples[${i}].text=this.value"></td>
+      <td><input type="text" placeholder="PIB / Hindu / NITI…" value="${row.source}" oninput="state.examples[${i}].source=this.value"></td>
+      <td><input type="text" placeholder="GS2, GS3" value="${row.papers}" oninput="state.examples[${i}].papers=this.value"></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function addExampleRow() {
+  state.examples.push({text:'',source:'',papers:''});
+  buildExampleTable();
+}
+
+// ── QUALITY CHECKS ────────────────────────────────────────────────────────
+function toggleQC(el) {
+  el.classList.toggle('checked');
+  const check = el.querySelector('.qc-check');
+  check.textContent = el.classList.contains('checked') ? '✓' : '○';
+}
+
+// ── 36 THEMES ─────────────────────────────────────────────────────────────
+function buildTheme36() {
+  const grid = document.getElementById('theme-36-grid');
+  grid.innerHTML = '';
+  THEMES_36.forEach((theme, i) => {
+    const answered = state.themes36[i] || [];
+    const isDone = answered.length >= 2;
+    const box = document.createElement('div');
+    box.className = `theme-box ${isDone ? 't-done' : ''}`;
+    box.id = `theme-box-${i}`;
+    box.innerHTML = `
+      <div class="theme-box-name">
+        <span class="tnum">${String(i+1).padStart(2,'0')}</span>
+        ${theme}
+      </div>
+      <div class="theme-pips">
+        <div class="pip ${answered.includes(1)?'answered':''}" onclick="toggleThemePip(${i},1)" title="Answer 1">1</div>
+        <div class="pip ${answered.includes(2)?'answered':''}" onclick="toggleThemePip(${i},2)" title="Answer 2">2</div>
+      </div>
+    `;
+    grid.appendChild(box);
+  });
+}
+
+function toggleThemePip(i, n) {
+  if (!state.themes36[i]) state.themes36[i] = [];
+  const arr = state.themes36[i];
+  const idx = arr.indexOf(n);
+  if (idx >= 0) arr.splice(idx, 1);
+  else arr.push(n);
+  buildTheme36();
+}
+
+// ── GAP GRID ───────────────────────────────────────────────────────────────
+function buildGapGrid() {
+  const grid = document.getElementById('gap-grid');
+  grid.innerHTML = '';
+  GAP_CLUSTERS.forEach(cluster => {
+    const status = state.gapStatus[cluster] || '';
+    const div = document.createElement('div');
+    div.className = 'gap-item';
+    div.innerHTML = `
+      <div class="gap-label">${cluster}</div>
+      <div class="gap-btn-group">
+        <button class="gap-btn O ${status==='O'?'selected':''}" onclick="setGap('${cluster}','O',this)">O Done</button>
+        <button class="gap-btn tilde ${status==='~'?'selected':''}" onclick="setGap('${cluster}','~',this)">~ Partial</button>
+        <button class="gap-btn X ${status==='X'?'selected':''}" onclick="setGap('${cluster}','X',this)">X Undone</button>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function setGap(cluster, val, btn) {
+  state.gapStatus[cluster] = val;
+  const grp = btn.closest('.gap-btn-group');
+  grp.querySelectorAll('.gap-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ── CONFIDENCE ────────────────────────────────────────────────────────────
+function setConf(n) {
+  state.conf = n;
+  document.querySelectorAll('.conf-btn').forEach((b, i) => {
+    b.classList.toggle('active', i+1 === n);
+  });
+}
+
+function restoreConf() {
+  if (state.conf) {
+    document.querySelectorAll('.conf-btn').forEach((b, i) => {
+      b.classList.toggle('active', i+1 === state.conf);
+    });
+  }
+}
+
+// ── WEEK META ──────────────────────────────────────────────────────────────
+function bindMeta() {
+  const w = document.getElementById('meta-week');
+  const d = document.getElementById('meta-dates');
+  w.value = state.week;
+  d.value = state.dates;
+  w.oninput = () => state.week = w.value;
+  d.oninput = () => state.dates = d.value;
+}
+
+// ── METRICS ────────────────────────────────────────────────────────────────
+function bindMetrics() {
+  const ids = ['studydays','clusters','pyqacc','mainsans','themes','examples'];
+  ids.forEach(id => {
+    const el = document.getElementById('m-'+id);
+    if (el) {
+      el.value = state.metrics[id] || '';
+      el.oninput = () => state.metrics[id] = el.value;
+    }
+  });
+}
+
+// ── BIND TEXTAREAS ─────────────────────────────────────────────────────────
+function bindTextarea(id, stateKey, subkey) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (subkey) {
+    el.value = state[stateKey]?.[subkey] || '';
+    el.oninput = () => { if (!state[stateKey]) state[stateKey]={}; state[stateKey][subkey] = el.value; };
+  } else {
+    el.value = state[id] || state[stateKey] || '';
+    el.oninput = () => state[stateKey||id] = el.value;
+  }
+}
+
+// ── FLUSH DOM → STATE (call before any save/export/clear) ─────────────────
+function flushDOMToState() {
+  ['clusters','mock','mains','missing','confidence','plan'].forEach(k => {
+    const el = document.getElementById('r-'+k);
+    if (el) state.review[k] = el.value;
+  });
+  const simpleBindIds = {
+    'gap-themes-zero':'gap_themes_zero','gap-themes-plan':'gap_themes_plan',
+    'bucket-a':'bucket_a','bucket-b':'bucket_b','bucket-c':'bucket_c',
+    'ph1-audit':'ph1_audit','ph2-audit':'ph2_audit','ph3-audit':'ph3_audit',
+  };
+  Object.entries(simpleBindIds).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el) state[key] = el.value;
+  });
+  const w = document.getElementById('meta-week');
+  const d = document.getElementById('meta-dates');
+  if (w) state.week = w.value;
+  if (d) state.dates = d.value;
+  const mids = ['studydays','clusters','pyqacc','mainsans','themes','examples'];
+  mids.forEach(id => {
+    const el = document.getElementById('m-'+id);
+    if (el) state.metrics[id] = el.value;
+  });
+}
+
+// ── SAVE ───────────────────────────────────────────────────────────────────
+function saveAll() {
+  flushDOMToState();
+  localStorage.setItem('upsc2027_tracker', JSON.stringify(state));
+  showToast('Progress saved ✓');
+}
+
+// ── NEW WEEK ───────────────────────────────────────────────────────────────
+function clearWeek() {
+  if (!confirm('Start a new week? Current week data will be saved first, then cleared. Your 36-theme progress is preserved.')) return;
+  flushDOMToState();
+  // Archive current week into history
+  const archive = JSON.parse(localStorage.getItem('upsc2027_archive') || '[]');
+  archive.push({ savedAt: new Date().toISOString(), week: state.week, dates: state.dates, snapshot: JSON.parse(JSON.stringify(state)) });
+  localStorage.setItem('upsc2027_archive', JSON.stringify(archive));
+
+  const themes36 = state.themes36; // preserve across weeks
+  state = {
+    week: state.week ? String(parseInt(state.week||0)+1) : '',
+    dates: '',
+    news: DAYS_SHORT.map(d => ({day:d, story:'', gspaper:'', static:'', type:''})),
+    checklist: {},
+    mains: Array(9).fill(null).map(() => ({day:'',gspaper:'',question:'',directive:'',time:'',model:''})),
+    examples: Array(4).fill(null).map(() => ({text:'',source:'',papers:''})),
+    qc: [], themes36,
+    metrics: {studydays:'',clusters:'',pyqacc:'',mainsans:'',themes:'',examples:''},
+    gapStatus: {},
+    gap_themes_zero:'', gap_themes_plan:'',
+    bucket_a:'', bucket_b:'', bucket_c:'',
+    ph1_audit:'', ph2_audit:'', ph3_audit:'',
+    review:{clusters:'',mock:'',mains:'',missing:'',confidence:'',plan:''},
+    conf: null,
+  };
+  localStorage.setItem('upsc2027_tracker', JSON.stringify(state));
+  init();
+  showToast('New week started! Previous week archived ✓');
+}
+
+// ── DOWNLOAD PDF ───────────────────────────────────────────────────────────
+function downloadPDF() {
+  flushDOMToState();
+  // Update print title
+  const pn = document.getElementById('print-week-num');
+  const pd = document.getElementById('print-week-dates');
+  if (pn) pn.textContent = state.week || '—';
+  if (pd) pd.textContent = state.dates || '—';
+  window.print();
+}
+
+// ── DOWNLOAD CSV ───────────────────────────────────────────────────────────
+function downloadCSV() {
+  flushDOMToState();
+
+  const esc = v => '"' + String(v||'').replace(/"/g,'""') + '"';
+  const week = state.week || '—';
+  const dates = state.dates || '—';
+  const rows = [];
+
+  // Header block
+  rows.push(['Section','Week','Dates','Field','Value','Extra1','Extra2','Extra3']);
+
+  // ── Newspaper Log
+  state.news.forEach(n => {
+    rows.push(['Newspaper Log', week, dates, n.day, n.story, n.gspaper, n.static, n.type]);
+  });
+
+  // ── Prelims Checklist
+  CHECKLIST_DATA.forEach((cluster, ci) => {
+    cluster.topics.forEach((topic, ti) => {
+      const status = state.checklist[`${ci}-${ti}`] || 'not';
+      rows.push(['Prelims Checklist', week, dates, cluster.label, topic.name, status, topic.methods.join('; '), '']);
+    });
+  });
+
+  // ── Mains Answer Log
+  state.mains.forEach((m, i) => {
+    if (m.question || m.day) {
+      rows.push(['Mains Answer Log', week, dates, `Answer ${i+1}`, m.question, `Day:${m.day} GS:${m.gspaper}`, `Directive:${m.directive} Time:${m.time}`, `Model:${m.model}`]);
+    }
+  });
+
+  // ── Example Bank
+  state.examples.forEach((e, i) => {
+    if (e.text) {
+      rows.push(['Example Bank', week, dates, `Example ${i+1}`, e.text, e.source, e.papers, '']);
+    }
+  });
+
+  // ── 36 Themes
+  THEMES_36.forEach((theme, i) => {
+    const answered = state.themes36[i] || [];
+    rows.push(['36 Themes', week, dates, theme, `${answered.length}/2 answered`, answered.join(','), '', '']);
+  });
+
+  // ── Weekly Metrics
+  const m = state.metrics;
+  [
+    ['Study Days', m.studydays],['Prelims Clusters', m.clusters],
+    ['PYQ Accuracy %', m.pyqacc],['Mains Answers', m.mainsans],
+    ['Mains Themes', m.themes],['Example Bank Count', m.examples],
+  ].forEach(([label, val]) => rows.push(['Metrics', week, dates, label, val, '', '', '']));
+
+  // ── Gap Detection
+  GAP_CLUSTERS.forEach(c => {
+    rows.push(['Gap Detection', week, dates, c, state.gapStatus[c] || '—', '', '', '']);
+  });
+  rows.push(['Gap Notes', week, dates, 'Zero-answer themes', state.gap_themes_zero||'', '', '', '']);
+  rows.push(['Gap Notes', week, dates, 'Next week plan', state.gap_themes_plan||'', '', '', '']);
+
+  // ── Error Buckets
+  rows.push(['Mock Buckets', week, dates, 'Bucket A – Never Studied', state.bucket_a||'', '', '', '']);
+  rows.push(['Mock Buckets', week, dates, 'Bucket B – Confused', state.bucket_b||'', '', '', '']);
+  rows.push(['Mock Buckets', week, dates, 'Bucket C – Wrong Elimination', state.bucket_c||'', '', '', '']);
+
+  // ── Sunday Review
+  const r = state.review;
+  [
+    ['Clusters Covered', r.clusters],['Mock Score & Analysis', r.mock],
+    ['Mains Answers & Themes', r.mains],['Missing Dimension', r.missing],
+    ['Confidence Score', state.conf||'—'],['Confidence Notes', r.confidence],
+    ['Next Week Plan', r.plan],
+  ].forEach(([label, val]) => rows.push(['Sunday Review', week, dates, label, val, '', '', '']));
+
+  const csv = rows.map(r => r.map(esc).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' }); // BOM for Excel/Notion
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `UPSC2027_Week${week}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('CSV downloaded — ready for Notion!');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+function init() {
+  bindMeta();
+  buildNewsTable();
+  buildChecklist();
+  buildMainsTable();
+  buildExampleTable();
+  buildTheme36();
+  buildGapGrid();
+  bindMetrics();
+  restoreConf();
+
+  // Bind review textareas
+  ['clusters','mock','mains','missing','confidence','plan'].forEach(k => {
+    const el = document.getElementById('r-'+k);
+    if (el) {
+      el.value = state.review[k] || '';
+      el.oninput = () => state.review[k] = el.value;
+    }
+  });
+
+  // Bind gap/bucket textareas
+  const simpleBinds = {
+    'gap-themes-zero': 'gap_themes_zero', 'gap-themes-plan':'gap_themes_plan',
+    'bucket-a':'bucket_a','bucket-b':'bucket_b','bucket-c':'bucket_c',
+    'ph1-audit':'ph1_audit','ph2-audit':'ph2_audit','ph3-audit':'ph3_audit',
+  };
+
+  Object.entries(simpleBinds).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = state[key] || '';
+      el.oninput = () => state[key] = el.value;
+    }
+  });
+}
+
+// Auto-save every 60s
+setInterval(saveAll, 60000);
+
+init();
+</script>
+</body>
+</html>
