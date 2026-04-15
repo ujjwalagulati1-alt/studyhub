@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U's Daily Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyCmVVpzoLrRGfnRGDq45fDgqtfoMvzQdkE",
+    authDomain: "studyhub-upsc.firebaseapp.com",
+    projectId: "studyhub-upsc",
+    storageBucket: "studyhub-upsc.firebasestorage.app",
+    messagingSenderId: "541078992966",
+    appId: "1:541078992966:web:841a57a40bc5bbd52cf247"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window._db = db;
+  window._fs = { collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot };
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<style>
+:root {
+  --ink: #1c1714;
+  --ink2: #3a3228;
+  --paper: #f5f0e8;
+  --paper2: #ece7dc;
+  --paper3: #e0dbd0;
+  --gold: #9b7c2a;
+  --gold-light: #fdf5d0;
+  --accent: #c84b31;
+  --accent-light: #fde8e4;
+  --teal: #2a7f6f;
+  --teal-light: #d4ede9;
+  --blue: #2c5f8a;
+  --blue-light: #ddeaf5;
+  --purple: #5a3e7a;
+  --border: rgba(28,23,20,0.1);
+  --shadow: 0 2px 16px rgba(28,23,20,0.07);
+  --radius: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; font-size: 13px; }
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 220px; min-width: 220px; background: var(--ink); color: var(--paper); display: flex; flex-direction: column; overflow-y: auto; }
+.sidebar-brand { padding: 24px 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.sidebar-brand h1 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--paper); }
+.sidebar-brand p { font-size: 10px; color: rgba(245,240,232,0.38); margin-top: 3px; font-weight: 300; }
+.streak-box { margin: 14px; background: rgba(155,124,42,0.15); border: 1px solid rgba(155,124,42,0.25); border-radius: 10px; padding: 14px; text-align: center; }
+.streak-num { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: var(--gold); line-height: 1; }
+.streak-label { font-size: 9px; color: rgba(245,240,232,0.4); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+.nav-section { padding: 12px 0 4px; }
+.nav-label { font-size: 8.5px; font-weight: 500; letter-spacing: 1.8px; text-transform: uppercase; color: rgba(245,240,232,0.28); padding: 8px 18px 4px; }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 18px; cursor: pointer; font-size: 12.5px; color: rgba(245,240,232,0.6); border-left: 2px solid transparent; transition: all 0.15s; }
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--paper); }
+.nav-item.active { background: rgba(155,124,42,0.2); color: var(--paper); border-left-color: var(--gold); }
+.nav-item .ni { font-size: 14px; width: 16px; text-align: center; }
+.sidebar-bottom { margin-top: auto; padding: 12px 14px 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+.back-link { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(245,240,232,0.4); cursor: pointer; padding: 6px 4px; transition: color 0.15s; text-decoration: none; }
+.back-link:hover { color: rgba(245,240,232,0.8); }
+
+/* MAIN */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { background: var(--paper); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+.topbar h2 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; flex: 1; }
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+.view { display: none; }
+.view.active { display: block; }
+
+/* BUTTONS */
+.btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; transition: all 0.15s; }
+.btn-primary { background: var(--gold); color: white; }
+.btn-primary:hover { background: #7a6020; }
+.btn-ghost { background: transparent; color: var(--ink2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--paper2); }
+
+/* LOG FORM */
+.log-form { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); max-width: 680px; margin: 0 auto 24px; }
+.form-section-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; margin-bottom: 20px; color: var(--ink); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+.form-label { font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: rgba(28,23,20,0.45); }
+.form-input, .form-select { padding: 9px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--paper); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.15s; }
+.form-input:focus, .form-select:focus { border-color: var(--gold); }
+
+/* SLEEP */
+.sleep-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.sleep-inner { display: flex; flex-direction: column; gap: 4px; }
+.sleep-inner-label { font-size: 10px; color: rgba(28,23,20,0.4); }
+.sleep-calc { padding: 9px 12px; border-radius: 8px; background: var(--gold-light); border: 1.5px solid rgba(155,124,42,0.2); font-family: 'DM Mono', monospace; font-size: 13px; color: var(--gold); display: flex; align-items: center; }
+
+/* MOOD */
+.mood-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.mood-btn { width: 50px; height: 50px; border-radius: 12px; border: 2px solid var(--border); background: var(--paper); font-size: 22px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.mood-btn:hover { transform: scale(1.1); border-color: var(--gold); }
+.mood-btn.selected { border-color: var(--gold); background: var(--gold-light); transform: scale(1.12); box-shadow: 0 4px 12px rgba(155,124,42,0.2); }
+
+/* TASKS */
+.task-checks { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+.task-check { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--paper); cursor: pointer; transition: all 0.15s; user-select: none; }
+.task-check:hover { border-color: var(--teal); }
+.task-check.done { border-color: var(--teal); background: var(--teal-light); }
+.task-check input[type=checkbox] { display: none; }
+.task-icon { width: 20px; height: 20px; border-radius: 6px; border: 2px solid rgba(28,23,20,0.2); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; background: white; transition: all 0.15s; }
+.task-check.done .task-icon { background: var(--teal); border-color: var(--teal); color: white; }
+.task-text { font-size: 13px; color: var(--ink2); }
+
+/* HISTORY */
+.log-entries { max-width: 680px; margin: 0 auto; }
+.log-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px; box-shadow: var(--shadow); display: flex; gap: 14px; align-items: flex-start; position: relative; }
+.log-mood { font-size: 28px; width: 48px; height: 48px; background: var(--paper2); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.log-body { flex: 1; }
+.log-date { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(28,23,20,0.4); margin-bottom: 3px; }
+.log-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.log-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.log-stat { font-size: 11px; color: rgba(28,23,20,0.55); background: var(--paper); padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border); }
+.log-tasks { display: flex; gap: 5px; flex-wrap: wrap; }
+.task-pill { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: var(--teal-light); color: var(--teal); font-weight: 500; }
+.log-note { font-size: 12px; color: rgba(28,23,20,0.45); font-style: italic; margin-top: 6px; }
+.log-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; align-items: flex-end; }
+.log-btn-edit { background: var(--blue-light); color: var(--blue); border: 1px solid rgba(44,95,138,0.2); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-family: 'DM Sans',sans-serif; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.log-btn-edit:hover { background: #c5daf0; }
+.log-btn-del { background: none; color: rgba(28,23,20,0.25); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-family: 'DM Sans',sans-serif; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.log-btn-del:hover { color: var(--accent); background: var(--accent-light); border-color: rgba(200,75,49,0.2); }
+
+/* ANALYTICS */
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+.stat-num { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; line-height: 1; margin-bottom: 4px; }
+.stat-label { font-size: 10px; color: rgba(28,23,20,0.4); letter-spacing: 0.5px; }
+.stat-sub { font-size: 11px; color: var(--teal); margin-top: 3px; }
+.analytics-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; margin-bottom: 16px; }
+.analytics-grid.wide { grid-template-columns: 1fr; }
+.chart-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.chart-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+.chart-sub { font-size: 11px; color: rgba(28,23,20,0.4); margin-bottom: 14px; }
+
+/* WEEKDAY BARS */
+.weekday-bars { display: flex; gap: 8px; align-items: flex-end; height: 80px; }
+.weekday-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; }
+.weekday-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+.weekday-bar { width: 100%; border-radius: 4px 4px 0 0; background: var(--gold); opacity: 0.6; min-height: 3px; transition: height 0.6s ease; }
+.weekday-bar.best { opacity: 1; background: var(--teal); }
+.weekday-label { font-size: 9px; color: rgba(28,23,20,0.4); font-family: 'DM Mono', monospace; }
+.weekday-val { font-size: 9px; color: rgba(28,23,20,0.55); }
+
+/* CORR BARS */
+.corr-grid { display: flex; flex-direction: column; gap: 8px; }
+.corr-row { display: flex; align-items: center; gap: 10px; }
+.corr-label { font-size: 11px; width: 95px; color: rgba(28,23,20,0.5); flex-shrink: 0; }
+.corr-wrap { flex: 1; height: 8px; background: var(--paper3); border-radius: 4px; overflow: hidden; }
+.corr-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+.corr-val { font-size: 10px; font-family: 'DM Mono', monospace; color: rgba(28,23,20,0.5); width: 30px; text-align: right; }
+
+/* INSIGHT */
+.insight { background: var(--gold-light); border: 1px solid rgba(155,124,42,0.2); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px; display: flex; gap: 12px; align-items: flex-start; }
+.insight-icon { font-size: 20px; flex-shrink: 0; }
+.insight-text { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.insight-text strong { color: var(--gold); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 60px 20px; color: rgba(28,23,20,0.3); }
+.empty .ei { font-size: 40px; margin-bottom: 12px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: rgba(28,23,20,0.12); border-radius: 10px; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.fade-up { animation: fadeUp 0.3s ease both; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1>Daily Log</h1>
+    <p>Track · Reflect · Improve</p>
+  </div>
+  <div class="streak-box">
+    <div class="streak-num" id="streak-num">0</div>
+    <div class="streak-label">Day Streak 🔥</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Views</div>
+    <div class="nav-item active" onclick="showView('log',this)"><span class="ni">📝</span> Today's Log</div>
+    <div class="nav-item" onclick="showView('history',this)"><span class="ni">📅</span> History</div>
+    <div class="nav-item" onclick="showView('analytics',this)"><span class="ni">📊</span> Analytics</div>
+    <div class="nav-item" onclick="showView('sleep',this)"><span class="ni">🌙</span> Sleep Analysis</div>
+  </div>
+  <div class="sidebar-bottom">
+    <a class="back-link" href="index.html">← Command Centre</a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <h2 id="view-title">Today's Log</h2>
+    <div id="sync-lbl" style="font-size:11px;color:rgba(28,23,20,0.35);font-family:'DM Mono',monospace">Connecting…</div>
+  </div>
+  <div class="content">
+
+    <!-- LOG -->
+    <div class="view active" id="view-log">
+      <div class="log-form fade-up">
+        <div class="form-section-title">Log your day — <span id="date-display" style="color:var(--gold)"></span></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <div class="form-label">Date</div>
+            <input class="form-input" type="date" id="f-date" oninput="onDateChange()">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Study Hours</div>
+            <input class="form-input" type="number" id="f-hours" placeholder="e.g. 3.5" min="0" max="16" step="0.5">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:18px">
+          <div class="form-label">Sleep</div>
+          <div class="sleep-row">
+            <div class="sleep-inner">
+              <div class="sleep-inner-label">Slept at</div>
+              <input class="form-input" type="time" id="f-sleep-from" oninput="calcSleep()" onchange="calcSleep()">
+            </div>
+            <div class="sleep-inner">
+              <div class="sleep-inner-label">Woke up at</div>
+              <input class="form-input" type="time" id="f-sleep-to" oninput="calcSleep()" onchange="calcSleep()">
+            </div>
+            <div class="sleep-inner">
+              <div class="sleep-inner-label">Total sleep</div>
+              <div class="sleep-calc" id="sleep-calc">— hrs</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:18px">
+          <div class="form-label">Mood</div>
+          <div class="mood-picker">
+            <button class="mood-btn" data-mood="sick" title="Sick day" onclick="selectMood(this)">🤢</button>
+            <button class="mood-btn" data-mood="low" title="Low" onclick="selectMood(this)">😔</button>
+            <button class="mood-btn" data-mood="okay" title="Okay" onclick="selectMood(this)">😐</button>
+            <button class="mood-btn" data-mood="good" title="Good" onclick="selectMood(this)">🙂</button>
+            <button class="mood-btn" data-mood="great" title="Great" onclick="selectMood(this)">😊</button>
+            <button class="mood-btn" data-mood="loved" title="Loved it" onclick="selectMood(this)">❤️</button>
+            <button class="mood-btn" data-mood="fire" title="On fire" onclick="selectMood(this)">🔥</button>
+          </div>
+          <input type="hidden" id="f-mood">
+        </div>
+
+        <div class="form-group" style="margin-bottom:18px">
+          <div class="form-label">Tasks Completed</div>
+          <div class="task-checks">
+            <label class="task-check" onclick="toggleTask(this)">
+              <input type="checkbox" name="tasks" value="Hindu articles">
+              <div class="task-icon">✓</div>
+              <span class="task-text">📰 2 Hindu articles</span>
+            </label>
+            <label class="task-check" onclick="toggleTask(this)">
+              <input type="checkbox" name="tasks" value="Vision quiz">
+              <div class="task-icon">✓</div>
+              <span class="task-text">🧠 Vision IAS Quiz</span>
+            </label>
+            <label class="task-check" onclick="toggleTask(this)">
+              <input type="checkbox" name="tasks" value="Static covered">
+              <div class="task-icon">✓</div>
+              <span class="task-text">📖 Static covered</span>
+            </label>
+            <label class="task-check" onclick="toggleTask(this)">
+              <input type="checkbox" name="tasks" value="Study Hub entries">
+              <div class="task-icon">✓</div>
+              <span class="task-text">💡 Study Hub entries</span>
+            </label>
+            <label class="task-check" onclick="toggleTask(this)">
+              <input type="checkbox" name="tasks" value="Answer writing">
+              <div class="task-icon">✓</div>
+              <span class="task-text">✍️ Answer writing</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <div class="form-label">Extra Task</div>
+            <input class="form-input" id="f-extra" placeholder="Anything else done today…">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Quick Note</div>
+            <input class="form-input" id="f-note" placeholder="One line reflection…">
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px;padding-top:16px;border-top:1px solid var(--border)">
+          <button class="btn btn-ghost" onclick="resetForm()">Clear</button>
+          <button class="btn btn-primary" onclick="saveLog()">Save Day ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="view" id="view-history">
+      <div class="log-entries" id="history-list">
+        <div class="empty"><div class="ei">📅</div><p>No logs yet.</p></div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="view" id="view-analytics">
+      <div class="stats-row" id="a-stats"></div>
+      <div id="a-insight"></div>
+      <div class="analytics-grid wide">
+        <div class="chart-card">
+          <div class="chart-title">Study Hours Trend</div>
+          <div class="chart-sub">Daily hours studied over time</div>
+          <canvas id="chart-hours" height="100"></canvas>
+        </div>
+      </div>
+      <div class="analytics-grid">
+        <div class="chart-card">
+          <div class="chart-title">Best Weekdays</div>
+          <div class="chart-sub">Average study hours — Mon to Sun</div>
+          <div class="weekday-bars" id="weekday-bars"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Mood Distribution</div>
+          <div class="chart-sub">How you've been feeling</div>
+          <canvas id="chart-mood" height="140"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLEEP -->
+    <div class="view" id="view-sleep">
+      <div class="stats-row" id="s-stats"></div>
+      <div id="s-insight"></div>
+      <div class="analytics-grid wide">
+        <div class="chart-card">
+          <div class="chart-title">Sleep vs Study Hours</div>
+          <div class="chart-sub">Purple = sleep · Gold = study hours per day</div>
+          <canvas id="chart-sleep-study" height="100"></canvas>
+        </div>
+      </div>
+      <div class="analytics-grid">
+        <div class="chart-card">
+          <div class="chart-title">Bedtime → Next Day Performance</div>
+          <div class="chart-sub">Which bedtime leads to better study</div>
+          <div class="corr-grid" id="bedtime-bars" style="margin-top:12px"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Sleep Hours Distribution</div>
+          <div class="chart-sub">How many hours you typically sleep</div>
+          <canvas id="chart-sleep-dist" height="140"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const MOOD_EMOJI  = {sick:'🤢',low:'😔',okay:'😐',good:'🙂',great:'😊',loved:'❤️',fire:'🔥'};
+const MOOD_LABEL  = {sick:'Sick day',low:'Low',okay:'Okay',good:'Good',great:'Great',loved:'Loved it',fire:'On fire!'};
+const MOOD_SCORE  = {sick:0,low:1,okay:2,good:3,great:4,loved:5,fire:5};
+const MOOD_COLOR  = {sick:'#bbb',low:'#c84b31',okay:'#9b7c2a',good:'#2c5f8a',great:'#2a7f6f',loved:'#e8a020',fire:'#c84b31'};
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+let logs = [];
+let charts = {};
+let currentView = 'log';
+
+// ── FIREBASE ──
+function initFB() {
+  const {collection,query,orderBy,onSnapshot} = window._fs;
+  onSnapshot(query(collection(window._db,'daily_logs'),orderBy('date','desc')), snap => {
+    logs = snap.docs.map(d=>({...d.data(),_id:d.id}));
+    updateStreak();
+    if(currentView==='history') renderHistory();
+    if(currentView==='analytics') renderAnalytics();
+    if(currentView==='sleep') renderSleep();
+    sync('☁️ Synced');
+  }, ()=>sync('⚠️ Offline'));
+}
+if(window._fs) initFB(); else window.addEventListener('firebase-ready',initFB);
+function sync(msg){const e=document.getElementById('sync-lbl');if(e)e.textContent=msg;}
+
+// ── SAVE ──
+async function saveLog() {
+  const date = document.getElementById('f-date').value;
+  if(!date){alert('Please select a date.');return;}
+  const hours = parseFloat(document.getElementById('f-hours').value)||0;
+  const mood = document.getElementById('f-mood').value;
+  const sleepFrom = document.getElementById('f-sleep-from').value;
+  const sleepTo = document.getElementById('f-sleep-to').value;
+  const sleepHours = calcSleepHrs(sleepFrom,sleepTo);
+  const tasks = [...document.querySelectorAll('input[name="tasks"]:checked')].map(c=>c.value);
+  const extra = document.getElementById('f-extra').value.trim();
+  const note = document.getElementById('f-note').value.trim();
+  const entry = {date,hours,mood,sleepFrom,sleepTo,sleepHours,tasks,extra,note,savedAt:new Date().toISOString()};
+  const btn = document.querySelector('[onclick="saveLog()"]');
+  if(btn){btn.textContent='Saving…';btn.disabled=true;}
+  try {
+    const {collection,addDoc,updateDoc,doc} = window._fs;
+    const existing = logs.find(l=>l.date===date);
+    if(existing) await updateDoc(doc(window._db,'daily_logs',existing._id),entry);
+    else await addDoc(collection(window._db,'daily_logs'),entry);
+    resetForm();
+    toast('Day logged ✓');
+  } catch(e){alert('Could not save. Check connection.');}
+  finally{if(btn){btn.textContent='Save Day ✓';btn.disabled=false;}}
+}
+
+async function deleteLog(id){
+  if(!confirm('Delete this log?'))return;
+  const {doc,deleteDoc}=window._fs;
+  await deleteDoc(doc(window._db,'daily_logs',id));
+}
+
+// ── FORM ──
+function initForm(){
+  const today=new Date().toISOString().slice(0,10);
+  document.getElementById('f-date').value=today;
+  updateDateDisplay(today);
+  const ex=logs.find(l=>l.date===today);
+  if(ex)prefill(ex);
+}
+
+function onDateChange(){
+  const v=document.getElementById('f-date').value;
+  updateDateDisplay(v);
+  const ex=logs.find(l=>l.date===v);
+  resetForm(false);
+  if(ex)prefill(ex);
+}
+
+function updateDateDisplay(v){
+  if(!v)return;
+  const d=new Date(v+'T00:00:00');
+  document.getElementById('date-display').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+}
+
+function prefill(e){
+  document.getElementById('f-hours').value=e.hours||'';
+  document.getElementById('f-sleep-from').value=e.sleepFrom||'';
+  document.getElementById('f-sleep-to').value=e.sleepTo||'';
+  document.getElementById('f-extra').value=e.extra||'';
+  document.getElementById('f-note').value=e.note||'';
+  if(e.mood){const b=document.querySelector(`.mood-btn[data-mood="${e.mood}"]`);if(b)selectMood(b);}
+  (e.tasks||[]).forEach(t=>{const c=document.querySelector(`input[value="${t}"]`);if(c){c.checked=true;c.closest('.task-check').classList.add('done');}});
+  calcSleep();
+}
+
+function resetForm(keepDate=true){
+  if(!keepDate){}
+  document.getElementById('f-hours').value='';
+  document.getElementById('f-sleep-from').value='';
+  document.getElementById('f-sleep-to').value='';
+  document.getElementById('f-extra').value='';
+  document.getElementById('f-note').value='';
+  document.getElementById('f-mood').value='';
+  document.getElementById('sleep-calc').textContent='— hrs';
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.task-check').forEach(t=>{t.classList.remove('done');t.querySelector('input').checked=false;});
+}
+
+function selectMood(btn){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('f-mood').value=btn.dataset.mood;
+}
+
+function toggleTask(lbl){
+  const cb=lbl.querySelector('input');
+  setTimeout(()=>{if(cb.checked)lbl.classList.add('done');else lbl.classList.remove('done');},0);
+}
+
+function calcSleep(){
+  const f=document.getElementById('f-sleep-from').value;
+  const t=document.getElementById('f-sleep-to').value;
+  const el=document.getElementById('sleep-calc');
+  if(!f||!t){el.textContent='— hrs';return;}
+  const parts1=f.split(':');
+  const parts2=t.split(':');
+  if(parts1.length<2||parts2.length<2){el.textContent='— hrs';return;}
+  const fMins=parseInt(parts1[0],10)*60+parseInt(parts1[1],10);
+  const tMins=parseInt(parts2[0],10)*60+parseInt(parts2[1],10);
+  let diff=tMins-fMins;
+  if(diff<=0)diff+=1440;
+  const hrs=Math.round(diff/60*10)/10;
+  el.textContent=hrs>0?hrs.toFixed(1)+' hrs':'— hrs';
+}
+
+function calcSleepHrs(f,t){
+  if(!f||!t)return 0;
+  const p1=f.split(':'),p2=t.split(':');
+  if(p1.length<2||p2.length<2)return 0;
+  const fM=parseInt(p1[0],10)*60+parseInt(p1[1],10);
+  const tM=parseInt(p2[0],10)*60+parseInt(p2[1],10);
+  let diff=tM-fM;
+  if(diff<=0)diff+=1440;
+  return Math.round(diff/60*10)/10;
+}
+
+// Poll every 500ms as fallback for Safari which doesn't fire input on time pickers
+let _sleepPrev={f:'',t:''};
+setInterval(()=>{
+  const f=document.getElementById('f-sleep-from')?.value||'';
+  const t=document.getElementById('f-sleep-to')?.value||'';
+  if(f!==_sleepPrev.f||t!==_sleepPrev.t){_sleepPrev={f,t};calcSleep();}
+},500);
+
+// ── STREAK ──
+function updateStreak(){
+  const today=new Date().toISOString().slice(0,10);
+  const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  const dates=[...new Set(logs.map(l=>l.date))].sort().reverse();
+  if(!dates.length){document.getElementById('streak-num').textContent=0;return;}
+  // Start from today or yesterday (whichever has a log)
+  let check=dates[0]===today?today:dates[0]===yesterday?yesterday:dates[0];
+  let streak=0;
+  for(const d of dates){
+    if(d===check){streak++;const p=new Date(check);p.setDate(p.getDate()-1);check=p.toISOString().slice(0,10);}
+    else if(d<check)break;
+  }
+  document.getElementById('streak-num').textContent=streak;
+  localStorage.setItem('upsc_streak',streak);
+  localStorage.setItem('upsc_study_days',logs.filter(l=>l.hours>0).length);
+  localStorage.setItem('upsc_quiz_count',logs.filter(l=>(l.tasks||[]).includes('Vision quiz')).length);
+}
+
+// ── HISTORY ──
+function renderHistory(){
+  const el=document.getElementById('history-list');
+  if(!logs.length){el.innerHTML=`<div class="empty"><div class="ei">📅</div><p>No logs yet. Start today!</p></div>`;return;}
+  el.innerHTML=logs.map(l=>{
+    const emoji=MOOD_EMOJI[l.mood]||'—';
+    const allTasks=[...(l.tasks||[]),...(l.extra?[l.extra]:[])];
+    const d=new Date(l.date+'T00:00:00');
+    const ds=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short',year:'2-digit'});
+    return `<div class="log-card fade-up">
+      <div class="log-mood">${emoji}</div>
+      <div class="log-body">
+        <div class="log-date">${ds}</div>
+        <div class="log-title">${MOOD_LABEL[l.mood]||'—'}${l.hours?` · ${l.hours}h studied`:''}</div>
+        <div class="log-stats">
+          ${l.hours?`<div class="log-stat">📚 ${l.hours}h</div>`:''}
+          ${l.sleepHours?`<div class="log-stat">🌙 ${l.sleepHours}h sleep</div>`:''}
+          ${l.sleepFrom?`<div class="log-stat">😴 ${l.sleepFrom}–${l.sleepTo}</div>`:''}
+          ${allTasks.length?`<div class="log-stat">✅ ${allTasks.length} tasks</div>`:''}
+        </div>
+        ${allTasks.length?`<div class="log-tasks">${allTasks.map(t=>`<span class="task-pill">${t}</span>`).join('')}</div>`:''}
+        ${l.note?`<div class="log-note">"${l.note}"</div>`:''}
+      </div>
+      <div class="log-actions">
+        <button class="log-btn-edit" onclick="editLog('${l._id}')">✏️ Edit</button>
+        <button class="log-btn-del" onclick="deleteLog('${l._id}')">✕ Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function editLog(id){
+  const entry=logs.find(l=>l._id===id);
+  if(!entry)return;
+  // Switch to log view and prefill
+  showView('log', document.querySelector('.nav-item'));
+  document.getElementById('f-date').value=entry.date;
+  updateDateDisplay(entry.date);
+  resetForm(true);
+  prefill(entry);
+  // Scroll to top
+  document.querySelector('.content').scrollTo({top:0,behavior:'smooth'});
+  toast('Editing '+entry.date+' — make changes and save ✓');
+}
+
+// ── ANALYTICS ──
+function renderAnalytics(){
+  if(!logs.length){
+    document.getElementById('a-stats').innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">📊</div><p>Log a few days to see analytics.</p></div>`;
+    return;
+  }
+  const sorted=[...logs].sort((a,b)=>a.date.localeCompare(b.date));
+  const n=logs.length;
+  const avgH=(logs.reduce((s,l)=>s+(l.hours||0),0)/n).toFixed(1);
+  const maxH=Math.max(...logs.map(l=>l.hours||0));
+  const moodScores=logs.filter(l=>l.mood).map(l=>MOOD_SCORE[l.mood]);
+  const avgM=moodScores.length?(moodScores.reduce((a,b)=>a+b,0)/moodScores.length).toFixed(1):'—';
+
+  // Best weekday
+  const dt=Array(7).fill(0),dc=Array(7).fill(0);
+  logs.forEach(l=>{const d=new Date(l.date+'T00:00:00').getDay();dt[d]+=(l.hours||0);dc[d]++;});
+  const da=dt.map((t,i)=>dc[i]?t/dc[i]:0);
+  const bi=da.indexOf(Math.max(...da));
+
+  document.getElementById('a-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${n}</div><div class="stat-label">Days Logged</div></div>
+    <div class="stat-card"><div class="stat-num">${avgH}h</div><div class="stat-label">Avg Study/Day</div><div class="stat-sub">Best: ${maxH}h</div></div>
+    <div class="stat-card"><div class="stat-num">${DAYS[bi]}</div><div class="stat-label">Best Weekday</div><div class="stat-sub">${da[bi].toFixed(1)}h avg</div></div>
+    <div class="stat-card"><div class="stat-num">${avgM}/5</div><div class="stat-label">Avg Mood</div></div>
+  `;
+
+  // Insight
+  const bestDays=logs.filter(l=>['fire','loved','great'].includes(l.mood));
+  const bda=bestDays.length?(bestDays.reduce((s,l)=>s+(l.hours||0),0)/bestDays.length).toFixed(1):null;
+  document.getElementById('a-insight').innerHTML=bda?`<div class="insight"><div class="insight-icon">💡</div><div class="insight-text">On your best mood days 🔥❤️😊, you average <strong>${bda} hours</strong> of study. <strong>${DAYS[bi]}</strong> is your strongest day at ${da[bi].toFixed(1)}h avg — schedule hard topics then.</div></div>`:'';
+
+  // Hours chart
+  destroyChart('chart-hours');
+  const ctx=document.getElementById('chart-hours').getContext('2d');
+  charts['chart-hours']=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:sorted.map(l=>{const d=new Date(l.date+'T00:00:00');return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});}),
+      datasets:[{label:'Hours',data:sorted.map(l=>l.hours||0),borderColor:'#9b7c2a',backgroundColor:'rgba(155,124,42,0.08)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#9b7c2a',tension:0.3,fill:true}]
+    },
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(28,23,20,0.05)'},ticks:{font:{family:'DM Mono',size:10}}},x:{grid:{display:false},ticks:{font:{family:'DM Mono',size:9},maxRotation:0,maxTicksLimit:10}}}}
+  });
+
+  // Weekday bars
+  const maxA=Math.max(...da,1);
+  document.getElementById('weekday-bars').innerHTML=DAYS.map((d,i)=>`
+    <div class="weekday-col">
+      <div class="weekday-val">${da[i].toFixed(1)}</div>
+      <div class="weekday-bar-wrap"><div class="weekday-bar ${i===bi?'best':''}" style="height:${Math.max(4,(da[i]/maxA)*64)}px"></div></div>
+      <div class="weekday-label">${d}</div>
+    </div>`).join('');
+
+  // Mood donut
+  const mc={};
+  logs.forEach(l=>{if(l.mood)mc[l.mood]=(mc[l.mood]||0)+1;});
+  const mk=Object.keys(mc);
+  destroyChart('chart-mood');
+  const mctx=document.getElementById('chart-mood').getContext('2d');
+  charts['chart-mood']=new Chart(mctx,{
+    type:'doughnut',
+    data:{labels:mk.map(k=>`${MOOD_EMOJI[k]} ${MOOD_LABEL[k]}`),datasets:[{data:mk.map(k=>mc[k]),backgroundColor:mk.map(k=>MOOD_COLOR[k]),borderWidth:2,borderColor:'#f5f0e8'}]},
+    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{family:'DM Sans',size:11},boxWidth:12}}}}
+  });
+}
+
+// ── SLEEP ──
+function renderSleep(){
+  const sl=logs.filter(l=>l.sleepHours>0);
+  if(sl.length<3){
+    document.getElementById('s-stats').innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">🌙</div><p>Log at least 3 days with sleep data to see analysis.</p></div>`;
+    document.getElementById('s-insight').innerHTML='';
+    return;
+  }
+  const sorted=[...sl].sort((a,b)=>a.date.localeCompare(b.date));
+  const avgSl=(sl.reduce((s,l)=>s+(l.sleepHours||0),0)/sl.length).toFixed(1);
+  const corr=pearson(sl.map(l=>l.sleepHours),sl.map(l=>l.hours||0));
+  const corrTxt=corr>0.5?'strong positive':corr>0.2?'moderate positive':corr<-0.3?'negative':'weak';
+  const best=sl.reduce((b,l)=>(l.hours||0)>(b.hours||0)?l:b,sl[0]);
+  const worst=sl.reduce((w,l)=>(l.hours||0)<(w.hours||0)?l:w,sl[0]);
+
+  // Bedtime buckets
+  const bb={'Before 10pm':{s:0,c:0},'10–11pm':{s:0,c:0},'11pm–12am':{s:0,c:0},'After 12am':{s:0,c:0}};
+  sl.forEach(l=>{
+    if(!l.sleepFrom)return;
+    const [h]=l.sleepFrom.split(':').map(Number);
+    const ah=h<6?h+24:h;
+    const bk=ah<22?'Before 10pm':ah<23?'10–11pm':ah<24?'11pm–12am':'After 12am';
+    bb[bk].s+=(l.hours||0);bb[bk].c++;
+  });
+
+  const bestBed=Object.entries(bb).filter(([,v])=>v.c>0).sort(([,a],[,b])=>(b.s/b.c)-(a.s/a.c))[0];
+
+  document.getElementById('s-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${avgSl}h</div><div class="stat-label">Avg Sleep</div></div>
+    <div class="stat-card"><div class="stat-num">${best.sleepHours}h</div><div class="stat-label">Best Sleep Night</div><div class="stat-sub">${best.hours}h studied next day</div></div>
+    <div class="stat-card"><div class="stat-num">${(corr*100).toFixed(0)}%</div><div class="stat-label">Sleep-Study Correlation</div><div class="stat-sub">${corrTxt}</div></div>
+    <div class="stat-card"><div class="stat-num">${worst.sleepHours}h</div><div class="stat-label">Least Sleep Night</div><div class="stat-sub">${worst.hours}h studied next day</div></div>
+  `;
+
+  document.getElementById('s-insight').innerHTML=bestBed?`<div class="insight"><div class="insight-icon">🌙</div><div class="insight-text">Your best study days follow a <strong>${bestBed[0]}</strong> bedtime, averaging <strong>${(bestBed[1].s/bestBed[1].c).toFixed(1)}h of study</strong> the next day. Sleep and study have a <strong>${corrTxt} correlation</strong> for you.</div></div>`:'';
+
+  // Sleep vs Study chart
+  destroyChart('chart-sleep-study');
+  const ctx=document.getElementById('chart-sleep-study').getContext('2d');
+  charts['chart-sleep-study']=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:sorted.map(l=>{const d=new Date(l.date+'T00:00:00');return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});}),
+      datasets:[
+        {label:'Sleep hrs',data:sorted.map(l=>l.sleepHours||0),backgroundColor:'rgba(90,62,122,0.5)',borderColor:'#5a3e7a',borderWidth:1.5,borderRadius:4},
+        {label:'Study hrs',data:sorted.map(l=>l.hours||0),backgroundColor:'rgba(155,124,42,0.65)',borderColor:'#9b7c2a',borderWidth:1.5,borderRadius:4}
+      ]
+    },
+    options:{responsive:true,plugins:{legend:{labels:{font:{family:'DM Sans',size:11},boxWidth:12}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(28,23,20,0.05)'},ticks:{font:{family:'DM Mono',size:10}}},x:{grid:{display:false},ticks:{font:{family:'DM Mono',size:9},maxRotation:0,maxTicksLimit:10}}}}
+  });
+
+  // Bedtime bars
+  const maxS=Math.max(...Object.values(bb).filter(v=>v.c>0).map(v=>v.s/v.c),1);
+  document.getElementById('bedtime-bars').innerHTML=Object.entries(bb).map(([label,v])=>{
+    const avg=v.c>0?(v.s/v.c).toFixed(1):0;
+    const pct=v.c>0?((v.s/v.c)/maxS*100).toFixed(0):0;
+    const col=pct>70?'var(--teal)':pct>40?'var(--gold)':'var(--accent)';
+    return `<div class="corr-row">
+      <div class="corr-label">${label}</div>
+      <div class="corr-wrap"><div class="corr-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="corr-val">${v.c?avg+'h':'—'}</div>
+    </div>`;
+  }).join('');
+
+  // Sleep dist
+  destroyChart('chart-sleep-dist');
+  const bkts={'<5h':0,'5–6h':0,'6–7h':0,'7–8h':0,'8h+':0};
+  sl.forEach(l=>{const h=l.sleepHours||0;if(h<5)bkts['<5h']++;else if(h<6)bkts['5–6h']++;else if(h<7)bkts['6–7h']++;else if(h<8)bkts['7–8h']++;else bkts['8h+']++;});
+  const sdctx=document.getElementById('chart-sleep-dist').getContext('2d');
+  charts['chart-sleep-dist']=new Chart(sdctx,{
+    type:'bar',
+    data:{labels:Object.keys(bkts),datasets:[{data:Object.values(bkts),backgroundColor:['#c84b31','#e8a020','#9b7c2a','#2a7f6f','#2c5f8a'],borderRadius:6,borderWidth:0}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'DM Mono',size:10}},grid:{color:'rgba(28,23,20,0.05)'}},x:{grid:{display:false},ticks:{font:{family:'DM Mono',size:10}}}}}
+  });
+}
+
+// ── UTILS ──
+function pearson(x,y){
+  const n=x.length;if(!n)return 0;
+  const mx=x.reduce((a,b)=>a+b,0)/n,my=y.reduce((a,b)=>a+b,0)/n;
+  const num=x.reduce((s,xi,i)=>s+(xi-mx)*(y[i]-my),0);
+  const den=Math.sqrt(x.reduce((s,xi)=>s+(xi-mx)**2,0)*y.reduce((s,yi)=>s+(yi-my)**2,0));
+  return den?num/den:0;
+}
+
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+
+function toast(msg){
+  let t=document.getElementById('_toast');
+  if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--teal);color:white;padding:10px 18px;border-radius:8px;font-size:12px;font-family:DM Sans,sans-serif;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);
+}
+
+function showView(id,el){
+  currentView=id;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={log:"Today's Log",history:'History',analytics:'Analytics',sleep:'Sleep Analysis'};
+  document.getElementById('view-title').textContent=titles[id];
+  if(id==='history')renderHistory();
+  if(id==='analytics')renderAnalytics();
+  if(id==='sleep')renderSleep();
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+  const today=new Date().toISOString().slice(0,10);
+  document.getElementById('f-date').value=today;
+  updateDateDisplay(today);
+  // Robust sleep listeners
+  ['f-sleep-from','f-sleep-to'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+      el.addEventListener('input',calcSleep);
+      el.addEventListener('change',calcSleep);
+      el.addEventListener('blur',calcSleep);
+    }
+  });
+});
+</script>
+</body>
+</html>

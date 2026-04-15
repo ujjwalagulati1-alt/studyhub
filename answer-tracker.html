@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U's Answer Writing Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyCmVVpzoLrRGfnRGDq45fDgqtfoMvzQdkE",
+    authDomain: "studyhub-upsc.firebaseapp.com",
+    projectId: "studyhub-upsc",
+    storageBucket: "studyhub-upsc.firebasestorage.app",
+    messagingSenderId: "541078992966",
+    appId: "1:541078992966:web:841a57a40bc5bbd52cf247"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window._db = db;
+  window._fs = { collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot };
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<style>
+:root {
+  --ink: #1a1510;
+  --ink2: #352e24;
+  --paper: #f6f1e9;
+  --paper2: #ede8de;
+  --paper3: #e2dcd2;
+  --gold: #9b7c2a;
+  --gold-light: #fdf5d0;
+  --gold-border: rgba(155,124,42,0.2);
+  --accent: #c84b31;
+  --accent-light: #fde8e4;
+  --teal: #2a7f6f;
+  --teal-light: #d4ede9;
+  --blue: #2c5f8a;
+  --blue-light: #ddeaf5;
+  --purple: #5a3e7a;
+  --purple-light: #ede5f5;
+  --green: #3a7a3a;
+  --green-light: #e4f5e4;
+  --border: rgba(26,21,16,0.1);
+  --shadow: 0 2px 16px rgba(26,21,16,0.07);
+  --radius: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; font-size: 13px; }
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 230px; min-width: 230px; background: var(--ink); display: flex; flex-direction: column; overflow-y: auto; }
+.brand { padding: 24px 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.brand h1 { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--paper); line-height: 1.2; }
+.brand p { font-size: 10px; color: rgba(246,241,233,0.38); margin-top: 3px; }
+.nav-lbl { font-size: 8.5px; font-weight: 500; letter-spacing: 1.8px; text-transform: uppercase; color: rgba(246,241,233,0.28); padding: 14px 18px 5px; }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 18px; cursor: pointer; font-size: 12.5px; color: rgba(246,241,233,0.6); border-left: 2px solid transparent; transition: all 0.15s; }
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--paper); }
+.nav-item.active { background: rgba(155,124,42,0.2); color: var(--paper); border-left-color: var(--gold); }
+.nav-item .ni { font-size: 14px; width: 18px; text-align: center; }
+.sidebar-stats { margin: 12px 14px; background: rgba(155,124,42,0.12); border: 1px solid rgba(155,124,42,0.2); border-radius: 10px; padding: 12px 14px; }
+.ss-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.ss-row:last-child { margin-bottom: 0; }
+.ss-num { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--gold); line-height: 1; }
+.ss-lbl { font-size: 9px; color: rgba(246,241,233,0.35); text-transform: uppercase; letter-spacing: 0.8px; }
+.sidebar-bottom { margin-top: auto; padding: 12px 14px 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+.back-link { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(246,241,233,0.4); text-decoration: none; padding: 6px 4px; transition: color 0.15s; }
+.back-link:hover { color: rgba(246,241,233,0.8); }
+
+/* MAIN */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { background: var(--paper); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+.topbar h2 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; flex: 1; }
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+.view { display: none; }
+.view.active { display: block; }
+
+/* BUTTONS */
+.btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--gold); color: white; }
+.btn-primary:hover { background: #7a6020; }
+.btn-ghost { background: transparent; color: var(--ink2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--paper2); }
+.btn-ai { background: linear-gradient(135deg, #5a3e7a, #2c5f8a); color: white; }
+.btn-ai:hover { opacity: 0.9; }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #1e6055; }
+.btn-sm { padding: 5px 11px; font-size: 11px; }
+
+/* WRITE VIEW */
+.write-layout { display: grid; grid-template-columns: 1fr 380px; gap: 20px; max-width: 1200px; }
+.write-main { display: flex; flex-direction: column; gap: 16px; }
+.write-sidebar-panel { display: flex; flex-direction: column; gap: 14px; }
+
+.panel { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.panel-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+/* FORM */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.fg { display: flex; flex-direction: column; gap: 4px; }
+.fg.full { grid-column: 1/-1; }
+.fl { font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: rgba(26,21,16,0.45); }
+.fi, .fs, .fta { padding: 8px 11px; border-radius: 7px; border: 1.5px solid var(--border); background: var(--paper); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.15s; width: 100%; }
+.fi:focus, .fs:focus, .fta:focus { border-color: var(--gold); }
+.fta { resize: vertical; line-height: 1.7; min-height: 280px; font-size: 13.5px; }
+
+/* WORD COUNT BAR */
+.wc-bar-wrap { margin-top: 6px; }
+.wc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.wc-num { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; }
+.wc-target { font-size: 10px; color: rgba(26,21,16,0.4); }
+.wc-track { height: 5px; background: var(--paper3); border-radius: 3px; overflow: hidden; }
+.wc-fill { height: 100%; border-radius: 3px; transition: width 0.3s, background 0.3s; }
+
+/* THEME TAGS */
+.theme-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; max-height: 120px; overflow-y: auto; }
+.theme-opt { display: none; }
+.theme-opt-lbl { padding: 4px 10px; border-radius: 14px; border: 1.5px solid var(--border); font-size: 11px; cursor: pointer; transition: all 0.15s; color: var(--ink2); background: var(--paper); }
+.theme-opt:checked + .theme-opt-lbl { background: var(--gold); color: white; border-color: var(--gold); }
+
+/* QUESTION BANK PANEL */
+.qb-question { background: var(--paper); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+.qb-question:hover { border-color: var(--gold); background: var(--gold-light); }
+.qb-paper-tag { font-size: 9px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; font-family: 'DM Mono', monospace; }
+.qb-text { font-size: 12.5px; color: var(--ink2); line-height: 1.5; }
+.qb-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.qb-filter { padding: 4px 10px; border-radius: 16px; border: 1px solid var(--border); font-size: 11px; cursor: pointer; background: white; transition: all 0.15s; }
+.qb-filter.active { background: var(--ink); color: white; border-color: var(--ink); }
+.surprise-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, var(--purple), var(--blue)); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; margin-bottom: 12px; transition: opacity 0.15s; }
+.surprise-btn:hover { opacity: 0.9; }
+
+/* AI FEEDBACK */
+.ai-loading { display: flex; align-items: center; gap: 10px; padding: 20px; color: rgba(26,21,16,0.5); font-size: 13px; }
+.ai-spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.report-card { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.rc-item { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--paper); }
+.rc-label { font-size: 10px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(26,21,16,0.45); margin-bottom: 4px; }
+.rc-status { font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.rc-good { color: var(--teal); }
+.rc-warn { color: var(--gold); }
+.rc-bad { color: var(--accent); }
+
+.ai-score-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--paper); padding: 8px 16px; border-radius: 20px; font-family: 'DM Mono', monospace; font-size: 13px; margin-bottom: 14px; }
+.ai-score-num { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--gold); }
+
+.ai-advice { background: var(--purple-light); border: 1px solid rgba(90,62,122,0.15); border-radius: 10px; padding: 16px; font-size: 13px; line-height: 1.75; color: var(--ink2); }
+.ai-advice strong { color: var(--purple); }
+
+/* ANSWERS LIST */
+.answers-grid { display: flex; flex-direction: column; gap: 12px; }
+.answer-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); transition: all 0.15s; }
+.answer-card:hover { box-shadow: 0 4px 20px rgba(26,21,16,0.1); }
+.ac-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.ac-paper { font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.paper-gs1 { background: var(--blue-light); color: var(--blue); }
+.paper-gs2 { background: var(--teal-light); color: var(--teal); }
+.paper-gs3 { background: var(--gold-light); color: var(--gold); }
+.paper-gs4 { background: var(--purple-light); color: var(--purple); }
+.paper-essay { background: var(--accent-light); color: var(--accent); }
+.ac-question { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; line-height: 1.35; flex: 1; }
+.ac-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.ac-stat { font-size: 11px; color: rgba(26,21,16,0.5); background: var(--paper); padding: 3px 9px; border-radius: 16px; border: 1px solid var(--border); }
+.ac-themes { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.ac-theme { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: var(--gold-light); color: #6b5000; border: 1px solid var(--gold-border); }
+.ac-actions { display: flex; gap: 8px; }
+.ac-score { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; margin-left: auto; }
+
+/* ANALYTICS */
+.analytics-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; margin-bottom: 16px; }
+.analytics-grid.wide { grid-template-columns: 1fr; }
+.chart-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.chart-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+.chart-sub { font-size: 11px; color: rgba(26,21,16,0.4); margin-bottom: 14px; }
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+.stat-num { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; line-height: 1; margin-bottom: 4px; }
+.stat-lbl { font-size: 10px; color: rgba(26,21,16,0.4); letter-spacing: 0.5px; }
+.stat-sub { font-size: 11px; color: var(--teal); margin-top: 3px; }
+
+/* REVIEW MODE */
+.review-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.review-old { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+.review-new { background: white; border: 2px solid var(--gold); border-radius: var(--radius); padding: 20px; }
+.review-label { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(26,21,16,0.4); margin-bottom: 8px; }
+.review-question { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; margin-bottom: 14px; line-height: 1.4; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.review-answer-text { font-size: 13px; line-height: 1.8; color: var(--ink2); white-space: pre-wrap; }
+
+/* TOPPER UPLOAD */
+.upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--paper2); position: relative; }
+.upload-zone:hover { border-color: var(--gold); background: var(--gold-light); }
+.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.upload-zone-label { font-size: 12px; color: rgba(26,21,16,0.45); pointer-events: none; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 60px 20px; color: rgba(26,21,16,0.3); }
+.empty .ei { font-size: 40px; margin-bottom: 12px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: rgba(26,21,16,0.12); border-radius: 10px; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.fade-up { animation: fadeUp 0.3s ease both; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">
+    <h1>Answer Writing<br>Tracker</h1>
+    <p>Write · Analyse · Improve</p>
+  </div>
+  <div class="sidebar-stats" id="sidebar-stats">
+    <div class="ss-row">
+      <div><div class="ss-num" id="ss-total">0</div><div class="ss-lbl">Answers</div></div>
+      <div><div class="ss-num" id="ss-avg-score">—</div><div class="ss-lbl">Avg Score</div></div>
+    </div>
+    <div class="ss-row">
+      <div><div class="ss-num" id="ss-avg-wc">—</div><div class="ss-lbl">Avg Words</div></div>
+      <div><div class="ss-num" id="ss-avg-time">—</div><div class="ss-lbl">Avg Mins</div></div>
+    </div>
+  </div>
+  <div class="nav-lbl">Views</div>
+  <div class="nav-item active" onclick="showView('write',this)"><span class="ni">✍️</span> Write Answer</div>
+  <div class="nav-item" onclick="showView('answers',this)"><span class="ni">📋</span> All Answers</div>
+  <div class="nav-item" onclick="showView('review',this)"><span class="ni">🔄</span> Review Mode</div>
+  <div class="nav-item" onclick="showView('analytics',this)"><span class="ni">📊</span> Analytics</div>
+  <div class="nav-item" onclick="showView('qbank',this)"><span class="ni">📚</span> Question Bank</div>
+  <div class="nav-item" onclick="showView('toppers',this)"><span class="ni">🏆</span> Topper Answers</div>
+  <div class="sidebar-bottom">
+    <a class="back-link" href="index.html">← Command Centre</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <h2 id="view-title">Write Answer</h2>
+    <div id="sync-lbl" style="font-size:11px;color:rgba(26,21,16,0.35);font-family:'DM Mono',monospace">Connecting…</div>
+    <button class="btn btn-ghost btn-sm" onclick="downloadQBankCSV()">⬇ Q-Bank CSV</button>
+    <button class="btn btn-primary btn-sm" onclick="showView('write', document.querySelector('.nav-item'))">+ New Answer</button>
+  </div>
+  <div class="content">
+
+    <!-- WRITE -->
+    <div class="view active" id="view-write">
+      <div class="write-layout">
+        <div class="write-main">
+
+          <!-- META -->
+          <div class="panel">
+            <div class="panel-title">📝 Answer Details</div>
+            <div class="form-row">
+              <div class="fg"><div class="fl">Date</div><input class="fi" type="date" id="f-date"></div>
+              <div class="fg"><div class="fl">GS Paper</div>
+                <select class="fs" id="f-paper">
+                  <option>GS1</option><option>GS2</option><option>GS3</option><option selected>GS4</option><option>Essay</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="fg">
+                <div class="fl">Time Taken</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div id="timer-display" style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:70px">00:00</div>
+                  <div style="display:flex;flex-direction:column;gap:3px">
+                    <div id="timer-status" style="font-size:10px;color:rgba(26,21,16,0.4);letter-spacing:0.5px">Starts when you write</div>
+                    <div style="display:flex;gap:5px">
+                      <button class="btn btn-ghost btn-sm" onclick="pauseTimer()" id="timer-pause-btn" style="display:none;padding:3px 8px;font-size:10px">⏸ Pause</button>
+                      <button class="btn btn-ghost btn-sm" onclick="resetTimer()" id="timer-reset-btn" style="display:none;padding:3px 8px;font-size:10px">↺ Reset</button>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" id="f-time">
+              </div>
+              <div class="fg"><div class="fl">Self Score /10</div><input class="fi" type="number" id="f-score" placeholder="e.g. 7" min="1" max="10" step="0.5"></div>
+            </div>
+            <div class="fg" style="margin-bottom:12px">
+              <div class="fl">Question</div>
+              <input class="fi" id="f-question" placeholder="Type or paste the question here…">
+            </div>
+            <div class="fg">
+              <div class="fl">Notes / What to improve</div>
+              <input class="fi" id="f-notes" placeholder="Quick reflection…">
+            </div>
+          </div>
+
+          <!-- ANSWER -->
+          <div class="panel">
+            <div class="panel-title">✍️ Your Answer</div>
+            <textarea class="fta" id="f-answer" placeholder="Write your answer here… (timer starts automatically)" oninput="updateWordCount();startTimerOnFirstKey()"></textarea>
+            <div class="wc-bar-wrap">
+              <div class="wc-row">
+                <span class="wc-num" id="wc-num">0 words</span>
+                <span class="wc-target">Target: 150–200 words for 10-mark · 250 words for 15-mark</span>
+              </div>
+              <div class="wc-track"><div class="wc-fill" id="wc-fill" style="width:0%;background:var(--teal)"></div></div>
+            </div>
+          </div>
+
+          <!-- THEMES -->
+          <div class="panel">
+            <div class="panel-title">🏷 Themes</div>
+            <div class="theme-pills" id="theme-pills"></div>
+          </div>
+
+          <!-- ACTIONS -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-ai" onclick="openClaudeAI()">🤖 Get AI Feedback</button>
+            <button class="btn btn-primary" onclick="saveAnswer()">💾 Save Answer</button>
+            <button class="btn btn-ghost" onclick="resetWriteForm()">Clear</button>
+          </div>
+
+          <!-- AI FEEDBACK -->
+          <div class="panel" id="ai-feedback-panel" style="display:none">
+            <div class="panel-title">🤖 AI Teacher Feedback</div>
+            <div id="ai-feedback-content"></div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="write-sidebar-panel">
+
+          <!-- QUESTION BANK -->
+          <div class="panel">
+            <div class="panel-title">💡 Question Bank</div>
+            <button class="surprise-btn" onclick="surpriseMe()">🎲 Surprise Me — Random Question</button>
+            <div class="qb-filters" id="qb-write-filters">
+              <span class="qb-filter active" onclick="filterQBWrite('All',this)">All</span>
+              <span class="qb-filter" onclick="filterQBWrite('GS1',this)">GS1</span>
+              <span class="qb-filter" onclick="filterQBWrite('GS2',this)">GS2</span>
+              <span class="qb-filter" onclick="filterQBWrite('GS3',this)">GS3</span>
+              <span class="qb-filter" onclick="filterQBWrite('GS4',this)">GS4</span>
+              <span class="qb-filter" onclick="filterQBWrite('Essay',this)">Essay</span>
+            </div>
+            <div id="qb-write-list" style="max-height:320px;overflow-y:auto"></div>
+            <!-- CSV Upload -->
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+              <div style="font-size:10px;color:rgba(26,21,16,0.4);margin-bottom:6px">Upload custom question bank CSV</div>
+              <div class="upload-zone" style="padding:12px">
+                <input type="file" accept=".csv" onchange="uploadQBankCSV(this)">
+                <div class="upload-zone-label">📎 Drop CSV here or click to upload</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL ANSWERS -->
+    <div class="view" id="view-answers">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="answers-filters">
+        <span class="qb-filter active" onclick="filterAnswers('All',this)">All</span>
+        <span class="qb-filter" onclick="filterAnswers('GS1',this)">GS1</span>
+        <span class="qb-filter" onclick="filterAnswers('GS2',this)">GS2</span>
+        <span class="qb-filter" onclick="filterAnswers('GS3',this)">GS3</span>
+        <span class="qb-filter" onclick="filterAnswers('GS4',this)">GS4</span>
+        <span class="qb-filter" onclick="filterAnswers('Essay',this)">Essay</span>
+      </div>
+      <div class="answers-grid" id="answers-list"></div>
+    </div>
+
+    <!-- REVIEW MODE -->
+    <div class="view" id="view-review">
+      <div id="review-picker" style="margin-bottom:20px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:6px">🔄 Review Mode</div>
+        <div style="font-size:13px;color:rgba(26,21,16,0.5);margin-bottom:16px">Pick an old answer to revisit. Rewrite it from scratch, then compare side by side.</div>
+        <div id="review-list"></div>
+      </div>
+      <div id="review-workspace" style="display:none">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <button class="btn btn-ghost btn-sm" onclick="closeReview()">← Back</button>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600">Reviewing — how would you write this today?</div>
+        </div>
+        <div class="review-layout">
+          <div class="review-old">
+            <div class="review-label">Your original answer</div>
+            <div class="review-question" id="review-question-text"></div>
+            <div class="review-answer-text" id="review-original-text"></div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:10px">
+              <span class="ac-stat" id="review-orig-wc"></span>
+              <span class="ac-stat" id="review-orig-score"></span>
+            </div>
+          </div>
+          <div class="review-new">
+            <div class="review-label" style="color:var(--gold)">Your revised answer — today</div>
+            <div style="font-size:12px;color:rgba(26,21,16,0.45);margin-bottom:10px">Write it fresh. Don't look at the original.</div>
+            <textarea class="fta" id="review-new-text" placeholder="Write your revised answer…" style="min-height:260px" oninput="updateReviewWC()"></textarea>
+            <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(26,21,16,0.4)" id="review-wc">0 words</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ai btn-sm" onclick="reviewAIFeedback()">🤖 Compare with AI</button>
+                <button class="btn btn-teal btn-sm" onclick="saveRevision()">Save Revision</button>
+              </div>
+            </div>
+            <div id="review-ai-output" style="margin-top:14px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="view" id="view-analytics">
+      <div class="stats-row" id="a-stats"></div>
+      <div class="analytics-grid wide">
+        <div class="chart-card">
+          <div class="chart-title">Score Trend Over Time</div>
+          <div class="chart-sub">Self-score per answer — are you improving?</div>
+          <canvas id="chart-score" height="90"></canvas>
+        </div>
+      </div>
+      <div class="analytics-grid">
+        <div class="chart-card">
+          <div class="chart-title">Word Count Trend</div>
+          <div class="chart-sub">Are you hitting the 150–250 word target?</div>
+          <canvas id="chart-wc" height="120"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Time per Answer</div>
+          <div class="chart-sub">Are you writing faster over time?</div>
+          <canvas id="chart-time" height="120"></canvas>
+        </div>
+      </div>
+      <div class="analytics-grid">
+        <div class="chart-card">
+          <div class="chart-title">Answers by GS Paper</div>
+          <div class="chart-sub">Coverage across papers</div>
+          <canvas id="chart-paper" height="160"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Score by GS Paper</div>
+          <div class="chart-sub">Average score per paper</div>
+          <div id="paper-score-bars" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUESTION BANK FULL -->
+    <div class="view" id="view-qbank">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;flex:1">Question Bank</div>
+        <button class="btn btn-ghost btn-sm" onclick="downloadQBankCSV()">⬇ Download CSV Template</button>
+        <div class="upload-zone" style="padding:8px 14px;width:auto;display:inline-block">
+          <input type="file" accept=".csv" onchange="uploadQBankCSV(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+          <div class="upload-zone-label" style="font-size:11px;pointer-events:none">⬆ Upload CSV</div>
+        </div>
+      </div>
+      <div class="qb-filters" id="qb-full-filters">
+        <span class="qb-filter active" onclick="filterQBFull('All',this)">All</span>
+        <span class="qb-filter" onclick="filterQBFull('GS1',this)">GS1</span>
+        <span class="qb-filter" onclick="filterQBFull('GS2',this)">GS2</span>
+        <span class="qb-filter" onclick="filterQBFull('GS3',this)">GS3</span>
+        <span class="qb-filter" onclick="filterQBFull('GS4',this)">GS4</span>
+        <span class="qb-filter" onclick="filterQBFull('Essay',this)">Essay</span>
+      </div>
+      <div id="qb-full-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;margin-top:12px"></div>
+    </div>
+
+    <!-- TOPPER ANSWERS -->
+    <div class="view" id="view-toppers">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;flex:1">Topper Answer Bank</div>
+        <button class="btn btn-primary btn-sm" onclick="openTopperForm()">+ Add Topper Answer</button>
+      </div>
+      <div id="topper-form" style="display:none" class="panel fade-up" style="margin-bottom:16px">
+        <div class="panel-title">Add Topper Answer for Reference</div>
+        <div class="form-row">
+          <div class="fg"><div class="fl">GS Paper</div><select class="fs" id="tp-paper"><option>GS1</option><option>GS2</option><option>GS3</option><option>GS4</option><option>Essay</option></select></div>
+          <div class="fg"><div class="fl">Source / Topper Name</div><input class="fi" id="tp-source" placeholder="e.g. Vision IAS, Rank 1 2023…"></div>
+        </div>
+        <div class="fg" style="margin-bottom:12px"><div class="fl">Question</div><input class="fi" id="tp-question" placeholder="The question this answer is for…"></div>
+        <div class="fg" style="margin-bottom:12px"><div class="fl">Topper's Answer</div><textarea class="fta" id="tp-answer" style="min-height:200px" placeholder="Paste or type the topper answer…"></textarea></div>
+        <div class="fg" style="margin-bottom:14px"><div class="fl">Key Takeaways (what makes this answer good?)</div><input class="fi" id="tp-notes" placeholder="e.g. Great intro, uses data, multidimensional…"></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <button class="btn btn-ghost btn-sm" onclick="closeTopperForm()">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTopperAnswer()">Save Topper Answer</button>
+        </div>
+      </div>
+      <div id="toppers-list"></div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ── TIMER ─────────────────────────────────────────────────────────────────
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+let timerStarted = false;
+
+function startTimerOnFirstKey() {
+  if (!timerStarted) {
+    timerStarted = true;
+    startTimer();
+  }
+}
+
+function startTimer() {
+  if (timerRunning) return;
+  timerRunning = true;
+  document.getElementById('timer-status').textContent = '⏱ Running…';
+  document.getElementById('timer-pause-btn').style.display = 'inline-flex';
+  document.getElementById('timer-reset-btn').style.display = 'inline-flex';
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function pauseTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timer-status').textContent = 'Paused';
+    document.getElementById('timer-pause-btn').textContent = '▶ Resume';
+  } else {
+    startTimer();
+    document.getElementById('timer-pause-btn').textContent = '⏸ Pause';
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerStarted = false;
+  timerSeconds = 0;
+  updateTimerDisplay();
+  document.getElementById('timer-status').textContent = 'Starts when you write';
+  const pb = document.getElementById('timer-pause-btn');
+  const rb = document.getElementById('timer-reset-btn');
+  if (pb) { pb.style.display = 'none'; pb.textContent = '⏸ Pause'; }
+  if (rb) rb.style.display = 'none';
+  document.getElementById('f-time').value = '';
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const el = document.getElementById('timer-display');
+  if (el) el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  const fi = document.getElementById('f-time');
+  if (fi) fi.value = m > 0 ? m : (timerSeconds > 30 ? 1 : '');
+}
+
+// ── QUESTION BANK ──────────────────────────────────────────────────────────
+const BUILTIN_QUESTIONS = [
+  // GS1
+  {paper:'GS1',q:'Discuss the role of women in the Indian independence movement. How did their participation shape post-independence India?'},
+  {paper:'GS1',q:'What is the significance of the Bhakti movement in shaping Indian society? How did it challenge caste hierarchy?'},
+  {paper:'GS1',q:'Analyse the impact of colonial rule on Indian agriculture. Were the effects purely negative?'},
+  {paper:'GS1',q:'Examine the causes and consequences of the Partition of Bengal (1905). How did it galvanise the nationalist movement?'},
+  {paper:'GS1',q:'Critically analyse the contribution of Subhas Chandra Bose to the Indian independence movement.'},
+  {paper:'GS1',q:'How did the Industrial Revolution in Britain affect India\'s economy and society?'},
+  {paper:'GS1',q:'Explain the geographical factors that influence the distribution of rainfall in India.'},
+  {paper:'GS1',q:'What are the causes of increasing urbanisation in India? Discuss its socio-economic consequences.'},
+  {paper:'GS1',q:'Examine the factors responsible for the declining sex ratio in India and suggest remedial measures.'},
+  {paper:'GS1',q:'How has the caste system evolved in independent India? Is it weakening or merely transforming?'},
+  // GS2
+  {paper:'GS2',q:'Discuss the significance of the basic structure doctrine in preserving constitutional democracy in India.'},
+  {paper:'GS2',q:'How effective has the Right to Information Act been in promoting transparency and accountability in India?'},
+  {paper:'GS2',q:'Critically examine the role of the Election Commission of India in ensuring free and fair elections.'},
+  {paper:'GS2',q:'What are the challenges in implementing cooperative federalism in India? Suggest reforms.'},
+  {paper:'GS2',q:'Analyse the impact of the 73rd Constitutional Amendment on grassroots democracy in India.'},
+  {paper:'GS2',q:'Discuss India\'s "Neighbourhood First" policy. How successful has it been?'},
+  {paper:'GS2',q:'Examine the role of civil society in strengthening democracy. Can it substitute for weak institutions?'},
+  {paper:'GS2',q:'What are the major challenges in judicial appointments in India? Discuss the collegium system controversy.'},
+  {paper:'GS2',q:'Analyse India\'s approach to the Indo-Pacific region. What are the strategic imperatives?'},
+  {paper:'GS2',q:'How can India leverage its role in multilateral forums like G20 and SCO for strategic advantage?'},
+  // GS3
+  {paper:'GS3',q:'Discuss the challenges and opportunities of India\'s critical mineral policy for the clean energy transition.'},
+  {paper:'GS3',q:'How can India achieve its net-zero target by 2070? What structural changes are required?'},
+  {paper:'GS3',q:'Examine the causes of agrarian distress in India. Are the current MSP policies adequate?'},
+  {paper:'GS3',q:'Discuss the role of Artificial Intelligence in transforming governance. What are the ethical challenges?'},
+  {paper:'GS3',q:'Analyse the challenges of food security in India. How effective has the National Food Security Act been?'},
+  {paper:'GS3',q:'What are the threats to India\'s internal security from Left Wing Extremism? Discuss the government\'s approach.'},
+  {paper:'GS3',q:'Examine India\'s space programme. How can it be leveraged for economic and strategic gains?'},
+  {paper:'GS3',q:'Discuss the impact of demonetisation on the Indian economy. Was it a success or failure?'},
+  {paper:'GS3',q:'How can India bridge the gap between agricultural production and farmer income? Discuss reforms needed.'},
+  {paper:'GS3',q:'Examine the challenges of cybersecurity in India. What institutional mechanisms are needed?'},
+  // GS4
+  {paper:'GS4',q:'What is emotional intelligence and why is it important for civil servants? Discuss with examples.'},
+  {paper:'GS4',q:'Examine the concept of "whistleblowing" in public service. Is it an ethical obligation or professional disloyalty?'},
+  {paper:'GS4',q:'Distinguish between "ends justify the means" and consequentialist ethics. Which is more appropriate for public servants?'},
+  {paper:'GS4',q:'Discuss the ethical dilemmas a civil servant may face between political loyalty and constitutional obligation.'},
+  {paper:'GS4',q:'What are the key elements of ethical governance? How can probity in public life be strengthened?'},
+  {paper:'GS4',q:'Examine the role of conscience as a moral guide for civil servants. Can it conflict with rules?'},
+  {paper:'GS4',q:'What is the significance of the Nolan Principles in public life? How relevant are they for Indian governance?'},
+  {paper:'GS4',q:'"Corruption is not just an economic problem but a moral failure." Critically examine.'},
+  {paper:'GS4',q:'Discuss the ethical issues arising from the use of social media by civil servants.'},
+  {paper:'GS4',q:'How should a district collector handle a situation where a politically powerful person pressures them to ignore a law violation?'},
+  // Essay
+  {paper:'Essay',q:'The most dangerous phrase in any language is "we have always done it this way."'},
+  {paper:'Essay',q:'Forests are the lungs of the Earth. Can development and conservation coexist?'},
+  {paper:'Essay',q:'"Democracy is not just a form of government; it is a way of life." Critically examine.'},
+  {paper:'Essay',q:'Technology is a good servant but a bad master. Discuss in the context of modern governance.'},
+  {paper:'Essay',q:'India\'s greatest strength is its diversity; India\'s greatest challenge is its diversity.'},
+  {paper:'Essay',q:'"The real voyage of discovery consists not in seeking new landscapes but in having new eyes." — Proust'},
+  {paper:'Essay',q:'Is the current model of globalisation sustainable? What reforms are needed?'},
+];
+
+let customQuestions = [];
+let qbFilter = 'All';
+let qbFullFilter = 'All';
+let answersFilter = 'All';
+let answers = [];
+let toppers = [];
+let charts = {};
+let reviewingEntry = null;
+let editingAnswerId = null;
+
+const THEMES = ['Federalism & Centre-State','Judicial Activism','Neighbourhood Policy','Economic Inequality','Women Empowerment & GBV','Climate & NDCs','Technology Governance','Agricultural Distress','Urban Governance','Internal Security & LWE','Social Movements','Monetary Policy','Globalisation','Ethics in Public Service','Biodiversity & Conservation','Science & Innovation','Constitutional Morality','Disaster Management','Food Security','Multilateral Diplomacy','Corruption & Accountability','Education & Human Dev','Health Policy & UHC','Caste & Social Justice','Infrastructure & PPP','Freedom Struggle Themes','Media & Democracy','Fiscal Federalism','Civil Services Reform','Demographic Dividend','Governance & Implementation','Parliament & Elections','Geopolitics','Digital Economy','Industrial Policy','Rural Economy & Migration'];
+
+const PAPER_COLORS = {GS1:'paper-gs1',GS2:'paper-gs2',GS3:'paper-gs3',GS4:'paper-gs4',Essay:'paper-essay'};
+
+// ── FIREBASE ──────────────────────────────────────────────────────────────
+function initFB(){
+  const {collection,query,orderBy,onSnapshot}=window._fs;
+  const db=window._db;
+  onSnapshot(query(collection(db,'answers'),orderBy('date','desc')),snap=>{
+    answers=snap.docs.map(d=>({...d.data(),_id:d.id}));
+    updateSidebarStats();
+    if(currentView==='answers') renderAnswers();
+    if(currentView==='analytics') renderAnalytics();
+    if(currentView==='review') renderReviewList();
+    sync('☁️ Synced');
+  },()=>sync('⚠️ Offline'));
+  onSnapshot(query(collection(db,'topper_answers'),orderBy('date','desc')),snap=>{
+    toppers=snap.docs.map(d=>({...d.data(),_id:d.id}));
+    if(currentView==='toppers') renderToppers();
+  });
+}
+if(window._fs)initFB(); else window.addEventListener('firebase-ready',initFB);
+function sync(m){const e=document.getElementById('sync-lbl');if(e)e.textContent=m;}
+
+// ── INIT FORM ──────────────────────────────────────────────────────────────
+function initWriteForm(){
+  document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+  renderThemePills();
+  renderQBWrite();
+}
+
+function renderThemePills(){
+  document.getElementById('theme-pills').innerHTML=THEMES.map(t=>`
+    <input type="checkbox" class="theme-opt" id="th-${t.replace(/\W/g,'_')}" value="${t}">
+    <label class="theme-opt-lbl" for="th-${t.replace(/\W/g,'_')}">${t}</label>
+  `).join('');
+}
+
+// ── WORD COUNT ──────────────────────────────────────────────────────────────
+function wordCount(txt){return txt.trim().split(/\s+/).filter(Boolean).length;}
+
+function updateWordCount(){
+  const wc=wordCount(document.getElementById('f-answer').value);
+  document.getElementById('wc-num').textContent=wc+' words';
+  const pct=Math.min(100,(wc/250)*100);
+  const fill=document.getElementById('wc-fill');
+  fill.style.width=pct+'%';
+  fill.style.background=wc<100?'#c84b31':wc<150?'#e8a020':wc<=250?'#2a7f6f':'#9b7c2a';
+}
+
+function updateReviewWC(){
+  const wc=wordCount(document.getElementById('review-new-text').value);
+  document.getElementById('review-wc').textContent=wc+' words';
+}
+
+// ── QUESTION BANK ──────────────────────────────────────────────────────────
+function allQuestions(){return [...BUILTIN_QUESTIONS,...customQuestions];}
+
+function renderQBWrite(){
+  const qs=allQuestions().filter(q=>qbFilter==='All'||q.paper===qbFilter);
+  const el=document.getElementById('qb-write-list');
+  el.innerHTML=qs.length?qs.slice(0,12).map(q=>`
+    <div class="qb-question" onclick="useQuestion('${escHtml(q.q)}','${q.paper}')">
+      <div class="qb-paper-tag">${q.paper}</div>
+      <div class="qb-text">${q.q.length>120?q.q.slice(0,119)+'…':q.q}</div>
+    </div>`).join(''):`<div style="font-size:12px;color:rgba(26,21,16,0.4);text-align:center;padding:20px">No questions for this filter.</div>`;
+}
+
+function renderQBFull(){
+  const qs=allQuestions().filter(q=>qbFullFilter==='All'||q.paper===qbFullFilter);
+  document.getElementById('qb-full-list').innerHTML=qs.map((q,i)=>`
+    <div class="qb-question" onclick="useQuestion('${escHtml(q.q)}','${q.paper}');showView('write',document.querySelector('.nav-item'))">
+      <div class="qb-paper-tag">${q.paper}</div>
+      <div class="qb-text">${q.q}</div>
+    </div>`).join('');
+}
+
+function filterQBWrite(f,el){
+  qbFilter=f;
+  document.querySelectorAll('#qb-write-filters .qb-filter').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  renderQBWrite();
+}
+
+function filterQBFull(f,el){
+  qbFullFilter=f;
+  document.querySelectorAll('#qb-full-filters .qb-filter').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  renderQBFull();
+}
+
+function surpriseMe(){
+  const qs=allQuestions().filter(q=>qbFilter==='All'||q.paper===qbFilter);
+  if(!qs.length)return;
+  const q=qs[Math.floor(Math.random()*qs.length)];
+  useQuestion(q.q,q.paper);
+  toast('🎲 Random question loaded!');
+}
+
+function useQuestion(q,paper){
+  document.getElementById('f-question').value=q;
+  document.getElementById('f-paper').value=paper;
+  document.getElementById('f-answer').focus();
+}
+
+// ── CSV Q-BANK ──────────────────────────────────────────────────────────────
+function downloadQBankCSV(){
+  const header='paper,question\n';
+  const rows=allQuestions().map(q=>`"${q.paper}","${q.q.replace(/"/g,'""')}"`).join('\n');
+  const blob=new Blob([header+rows],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='upsc-question-bank.csv';
+  a.click();
+}
+
+function uploadQBankCSV(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const lines=e.target.result.split('\n').slice(1);
+    const parsed=[];
+    lines.forEach(line=>{
+      const m=line.match(/^"?([^",]+)"?,?"?(.+?)"?$/);
+      if(m&&m[1]&&m[2]){parsed.push({paper:m[1].trim(),q:m[2].replace(/""/g,'"').trim()});}
+    });
+    customQuestions=[...customQuestions,...parsed];
+    renderQBWrite();renderQBFull();
+    toast(`✅ Loaded ${parsed.length} questions from CSV`);
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+// ── SAVE ANSWER ──────────────────────────────────────────────────────────────
+async function saveAnswer(){
+  const question=document.getElementById('f-question').value.trim();
+  const answerText=document.getElementById('f-answer').value.trim();
+  if(!question||!answerText){alert('Please enter both a question and your answer.');return;}
+  const themes=[...document.querySelectorAll('.theme-opt:checked')].map(c=>c.value);
+  const entry={
+    date:document.getElementById('f-date').value,
+    paper:document.getElementById('f-paper').value,
+    question,
+    answer:answerText,
+    wordCount:wordCount(answerText),
+    timeMins:parseInt(document.getElementById('f-time').value)||null,
+    selfScore:parseFloat(document.getElementById('f-score').value)||null,
+    themes,
+    notes:document.getElementById('f-notes').value.trim(),
+    aiFeedback:document.getElementById('ai-feedback-panel').style.display!=='none'?document.getElementById('ai-feedback-content').innerHTML:'',
+    savedAt:new Date().toISOString(),
+  };
+  const btn=document.querySelector('[onclick="saveAnswer()"]');
+  if(btn){btn.textContent='Saving…';btn.disabled=true;}
+  try{
+    const {collection,addDoc,updateDoc,doc}=window._fs;
+    if(editingAnswerId){await updateDoc(doc(window._db,'answers',editingAnswerId),entry);}
+    else{await addDoc(collection(window._db,'answers'),entry);}
+    resetWriteForm();
+    toast('Answer saved ✓');
+    editingAnswerId=null;
+  }catch(e){alert('Could not save.');}
+  finally{if(btn){btn.textContent='💾 Save Answer';btn.disabled=false;}}
+}
+
+async function deleteAnswer(id){
+  if(!confirm('Delete this answer?'))return;
+  const {doc,deleteDoc}=window._fs;
+  await deleteDoc(doc(window._db,'answers',id));
+}
+
+function editAnswer(id){
+  const e=answers.find(a=>a._id===id);if(!e)return;
+  editingAnswerId=id;
+  showView('write',document.querySelector('.nav-item'));
+  document.getElementById('f-date').value=e.date||'';
+  document.getElementById('f-paper').value=e.paper||'GS1';
+  document.getElementById('f-question').value=e.question||'';
+  document.getElementById('f-answer').value=e.answer||'';
+  document.getElementById('f-time').value=e.timeMins||'';
+  document.getElementById('f-score').value=e.selfScore||'';
+  document.getElementById('f-notes').value=e.notes||'';
+  updateWordCount();
+  (e.themes||[]).forEach(t=>{const cb=document.getElementById('th-'+t.replace(/\W/g,'_'));if(cb)cb.checked=true;});
+  document.querySelector('.content').scrollTo({top:0,behavior:'smooth'});
+  toast('Editing answer — make changes and save ✓');
+}
+
+function resetWriteForm(){
+  document.getElementById('f-question').value='';
+  document.getElementById('f-answer').value='';
+  document.getElementById('f-time').value='';
+  document.getElementById('f-score').value='';
+  document.getElementById('f-notes').value='';
+  document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+  document.querySelectorAll('.theme-opt').forEach(c=>c.checked=false);
+  document.getElementById('wc-num').textContent='0 words';
+  document.getElementById('wc-fill').style.width='0%';
+  document.getElementById('ai-feedback-panel').style.display='none';
+  resetTimer();
+  editingAnswerId=null;
+}
+
+// ── AI TEACHER ────────────────────────────────────────────────────────────
+function openClaudeAI(){
+  const question=document.getElementById('f-question').value.trim();
+  const answer=document.getElementById('f-answer').value.trim();
+  const paper=document.getElementById('f-paper').value;
+  const wc=wordCount(answer);
+
+  if(!question&&!answer){
+    alert('Please write a question and answer first.');
+    return;
+  }
+
+  const prompt=`You are an expert UPSC Mains examiner and coach. Please analyse my answer below and give structured feedback.
+
+**Paper:** ${paper}
+**Question:** ${question||'(not specified)'}
+**My Answer (${wc} words):**
+${answer||'(not written yet)'}
+
+Please give me:
+1. A **Report Card** covering: Introduction, Structure, Word Count, Examples used, Quote/Data, Conclusion, Multidimensional angle, Grammar & Spelling — mark each as ✅ Good / ⚠️ Needs Work / ❌ Missing
+2. An **AI Score** out of 10 with brief reasoning
+3. **Teacher's Advice** — 2-3 paragraphs on what worked, what to improve, what a topper would add
+4. One **Topper Tip** — the single most impactful thing I should do differently`;
+
+  // Copy to clipboard and open Claude
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(prompt).then(()=>{
+      showAIPanel('copied');
+      setTimeout(()=>window.open('https://claude.ai','_blank'), 400);
+    }).catch(()=>{
+      showAIPanel('manual', prompt);
+      setTimeout(()=>window.open('https://claude.ai','_blank'), 400);
+    });
+  } else {
+    showAIPanel('manual', prompt);
+    setTimeout(()=>window.open('https://claude.ai','_blank'), 400);
+  }
+}
+
+function showAIPanel(mode, prompt=''){
+  const panel=document.getElementById('ai-feedback-panel');
+  const content=document.getElementById('ai-feedback-content');
+  panel.style.display='block';
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  if(mode==='copied'){
+    content.innerHTML=`
+      <div style="background:var(--teal-light);border:1px solid rgba(42,127,111,0.2);border-radius:10px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:20px">✅</div>
+        <div>
+          <div style="font-weight:500;color:var(--teal);margin-bottom:4px">Prompt copied to clipboard!</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.6">Claude is opening in a new tab. Just paste (<strong>Cmd+V</strong> or <strong>Ctrl+V</strong>) and press Enter to get your feedback.</div>
+        </div>
+      </div>`;
+  } else {
+    // Fallback — show the prompt text to copy manually
+    content.innerHTML=`
+      <div style="background:var(--gold-light);border:1px solid var(--gold-border);border-radius:10px;padding:16px 18px;margin-bottom:12px">
+        <div style="font-weight:500;color:var(--gold);margin-bottom:6px">Claude is opening in a new tab →</div>
+        <div style="font-size:12px;color:var(--ink2);margin-bottom:10px">Copy the prompt below and paste it into Claude:</div>
+        <button class="btn btn-ghost btn-sm" onclick="copyPromptText()" style="margin-bottom:10px">📋 Copy Prompt</button>
+        <textarea id="ai-prompt-text" style="width:100%;min-height:120px;font-size:11px;font-family:'DM Mono',monospace;line-height:1.5;padding:10px;border:1px solid var(--border);border-radius:7px;background:white;color:var(--ink2);resize:vertical" readonly>${prompt.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+      </div>`;
+    // Store prompt for copy button
+    window._aiPrompt = prompt;
+  }
+}
+
+function renderAIFeedback(fb,el){
+  const statusIcon={good:'✅',warn:'⚠️',bad:'❌'};
+  const statusClass={good:'rc-good',warn:'rc-warn',bad:'rc-bad'};
+  const labels={introduction:'Introduction',structure:'Structure',word_count:'Word Count',examples:'Examples',quote_data:'Quote / Data',conclusion:'Conclusion',multidimensional:'Multidimensional',grammar_spelling:'Grammar & Spelling'};
+
+  const reportHTML=Object.entries(fb.report_card).map(([k,v])=>`
+    <div class="rc-item">
+      <div class="rc-label">${labels[k]||k}</div>
+      <div class="rc-status ${statusClass[v.status]}">${statusIcon[v.status]} ${v.comment}</div>
+    </div>`).join('');
+
+  el.innerHTML=`
+    <div class="ai-score-badge">AI Score: <span class="ai-score-num">${fb.score}</span>/10</div>
+    <div class="report-card">${reportHTML}</div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:rgba(26,21,16,0.4);margin-bottom:8px">Teacher's Advice</div>
+      <div class="ai-advice">${fb.overall_advice.replace(/\n/g,'<br>')}</div>
+    </div>
+    <div style="background:var(--gold-light);border:1px solid var(--gold-border);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--ink2)">
+      <strong style="color:var(--gold)">🏆 Topper Tip:</strong> ${fb.topper_tip}
+    </div>`;
+}
+
+function copyPromptText(){
+  const txt = window._aiPrompt || document.getElementById('ai-prompt-text')?.value || '';
+  if(navigator.clipboard && txt){
+    navigator.clipboard.writeText(txt).then(()=>toast('Prompt copied ✓'));
+  }
+}
+
+// ── REVIEW AI ─────────────────────────────────────────────────────────────
+async function reviewAIFeedback(){
+  if(!reviewingEntry)return;
+  const newText=document.getElementById('review-new-text').value.trim();
+  if(!newText){alert('Please write your revised answer first.');return;}
+
+  const prompt=`You are a UPSC Mains examiner. Compare these two answers and tell me how much I have improved.
+
+**Question:** ${reviewingEntry.question}
+
+**My ORIGINAL answer (written earlier):**
+${reviewingEntry.answer}
+
+**My REVISED answer (written today):**
+${newText}
+
+Please tell me:
+1. **Improvement Score** out of 10 (how much better is the revised version?)
+2. **What improved** — specific improvements in the revised version
+3. **Still needs work** — what's still missing or weak
+4. **Verdict** — an encouraging 1-2 sentence summary of my growth`;
+
+  const el=document.getElementById('review-ai-output');
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(prompt).then(()=>{
+      el.innerHTML=`<div style="background:var(--teal-light);border:1px solid rgba(42,127,111,0.2);border-radius:10px;padding:14px;margin-top:12px;font-size:13px;color:var(--teal)">✅ <strong>Prompt copied!</strong> Claude is opening — paste and get your comparison feedback.</div>`;
+      window.open('https://claude.ai','_blank');
+    });
+  } else {
+    window._aiPrompt = prompt;
+    el.innerHTML=`<div style="background:var(--gold-light);border:1px solid var(--gold-border);border-radius:10px;padding:14px;margin-top:12px">
+      <div style="font-size:12px;color:var(--ink2);margin-bottom:8px">Copy this prompt and paste into Claude:</div>
+      <button class="btn btn-ghost btn-sm" onclick="copyPromptText()">📋 Copy Prompt</button>
+    </div>`;
+    window.open('https://claude.ai','_blank');
+  }
+}
+
+async function saveRevision(){
+  const newText=document.getElementById('review-new-text').value.trim();
+  if(!newText||!reviewingEntry)return;
+  const {doc,updateDoc}=window._fs;
+  const revisions=reviewingEntry.revisions||[];
+  revisions.push({date:new Date().toISOString().slice(0,10),answer:newText,wordCount:wordCount(newText)});
+  await updateDoc(doc(window._db,'answers',reviewingEntry._id),{revisions});
+  toast('Revision saved ✓');
+}
+
+// ── RENDER ANSWERS ────────────────────────────────────────────────────────
+function filterAnswers(f,el){
+  answersFilter=f;
+  document.querySelectorAll('#answers-filters .qb-filter').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  renderAnswers();
+}
+
+function renderAnswers(){
+  const el=document.getElementById('answers-list');
+  const data=answers.filter(a=>answersFilter==='All'||a.paper===answersFilter);
+  if(!data.length){el.innerHTML=`<div class="empty"><div class="ei">✍️</div><p>No answers yet. Start writing!</p></div>`;return;}
+  el.innerHTML=data.map(a=>`
+    <div class="answer-card fade-up">
+      <div class="ac-header">
+        <span class="ac-paper ${PAPER_COLORS[a.paper]||''}">${a.paper}</span>
+        <div class="ac-question">${a.question}</div>
+        ${a.selfScore?`<div class="ac-score" style="color:${a.selfScore>=7?'var(--teal)':a.selfScore>=5?'var(--gold)':'var(--accent)'}">${a.selfScore}/10</div>`:''}
+      </div>
+      <div class="ac-meta">
+        <span class="ac-stat">📅 ${a.date}</span>
+        ${a.wordCount?`<span class="ac-stat">📝 ${a.wordCount} words</span>`:''}
+        ${a.timeMins?`<span class="ac-stat">⏱ ${a.timeMins} mins</span>`:''}
+        ${(a.revisions||[]).length?`<span class="ac-stat" style="color:var(--teal)">🔄 ${a.revisions.length} revision${a.revisions.length>1?'s':''}</span>`:''}
+      </div>
+      ${(a.themes||[]).length?`<div class="ac-themes">${a.themes.map(t=>`<span class="ac-theme">${t}</span>`).join('')}</div>`:''}
+      ${a.notes?`<div style="font-size:12px;color:rgba(26,21,16,0.45);font-style:italic;margin-bottom:10px">"${a.notes}"</div>`:''}
+      <div class="ac-actions">
+        <button class="btn btn-ghost btn-sm" onclick="editAnswer('${a._id}')">✏️ Edit</button>
+        <button class="btn btn-ghost btn-sm" onclick="startReview('${a._id}')">🔄 Review</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--accent)" onclick="deleteAnswer('${a._id}')">✕ Delete</button>
+        ${a.aiFeedback?`<span class="ac-stat" style="color:var(--purple)">🤖 AI feedback saved</span>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ── REVIEW ────────────────────────────────────────────────────────────────
+function renderReviewList(){
+  const el=document.getElementById('review-list');
+  if(!answers.length){el.innerHTML=`<div class="empty"><div class="ei">🔄</div><p>Write some answers first!</p></div>`;return;}
+  el.innerHTML=answers.map(a=>`
+    <div class="answer-card" style="cursor:pointer" onclick="startReview('${a._id}')">
+      <div class="ac-header">
+        <span class="ac-paper ${PAPER_COLORS[a.paper]||''}">${a.paper}</span>
+        <div class="ac-question">${a.question}</div>
+        ${a.selfScore?`<div class="ac-score">${a.selfScore}/10</div>`:''}
+      </div>
+      <div class="ac-meta">
+        <span class="ac-stat">📅 ${a.date}</span>
+        ${a.wordCount?`<span class="ac-stat">📝 ${a.wordCount} words</span>`:''}
+        ${(a.revisions||[]).length?`<span class="ac-stat" style="color:var(--teal)">🔄 ${a.revisions.length} revision(s)</span>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function startReview(id){
+  reviewingEntry=answers.find(a=>a._id===id);
+  if(!reviewingEntry)return;
+  document.getElementById('review-picker').style.display='none';
+  document.getElementById('review-workspace').style.display='block';
+  document.getElementById('review-question-text').textContent=reviewingEntry.question;
+  document.getElementById('review-original-text').textContent=reviewingEntry.answer;
+  document.getElementById('review-orig-wc').textContent=`📝 ${reviewingEntry.wordCount||0} words`;
+  document.getElementById('review-orig-score').textContent=`⭐ ${reviewingEntry.selfScore||'—'}/10`;
+  document.getElementById('review-new-text').value='';
+  document.getElementById('review-ai-output').innerHTML='';
+  updateReviewWC();
+}
+
+function closeReview(){
+  reviewingEntry=null;
+  document.getElementById('review-picker').style.display='block';
+  document.getElementById('review-workspace').style.display='none';
+}
+
+// ── TOPPERS ───────────────────────────────────────────────────────────────
+function openTopperForm(){document.getElementById('topper-form').style.display='block';}
+function closeTopperForm(){document.getElementById('topper-form').style.display='none';}
+
+async function saveTopperAnswer(){
+  const question=document.getElementById('tp-question').value.trim();
+  const answer=document.getElementById('tp-answer').value.trim();
+  if(!question||!answer){alert('Question and answer are required.');return;}
+  const entry={paper:document.getElementById('tp-paper').value,source:document.getElementById('tp-source').value.trim(),question,answer,notes:document.getElementById('tp-notes').value.trim(),date:new Date().toISOString().slice(0,10)};
+  try{
+    const {collection,addDoc}=window._fs;
+    await addDoc(collection(window._db,'topper_answers'),entry);
+    document.getElementById('tp-question').value='';
+    document.getElementById('tp-answer').value='';
+    document.getElementById('tp-source').value='';
+    document.getElementById('tp-notes').value='';
+    closeTopperForm();
+    toast('Topper answer saved ✓');
+  }catch(e){alert('Could not save.');}
+}
+
+async function deleteTopper(id){
+  if(!confirm('Delete this topper answer?'))return;
+  const {doc,deleteDoc}=window._fs;
+  await deleteDoc(doc(window._db,'topper_answers',id));
+}
+
+function renderToppers(){
+  const el=document.getElementById('toppers-list');
+  if(!toppers.length){el.innerHTML=`<div class="empty"><div class="ei">🏆</div><p>No topper answers yet. Add some for reference.</p></div>`;return;}
+  el.innerHTML=toppers.map(t=>`
+    <div class="answer-card fade-up">
+      <div class="ac-header">
+        <span class="ac-paper ${PAPER_COLORS[t.paper]||''}">${t.paper}</span>
+        <div class="ac-question">${t.question}</div>
+      </div>
+      ${t.source?`<div style="font-size:11px;color:var(--gold);font-family:'DM Mono',monospace;margin-bottom:8px">Source: ${t.source}</div>`:''}
+      <div style="font-size:13px;color:var(--ink2);line-height:1.7;white-space:pre-wrap;margin-bottom:12px;max-height:160px;overflow:hidden;position:relative">${t.answer}<div style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,white)"></div></div>
+      ${t.notes?`<div style="background:var(--gold-light);border-radius:7px;padding:10px 12px;font-size:12px;color:var(--ink2);margin-bottom:10px"><strong style="color:var(--gold)">Key Takeaways:</strong> ${t.notes}</div>`:''}
+      <div class="ac-actions">
+        <button class="btn btn-ghost btn-sm" style="color:var(--accent)" onclick="deleteTopper('${t._id}')">✕ Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── ANALYTICS ────────────────────────────────────────────────────────────
+function renderAnalytics(){
+  if(!answers.length){
+    document.getElementById('a-stats').innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">📊</div><p>Write some answers to see analytics.</p></div>`;
+    return;
+  }
+  const sorted=[...answers].sort((a,b)=>a.date.localeCompare(b.date));
+  const n=answers.length;
+  const scored=answers.filter(a=>a.selfScore);
+  const avgScore=scored.length?(scored.reduce((s,a)=>s+(a.selfScore||0),0)/scored.length).toFixed(1):'—';
+  const avgWC=(answers.reduce((s,a)=>s+(a.wordCount||0),0)/n).toFixed(0);
+  const timed=answers.filter(a=>a.timeMins);
+  const avgTime=timed.length?(timed.reduce((s,a)=>s+(a.timeMins||0),0)/timed.length).toFixed(0):'—';
+
+  document.getElementById('a-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${n}</div><div class="stat-lbl">Total Answers</div></div>
+    <div class="stat-card"><div class="stat-num">${avgScore}/10</div><div class="stat-lbl">Avg Self Score</div></div>
+    <div class="stat-card"><div class="stat-num">${avgWC}</div><div class="stat-lbl">Avg Word Count</div></div>
+    <div class="stat-card"><div class="stat-num">${avgTime}</div><div class="stat-lbl">Avg Mins/Answer</div></div>
+  `;
+
+  const labels=sorted.map(a=>{const d=new Date(a.date+'T00:00:00');return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});});
+
+  destroyChart('chart-score');
+  const sc=document.getElementById('chart-score').getContext('2d');
+  charts['chart-score']=new Chart(sc,{
+    type:'line',
+    data:{labels,datasets:[{label:'Score',data:sorted.map(a=>a.selfScore||null),borderColor:'#9b7c2a',backgroundColor:'rgba(155,124,42,0.08)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#9b7c2a',tension:0.3,fill:true,spanGaps:true}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:10,grid:{color:'rgba(26,21,16,0.05)'},ticks:{font:{family:'DM Mono',size:10}}},x:{grid:{display:false},ticks:{font:{family:'DM Mono',size:9},maxRotation:0,maxTicksLimit:10}}}}
+  });
+
+  destroyChart('chart-wc');
+  const wc=document.getElementById('chart-wc').getContext('2d');
+  charts['chart-wc']=new Chart(wc,{
+    type:'bar',
+    data:{labels,datasets:[{label:'Words',data:sorted.map(a=>a.wordCount||0),backgroundColor:sorted.map(a=>(a.wordCount||0)>=150&&(a.wordCount||0)<=250?'rgba(42,127,111,0.6)':'rgba(200,75,49,0.5)'),borderRadius:4,borderWidth:0}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(26,21,16,0.05)'},ticks:{font:{family:'DM Mono',size:10}}},x:{grid:{display:false},ticks:{font:{family:'DM Mono',size:9},maxRotation:0,maxTicksLimit:10}}}}
+  });
+
+  destroyChart('chart-time');
+  const tc=document.getElementById('chart-time').getContext('2d');
+  charts['chart-time']=new Chart(tc,{
+    type:'line',
+    data:{labels,datasets:[{label:'Mins',data:sorted.map(a=>a.timeMins||null),borderColor:'#5a3e7a',backgroundColor:'rgba(90,62,122,0.08)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#5a3e7a',tension:0.3,fill:true,spanGaps:true}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(26,21,16,0.05)'},ticks:{font:{family:'DM Mono',size:10}}},x:{grid:{display:false},ticks:{font:{family:'DM Mono',size:9},maxRotation:0,maxTicksLimit:10}}}}
+  });
+
+  // Paper distribution
+  const pc={GS1:0,GS2:0,GS3:0,GS4:0,Essay:0};
+  answers.forEach(a=>{if(pc[a.paper]!==undefined)pc[a.paper]++;});
+  destroyChart('chart-paper');
+  const pctx=document.getElementById('chart-paper').getContext('2d');
+  charts['chart-paper']=new Chart(pctx,{
+    type:'doughnut',
+    data:{labels:Object.keys(pc),datasets:[{data:Object.values(pc),backgroundColor:['#2c5f8a','#2a7f6f','#9b7c2a','#5a3e7a','#c84b31'],borderWidth:2,borderColor:'#f6f1e9'}]},
+    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{family:'DM Sans',size:11},boxWidth:12}}}}
+  });
+
+  // Score by paper bars
+  const paperScores={GS1:[],GS2:[],GS3:[],GS4:[],Essay:[]};
+  answers.filter(a=>a.selfScore).forEach(a=>{if(paperScores[a.paper])paperScores[a.paper].push(a.selfScore);});
+  const maxPS=10;
+  document.getElementById('paper-score-bars').innerHTML=Object.entries(paperScores).map(([p,scores])=>{
+    const avg=scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1):'—';
+    const pct=scores.length?((avg/maxPS)*100).toFixed(0):0;
+    const col=avg>=7?'var(--teal)':avg>=5?'var(--gold)':'var(--accent)';
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;width:40px;color:rgba(26,21,16,0.5)">${p}</div>
+      <div style="flex:1;height:10px;background:var(--paper3);border-radius:5px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${col};border-radius:5px;transition:width 0.6s"></div>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;width:36px;color:${col}">${avg}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── SIDEBAR STATS ─────────────────────────────────────────────────────────
+function updateSidebarStats(){
+  document.getElementById('ss-total').textContent=answers.length;
+  const scored=answers.filter(a=>a.selfScore);
+  document.getElementById('ss-avg-score').textContent=scored.length?(scored.reduce((s,a)=>s+a.selfScore,0)/scored.length).toFixed(1)+'':'—';
+  document.getElementById('ss-avg-wc').textContent=answers.length?(answers.reduce((s,a)=>s+(a.wordCount||0),0)/answers.length).toFixed(0):'—';
+  const timed=answers.filter(a=>a.timeMins);
+  document.getElementById('ss-avg-time').textContent=timed.length?(timed.reduce((s,a)=>s+a.timeMins,0)/timed.length).toFixed(0)+'m':'—';
+}
+
+// ── VIEWS ─────────────────────────────────────────────────────────────────
+let currentView='write';
+function showView(id,el){
+  currentView=id;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={write:'Write Answer',answers:'All Answers',review:'Review Mode',analytics:'Analytics',qbank:'Question Bank',toppers:'Topper Answers'};
+  document.getElementById('view-title').textContent=titles[id]||id;
+  if(id==='answers')renderAnswers();
+  if(id==='analytics')renderAnalytics();
+  if(id==='review')renderReviewList();
+  if(id==='qbank')renderQBFull();
+  if(id==='toppers')renderToppers();
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function escHtml(s){return s.replace(/'/g,'&apos;').replace(/"/g,'&quot;');}
+function toast(msg){
+  let t=document.getElementById('_toast');
+  if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--teal);color:white;padding:10px 18px;border-radius:8px;font-size:12px;font-family:DM Sans,sans-serif;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',initWriteForm);
+</script>
+</body>
+</html>
