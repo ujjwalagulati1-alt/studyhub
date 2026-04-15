@@ -306,6 +306,8 @@
   .badge-ca { background: var(--teal-light); color: var(--teal); }
   .badge-concept { background: var(--blue-light); color: var(--blue); }
   .badge-case { background: var(--purple-light); color: var(--purple); }
+  .badge-quote { background: #fef3e2; color: #b45309; }
+  .badge-fact { background: #e8f5e9; color: #2e7d32; }
 
   .entry-title {
     font-family: 'Playfair Display', serif;
@@ -1331,7 +1333,7 @@ function setFilter(f) {
 }
 
 function renderFilterChips() {
-  const types = ['All','PYQ','Current Affairs','Concept','Case Study'];
+  const types = ['All','PYQ','Current Affairs','Concept','Case Study','Quote','Fact'];
   const el = document.getElementById('filter-chips');
   el.innerHTML = types.map(t =>
     `<span class="filter-chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${t}</span>`
@@ -1379,7 +1381,7 @@ function renderEntries() {
     const isDue = e.revisionDate && e.revisionDate <= today && !e.done;
     return `<div class="entry-card" onclick="openViewModal(${idx})">
       <div class="entry-card-header">
-        <span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':'case'}">${e.type}</span>
+        <span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':e.type==='Quote'?'quote':e.type==='Fact'?'fact':'case'}">${e.type}</span>
         <div class="entry-title">${e.title}</div>
       </div>
       ${e.summary ? `<div class="entry-summary">${e.summary}</div>` : ''}
@@ -1497,7 +1499,7 @@ function renderRevision() {
     const statusClass = status.toLowerCase().replace(' ','-');
     return `<tr>
       <td style="font-weight:500;max-width:200px">${e.title}</td>
-      <td><span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':'case'}">${e.type}</span></td>
+      <td><span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':e.type==='Quote'?'quote':e.type==='Fact'?'fact':'case'}">${e.type}</span></td>
       <td>${e.revisionDate||'—'}</td>
       <td>${e.testDate||'—'}</td>
       <td>
@@ -1650,7 +1652,7 @@ function addForm(prefill) {
     <div class="form-group">
       <div class="form-label">Type *</div>
       <select class="form-select" id="f-type">
-        ${['PYQ','Current Affairs','Concept','Case Study'].map(t=>`<option ${(p.type||'PYQ')===t?'selected':''}>${t}</option>`).join('')}
+        ${['PYQ','Current Affairs','Concept','Case Study','Quote','Fact'].map(t=>`<option ${(p.type||'PYQ')===t?'selected':''}>${t}</option>`).join('')}
       </select>
     </div>
     <div class="form-group">
@@ -1783,7 +1785,7 @@ function viewEntry(e, idx) {
   const kp = (e.keypoints||'').split('\n').filter(Boolean);
   return `
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
-      <span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':'case'}">${e.type}</span>
+      <span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':e.type==='Quote'?'quote':e.type==='Fact'?'fact':'case'}">${e.type}</span>
       <span class="entry-type-badge" style="background:var(--paper2);color:var(--ink2)">⭐ ${e.priority||'Medium'}</span>
       ${e.multiTheme?`<span class="multi-badge">🔀 Multi-theme</span>`:''}
       <span style="font-size:11px;color:rgba(26,26,46,0.4);align-self:center">Added ${e.dateAdded||''}</span>
