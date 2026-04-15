@@ -3,6 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyCmVVpzoLrRGfnRGDq45fDgqtfoMvzQdkE",
+    authDomain: "studyhub-upsc.firebaseapp.com",
+    projectId: "studyhub-upsc",
+    storageBucket: "studyhub-upsc.firebasestorage.app",
+    messagingSenderId: "541078992966",
+    appId: "1:541078992966:web:841a57a40bc5bbd52cf247"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window._db = db;
+  window._fsWeekly = { doc, getDoc, setDoc, collection, addDoc, getDocs, orderBy, query };
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
 <title>UPSC 2027 — Integrated Weekly Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
@@ -1253,23 +1271,20 @@ const METHOD_COLORS = {
 };
 
 // ── STATE ──────────────────────────────────────────────────────────────────
-let state = loadState();
+let state = getDefaultState();
+let _weeklyTimer = null;
 
-function loadState() {
-  try {
-    const saved = localStorage.getItem('upsc2027_tracker');
-    if (saved) return JSON.parse(saved);
-  } catch(e){}
+function getDefaultState() {
   return {
     week: '', dates: '',
     news: DAYS_SHORT.map(d => ({day:d, story:'', gspaper:'', static:'', type:''})),
-    checklist: {},  // key: "section-topicIdx" → 'covered'|'partial'|'not'
+    checklist: {},
     mains: Array(9).fill(null).map((_,i) => ({day:'',gspaper:'',question:'',directive:'',time:'',model:''})),
     examples: Array(4).fill(null).map(() => ({text:'',source:'',papers:''})),
     qc: [],
-    themes36: {},  // key: idx → [1,2] answered
+    themes36: {},
     metrics: {studydays:'',clusters:'',pyqacc:'',mainsans:'',themes:'',examples:''},
-    gapStatus: {},  // key: cluster → 'O'|'~'|'X'
+    gapStatus: {},
     gapZero:'', gapPlan:'',
     buckets:{a:'',b:'',c:''},
     ph1:'', ph2:'', ph3:'',
@@ -1277,6 +1292,18 @@ function loadState() {
     conf: null,
   };
 }
+
+async function loadWeeklyState() {
+  try {
+    const { doc, getDoc } = window._fsWeekly;
+    const snap = await getDoc(doc(window._db, 'weekly_tracker', 'current'));
+    if (snap.exists()) state = snap.data();
+  } catch(e) { console.error('Firebase load error:', e); }
+  init();
+}
+
+if (window._fsWeekly) { loadWeeklyState(); }
+else { window.addEventListener('firebase-ready', loadWeeklyState); }
 
 // ── NAV ──────────────────────────────────────────────────────────────────
 const PAGE_META = {
@@ -1587,39 +1614,61 @@ function flushDOMToState() {
 // ── SAVE ───────────────────────────────────────────────────────────────────
 function saveAll() {
   flushDOMToState();
-  localStorage.setItem('upsc2027_tracker', JSON.stringify(state));
-  showToast('Progress saved ✓');
+  if (_weeklyTimer) clearTimeout(_weeklyTimer);
+  _weeklyTimer = setTimeout(async () => {
+    try {
+      const { doc, setDoc } = window._fsWeekly;
+      await setDoc(doc(window._db, 'weekly_tracker', 'current'), state);
+      showToast('Progress saved ✓');
+    } catch(e) {
+      console.error('Save error:', e);
+      showToast('Save failed — check connection');
+    }
+  }, 800);
 }
 
 // ── NEW WEEK ───────────────────────────────────────────────────────────────
-function clearWeek() {
-  if (!confirm('Start a new week? Current week data will be saved first, then cleared. Your 36-theme progress is preserved.')) return;
+async function clearWeek() {
+  if (!confirm('Start a new week? Current week data will be archived, then cleared. Your 36-theme progress is preserved.')) return;
   flushDOMToState();
-  // Archive current week into history
-  const archive = JSON.parse(localStorage.getItem('upsc2027_archive') || '[]');
-  archive.push({ savedAt: new Date().toISOString(), week: state.week, dates: state.dates, snapshot: JSON.parse(JSON.stringify(state)) });
-  localStorage.setItem('upsc2027_archive', JSON.stringify(archive));
 
-  const themes36 = state.themes36; // preserve across weeks
-  state = {
-    week: state.week ? String(parseInt(state.week||0)+1) : '',
-    dates: '',
-    news: DAYS_SHORT.map(d => ({day:d, story:'', gspaper:'', static:'', type:''})),
-    checklist: {},
-    mains: Array(9).fill(null).map(() => ({day:'',gspaper:'',question:'',directive:'',time:'',model:''})),
-    examples: Array(4).fill(null).map(() => ({text:'',source:'',papers:''})),
-    qc: [], themes36,
-    metrics: {studydays:'',clusters:'',pyqacc:'',mainsans:'',themes:'',examples:''},
-    gapStatus: {},
-    gap_themes_zero:'', gap_themes_plan:'',
-    bucket_a:'', bucket_b:'', bucket_c:'',
-    ph1_audit:'', ph2_audit:'', ph3_audit:'',
-    review:{clusters:'',mock:'',mains:'',missing:'',confidence:'',plan:''},
-    conf: null,
-  };
-  localStorage.setItem('upsc2027_tracker', JSON.stringify(state));
-  init();
-  showToast('New week started! Previous week archived ✓');
+  try {
+    const { doc, setDoc, collection, addDoc } = window._fsWeekly;
+    const db = window._db;
+
+    // Archive current week to Firestore
+    await addDoc(collection(db, 'weekly_archive'), {
+      savedAt: new Date().toISOString(),
+      week: state.week,
+      dates: state.dates,
+      snapshot: JSON.parse(JSON.stringify(state))
+    });
+
+    const themes36 = state.themes36;
+    state = {
+      week: state.week ? String(parseInt(state.week||0)+1) : '',
+      dates: '',
+      news: DAYS_SHORT.map(d => ({day:d, story:'', gspaper:'', static:'', type:''})),
+      checklist: {},
+      mains: Array(9).fill(null).map(() => ({day:'',gspaper:'',question:'',directive:'',time:'',model:''})),
+      examples: Array(4).fill(null).map(() => ({text:'',source:'',papers:''})),
+      qc: [], themes36,
+      metrics: {studydays:'',clusters:'',pyqacc:'',mainsans:'',themes:'',examples:''},
+      gapStatus: {},
+      gap_themes_zero:'', gap_themes_plan:'',
+      bucket_a:'', bucket_b:'', bucket_c:'',
+      ph1_audit:'', ph2_audit:'', ph3_audit:'',
+      review:{clusters:'',mock:'',mains:'',missing:'',confidence:'',plan:''},
+      conf: null,
+    };
+
+    await setDoc(doc(db, 'weekly_tracker', 'current'), state);
+    init();
+    showToast('New week started! Previous week archived ✓');
+  } catch(e) {
+    console.error(e);
+    showToast('Error starting new week — check connection');
+  }
 }
 
 // ── DOWNLOAD PDF ───────────────────────────────────────────────────────────

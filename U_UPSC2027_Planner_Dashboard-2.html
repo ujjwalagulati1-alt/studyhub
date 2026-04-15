@@ -3,6 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyCmVVpzoLrRGfnRGDq45fDgqtfoMvzQdkE",
+    authDomain: "studyhub-upsc.firebaseapp.com",
+    projectId: "studyhub-upsc",
+    storageBucket: "studyhub-upsc.firebasestorage.app",
+    messagingSenderId: "541078992966",
+    appId: "1:541078992966:web:841a57a40bc5bbd52cf247"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window._db = db;
+  window._fsDoc = { doc, getDoc, setDoc };
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
 <title>U's UPSC 2027 — Monthly Planner Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -620,12 +638,42 @@ const CHIP_CLASS = {"CA-anchor":"chip-ca","PYQ-first":"chip-pyq","Answer-write":
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let state = {};
-try { state = JSON.parse(localStorage.getItem('upsc_planner_state') || '{}'); } catch(e) { state = {}; }
+let _saveTimer = null;
 
-function save() {
-  try { localStorage.setItem('upsc_planner_state', JSON.stringify(state)); } catch(e) {}
+async function loadFromFirebase() {
+  try {
+    const { doc, getDoc } = window._fsDoc;
+    const snap = await getDoc(doc(window._db, 'planner', 'state'));
+    if (snap.exists()) state = snap.data();
+    updateStats();
+    renderAll();
+  } catch(e) { console.error('Firebase load error:', e); }
+}
+
+function renderAll() {
+  // Re-render all day cards if function exists
+  if (typeof renderDays === 'function') renderDays();
   updateStats();
 }
+
+async function _doSave() {
+  try {
+    const { doc, setDoc } = window._fsDoc;
+    await setDoc(doc(window._db, 'planner', 'state'), state);
+    const lbl = document.getElementById('save-indicator');
+    if (lbl) { lbl.textContent = '☁️ Saved'; setTimeout(() => { lbl.textContent = ''; }, 2000); }
+  } catch(e) { console.error('Firebase save error:', e); }
+}
+
+function save() {
+  updateStats();
+  // Debounce saves — wait 800ms after last change
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(_doSave, 800);
+}
+
+if (window._fsDoc) { loadFromFirebase(); }
+else { window.addEventListener('firebase-ready', loadFromFirebase); }
 
 function getDayState(dayNum) {
   if (!state[dayNum]) state[dayNum] = { done: false, checks: {}, notes: '' };
