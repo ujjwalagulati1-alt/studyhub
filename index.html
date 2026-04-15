@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCmVVpzoLrRGfnRGDq45fDgqtfoMvzQdkE",
+    authDomain: "studyhub-upsc.firebaseapp.com",
+    projectId: "studyhub-upsc",
+    storageBucket: "studyhub-upsc.firebasestorage.app",
+    messagingSenderId: "541078992966",
+    appId: "1:541078992966:web:841a57a40bc5bbd52cf247",
+    measurementId: "G-N65BWEM00F"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window._db = db;
+  window._fsLib = { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot, query, orderBy };
+  window._dbReady = true;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink2: #2d2d4e;
+    --paper: #f5f0e8;
+    --paper2: #ede8dd;
+    --paper3: #e0dbd0;
+    --accent: #c84b31;
+    --accent2: #e8a020;
+    --teal: #2a7f6f;
+    --teal-light: #d4ede9;
+    --amber-light: #fdf0d5;
+    --red-light: #fde8e4;
+    --blue: #2c5f8a;
+    --blue-light: #ddeaf5;
+    --purple: #5a3e7a;
+    --purple-light: #ede5f5;
+    --border: rgba(26,26,46,0.12);
+    --shadow: 0 2px 12px rgba(26,26,46,0.08);
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* LAYOUT */
+  .app { display: flex; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 22px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-logo h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--paper);
+    letter-spacing: 0.3px;
+  }
+
+  .sidebar-logo p {
+    font-size: 11px;
+    color: rgba(245,240,232,0.45);
+    margin-top: 3px;
+    font-weight: 300;
+  }
+
+  .sidebar-section {
+    padding: 14px 0 8px;
+  }
+
+  .sidebar-section-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.35);
+    padding: 0 20px;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(245,240,232,0.7);
+    border-left: 2px solid transparent;
+  }
+
+  .sidebar-item:hover { background: rgba(255,255,255,0.06); color: var(--paper); }
+  .sidebar-item.active {
+    background: rgba(200,75,49,0.18);
+    color: var(--paper);
+    border-left-color: var(--accent);
+  }
+
+  .sidebar-item .icon { font-size: 14px; width: 18px; text-align: center; }
+
+  .sidebar-themes {
+    padding: 8px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: auto;
+  }
+
+  .theme-tag-mini {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 20px;
+    font-size: 11px;
+    color: rgba(245,240,232,0.5);
+    cursor: pointer;
+  }
+
+  .theme-tag-mini:hover { color: rgba(245,240,232,0.85); }
+
+  .theme-count {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 10px;
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .topbar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #b03d25; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink2);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { background: var(--paper2); }
+
+  .search-bar {
+    flex: 1;
+    max-width: 280px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--paper2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 12px;
+  }
+
+  .search-bar input {
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    width: 100%;
+    outline: none;
+  }
+
+  .search-bar input::placeholder { color: rgba(26,26,46,0.35); }
+
+  /* CONTENT AREA */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .filter-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--ink2);
+    transition: all 0.15s;
+  }
+
+  .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+  /* ENTRIES GRID */
+  .entries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  /* ENTRY CARD */
+  .entry-card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+
+  .entry-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(26,26,46,0.12);
+    border-color: rgba(26,26,46,0.2);
+  }
+
+  .entry-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .entry-type-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .badge-pyq { background: var(--red-light); color: var(--accent); }
+  .badge-ca { background: var(--teal-light); color: var(--teal); }
+  .badge-concept { background: var(--blue-light); color: var(--blue); }
+  .badge-case { background: var(--purple-light); color: var(--purple); }
+
+  .entry-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--ink);
+    flex: 1;
+  }
+
+  .entry-summary {
+    font-size: 12.5px;
+    color: rgba(26,26,46,0.6);
+    line-height: 1.6;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .entry-themes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .theme-pill {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: var(--amber-light);
+    color: #8a5c00;
+    font-weight: 500;
+    border: 1px solid rgba(232,160,32,0.25);
+  }
+
+  .multi-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: var(--purple-light);
+    color: var(--purple);
+    font-weight: 500;
+  }
+
+  .entry-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--paper3);
+  }
+
+  .entry-date {
+    font-size: 11px;
+    color: rgba(26,26,46,0.4);
+  }
+
+  .priority-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .priority-high { background: var(--accent); }
+  .priority-medium { background: var(--accent2); }
+  .priority-low { background: var(--teal); }
+
+  .revision-chip {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .rev-due { background: #fde8e4; color: var(--accent); }
+  .rev-ok { background: var(--teal-light); color: var(--teal); }
+
+  /* MODAL OVERLAY */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,46,0.5);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .overlay.open { display: flex; }
+
+  .modal {
+    background: var(--paper);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(26,26,46,0.3);
+    animation: modalIn 0.2s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    flex: 1;
+    padding-right: 16px;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: white;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  .modal-close:hover { background: var(--paper2); }
+
+  .modal-body {
+    padding: 24px 28px;
+  }
+
+  .modal-section {
+    margin-bottom: 22px;
+  }
+
+  .modal-section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(26,26,46,0.4);
+    margin-bottom: 8px;
+  }
+
+  .modal-text {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink2);
+  }
+
+  .modal-points {
+    list-style: none;
+    padding: 0;
+  }
+
+  .modal-points li {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink2);
+    padding: 4px 0 4px 16px;
+    position: relative;
+  }
+
+  .modal-points li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: rgba(26,26,46,0.3);
+  }
+
+  /* FORM */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(26,26,46,0.55);
+    letter-spacing: 0.4px;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    padding: 9px 12px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+
+  .theme-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .theme-checkbox {
+    display: none;
+  }
+
+  .theme-checkbox-label {
+    padding: 5px 11px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--ink2);
+  }
+
+  .theme-checkbox:checked + .theme-checkbox-label {
+    background: var(--accent2);
+    color: white;
+    border-color: var(--accent2);
+  }
+
+  .form-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-checkbox-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--teal);
+    cursor: pointer;
+  }
+
+  .form-checkbox-row label {
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--ink2);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* CALENDAR VIEW */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .cal-day-header {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(26,26,46,0.4);
+    padding: 6px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .cal-day {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    min-height: 72px;
+    padding: 6px;
+    font-size: 11px;
+  }
+
+  .cal-day-num {
+    font-weight: 500;
+    color: rgba(26,26,46,0.5);
+    margin-bottom: 4px;
+  }
+
+  .cal-day.today { border-color: var(--accent); }
+  .cal-day.today .cal-day-num { color: var(--accent); font-weight: 600; }
+  .cal-day.other-month { background: var(--paper2); }
+  .cal-day.other-month .cal-day-num { color: rgba(26,26,46,0.25); }
+
+  .cal-event {
+    background: var(--teal-light);
+    color: var(--teal);
+    border-radius: 3px;
+    padding: 1px 4px;
+    font-size: 9.5px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+
+  .cal-event.test { background: var(--red-light); color: var(--accent); }
+
+  /* STATS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: rgba(26,26,46,0.45);
+    font-weight: 400;
+  }
+
+  /* THEMES VIEW */
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .theme-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: var(--shadow);
+  }
+
+  .theme-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,26,46,0.1); }
+
+  .theme-card-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .theme-card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .theme-card-count {
+    font-size: 11px;
+    color: rgba(26,26,46,0.45);
+  }
+
+  /* REVISION TABLE */
+  .rev-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+  }
+
+  .rev-table th {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(26,26,46,0.4);
+    text-align: left;
+    padding: 4px 12px;
+  }
+
+  .rev-table td {
+    padding: 12px;
+    background: white;
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rev-table td:first-child { border-left: 1px solid var(--border); border-radius: 8px 0 0 8px; }
+  .rev-table td:last-child { border-right: 1px solid var(--border); border-radius: 0 8px 8px 0; }
+
+  .rev-status {
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .status-not-started { background: var(--paper2); color: rgba(26,26,46,0.5); }
+  .status-in-progress { background: var(--amber-light); color: #8a5c00; }
+  .status-revised { background: var(--blue-light); color: var(--blue); }
+  .status-tested { background: var(--teal-light); color: var(--teal); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(26,26,46,0.35);
+  }
+
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* RICH TEXT DISPLAY */
+  .rich-content {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--ink2);
+  }
+
+  .rich-content h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    margin: 16px 0 6px;
+    color: var(--ink);
+  }
+
+  .rich-content p { margin-bottom: 8px; }
+
+  .source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 4px 0;
+  }
+
+  .source-link:hover { text-decoration: underline; }
+
+  .image-preview {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 8px 0;
+    border: 1px solid var(--border);
+  }
+
+
+  /* MEDIA ATTACHMENTS */
+  .media-drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--paper2);
+    position: relative;
+  }
+  .media-drop-zone:hover, .media-drop-zone.dragover {
+    border-color: var(--accent);
+    background: var(--red-light);
+  }
+  .media-drop-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .media-drop-label { font-size: 12px; color: rgba(26,26,46,0.45); pointer-events: none; }
+  .media-drop-label span { display: block; font-size: 22px; margin-bottom: 6px; }
+
+  .media-previews {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+  }
+  .media-thumb {
+    position: relative; width: 80px; height: 80px; border-radius: 7px;
+    overflow: hidden; border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .media-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .media-thumb-label {
+    width: 80px; height: 80px; border-radius: 7px;
+    background: var(--paper2); border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 9px; color: rgba(26,26,46,0.5); text-align: center; padding: 4px;
+    flex-shrink: 0;
+  }
+  .media-thumb-label .file-icon { font-size: 20px; margin-bottom: 3px; }
+  .media-remove {
+    position: absolute; top: 2px; right: 2px;
+    background: rgba(26,26,46,0.7); color: white; border: none;
+    border-radius: 50%; width: 18px; height: 18px; font-size: 10px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+
+  /* STORAGE BAR */
+  .storage-bar-wrap {
+    padding: 10px 16px 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .storage-bar-label {
+    font-size: 9px; color: rgba(245,240,232,0.35);
+    letter-spacing: 0.8px; text-transform: uppercase;
+    display: flex; justify-content: space-between; margin-bottom: 5px;
+  }
+  .storage-bar-track {
+    height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
+  }
+  .storage-bar-fill {
+    height: 100%; border-radius: 2px; transition: width 0.4s, background 0.4s;
+  }
+  .storage-bar-actions {
+    display: flex; gap: 6px; margin-top: 8px;
+  }
+  .storage-btn {
+    flex: 1; padding: 5px 0; border-radius: 5px; border: 1px solid rgba(255,255,255,0.12);
+    background: transparent; color: rgba(245,240,232,0.6); font-family: 'DM Sans',sans-serif;
+    font-size: 10px; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .storage-btn:hover { background: rgba(255,255,255,0.08); color: var(--paper); }
+  .storage-btn.danger { border-color: rgba(200,75,49,0.4); color: rgba(200,75,49,0.7); }
+  .storage-btn.danger:hover { background: rgba(200,75,49,0.15); color: var(--accent); }
+
+  /* VIEW IMAGE MODAL */
+  .img-lightbox {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 200; display: none; align-items: center; justify-content: center;
+    cursor: zoom-out;
+  }
+  .img-lightbox.open { display: flex; }
+  .img-lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+
+  /* MEDIA IN VIEW */
+  .media-gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .media-gallery-img {
+    width: 120px; height: 90px; object-fit: cover; border-radius: 7px;
+    border: 1px solid var(--border); cursor: zoom-in; transition: transform 0.15s;
+  }
+  .media-gallery-img:hover { transform: scale(1.03); }
+  .media-gallery-file {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100px; height: 80px; border-radius: 7px;
+    background: var(--paper2); border: 1px solid var(--border);
+    font-size: 10px; color: rgba(26,26,46,0.5); text-align: center;
+    padding: 6px; cursor: pointer; text-decoration: none;
+    transition: background 0.15s;
+  }
+  .media-gallery-file:hover { background: var(--paper3); }
+  .media-gallery-file .file-icon { font-size: 22px; margin-bottom: 4px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(26,26,46,0.15); border-radius: 10px; }
+
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .tab {
+    padding: 9px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    color: rgba(26,26,46,0.5);
+    transition: all 0.15s;
+    font-weight: 500;
+  }
+
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Study Hub</h1>
+      <p>Knowledge · Revision · Clarity</p>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Views</div>
+      <div class="sidebar-item active" onclick="showView('all')">
+        <span class="icon">📋</span> All Entries
+      </div>
+      <div class="sidebar-item" onclick="showView('calendar')">
+        <span class="icon">📅</span> Revision Calendar
+      </div>
+      <div class="sidebar-item" onclick="showView('themes')">
+        <span class="icon">🏷</span> By Themes
+      </div>
+      <div class="sidebar-item" onclick="showView('revision')">
+        <span class="icon">✅</span> Revision Tracker
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Quick Filter</div>
+      <div class="sidebar-item" onclick="showView('all'); setFilter('PYQ')">
+        <span class="icon">📌</span> PYQs Only
+      </div>
+      <div class="sidebar-item" onclick="showView('all'); setFilter('Current Affairs')">
+        <span class="icon">📰</span> Current Affairs
+      </div>
+      <div class="sidebar-item" onclick="showView('all'); setFilter('multi')">
+        <span class="icon">🔀</span> Multi-theme Gems
+      </div>
+    </div>
+
+    <div class="sidebar-themes">
+      <div class="sidebar-section-label" style="padding: 10px 20px 6px;">Themes</div>
+      <div id="sidebar-theme-list"></div>
+    </div>
+    <div class="storage-bar-wrap" id="storage-bar-wrap">
+      <div class="storage-bar-label">
+        <span>Storage</span>
+        <span id="storage-label">0 KB</span>
+      </div>
+      <div class="storage-bar-track">
+        <div class="storage-bar-fill" id="storage-fill" style="width:0%;background:var(--teal)"></div>
+      </div>
+      <div style="font-size:9px;color:rgba(245,240,232,0.35);margin-top:5px" id="last-backup-label">Last backup: never</div>
+      <div class="storage-bar-actions">
+        <button class="storage-btn" onclick="exportBackup()" title="Download JSON backup">⬇ JSON</button>
+        <button class="storage-btn" onclick="importBackup()" title="Restore from JSON">⬆ Restore</button>
+        <button class="storage-btn danger" onclick="exportCSV()" title="Export to Notion CSV">→ Notion</button>
+      </div>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <h2 id="view-title">All Entries</h2>
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" id="search-input" placeholder="Search entries…" oninput="renderEntries()">
+      </div>
+      <button class="btn btn-primary" onclick="openAddModal()">+ New Entry</button>
+    </div>
+
+    <div class="content">
+
+      <!-- ALL ENTRIES VIEW -->
+      <div id="view-all">
+        <div class="stats-row" id="stats-row"></div>
+        <div class="filters" id="filter-chips"></div>
+        <div class="entries-grid" id="entries-grid"></div>
+      </div>
+
+      <!-- CALENDAR VIEW -->
+      <div id="view-calendar" class="hidden">
+        <div class="tab-bar">
+          <div class="tab active" onclick="switchCalTab('revision', this)">Revision Dates</div>
+          <div class="tab" onclick="switchCalTab('test', this)">Test Dates</div>
+        </div>
+        <div id="calendar-area"></div>
+      </div>
+
+      <!-- THEMES VIEW -->
+      <div id="view-themes" class="hidden">
+        <div class="themes-grid" id="themes-grid"></div>
+      </div>
+
+      <!-- REVISION TRACKER VIEW -->
+      <div id="view-revision" class="hidden">
+        <div class="filters" style="margin-bottom:16px">
+          <span class="filter-chip active" onclick="setRevFilter('all',this)">All</span>
+          <span class="filter-chip" onclick="setRevFilter('Not Started',this)">Not Started</span>
+          <span class="filter-chip" onclick="setRevFilter('In Progress',this)">In Progress</span>
+          <span class="filter-chip" onclick="setRevFilter('Revised',this)">Revised</span>
+          <span class="filter-chip" onclick="setRevFilter('Tested',this)">Tested</span>
+          <span class="filter-chip" onclick="setRevFilter('due',this)">⚠️ Due Soon</span>
+        </div>
+        <table class="rev-table">
+          <thead>
+            <tr>
+              <th>Entry</th>
+              <th>Type</th>
+              <th>Revision Date</th>
+              <th>Test Date</th>
+              <th>Status</th>
+              <th>Done</th>
+            </tr>
+          </thead>
+          <tbody id="revision-tbody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ADD/VIEW MODAL -->
+<div class="overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="main-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">New Entry</div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ── FIREBASE DATA LAYER ───────────────────────────────────────────────────
+let _unsubscribe = null;
+
+async function initFirebase() {
+  const db = window._db;
+  const { collection, onSnapshot, query, orderBy } = window._fsLib;
+  showLoadingOverlay(true);
+  // Real-time listener — auto-updates UI whenever Firestore changes
+  const q = query(collection(db, 'entries'), orderBy('dateAdded', 'desc'));
+  _unsubscribe = onSnapshot(q, (snapshot) => {
+    entries = snapshot.docs.map(d => ({ ...d.data(), _id: d.id }));
+    showLoadingOverlay(false);
+    renderEntries();
+    renderSidebarThemes();
+    updateStorageBar();
+  }, (err) => {
+    showLoadingOverlay(false);
+    console.error('Firestore error:', err);
+  });
+}
+
+function showLoadingOverlay(show) {
+  let el = document.getElementById('loading-overlay');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'loading-overlay';
+    el.style.cssText = `position:fixed;inset:0;background:var(--paper);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-family:'DM Sans',sans-serif;`;
+    el.innerHTML = `<div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--ink)">Study Hub</div><div style="font-size:13px;color:rgba(26,26,46,0.45)">Connecting to your database…</div>`;
+    document.body.appendChild(el);
+  }
+  el.style.display = show ? 'flex' : 'none';
+}
+
+async function saveData() {
+  // Firestore saves happen per-entry via addEntry/updateEntry/deleteEntry
+  // This is kept for compatibility but actual saves use Firestore directly
+  updateStorageBar();
+}
+
+async function addEntryToFirestore(entry) {
+  const db = window._db;
+  const { collection, addDoc } = window._fsLib;
+  const ref = await addDoc(collection(db, 'entries'), entry);
+  return ref.id;
+}
+
+async function updateEntryInFirestore(id, entry) {
+  const db = window._db;
+  const { doc, updateDoc } = window._fsLib;
+  await updateDoc(doc(db, 'entries', id), entry);
+}
+
+async function deleteEntryFromFirestore(id) {
+  const db = window._db;
+  const { doc, deleteDoc } = window._fsLib;
+  await deleteDoc(doc(db, 'entries', id));
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────────
+const THEME_CATEGORIES = [
+  {
+    label: 'Prelims — Environment & Ecology',
+    color: 'teal',
+    themes: [
+      {name:'Biodiversity', icon:'🦋'},
+      {name:'Protected Areas', icon:'🏞'},
+      {name:'International Treaties', icon:'📜'},
+      {name:'Pollution', icon:'🏭'},
+      {name:'Climate Change', icon:'🌡'},
+      {name:'Environmental Laws', icon:'⚖️'},
+    ]
+  },
+  {
+    label: 'Prelims — Science & Technology',
+    color: 'blue',
+    themes: [
+      {name:'Space & ISRO', icon:'🚀'},
+      {name:'Defence & DRDO', icon:'🛡'},
+      {name:'Biotechnology', icon:'🧬'},
+      {name:'IT & AI', icon:'💻'},
+      {name:'Health Tech', icon:'🏥'},
+      {name:'Nuclear & Nano', icon:'⚛️'},
+    ]
+  },
+  {
+    label: 'Prelims — International Relations',
+    color: 'purple',
+    themes: [
+      {name:'India Bilateral', icon:'🤝'},
+      {name:'Multilateral Groupings', icon:'🌐'},
+      {name:'Regional Groupings', icon:'🗺'},
+      {name:'Foreign Policy', icon:'🕊'},
+    ]
+  },
+  {
+    label: 'Prelims — Economy',
+    color: 'amber',
+    themes: [
+      {name:'Banking & RBI', icon:'🏦'},
+      {name:'Fiscal Policy', icon:'📊'},
+      {name:'Inflation & GDP', icon:'📈'},
+      {name:'Financial Markets', icon:'💹'},
+      {name:'Poverty & Welfare', icon:'🤲'},
+      {name:'Agriculture & Food', icon:'🌾'},
+      {name:'International Trade', icon:'🚢'},
+      {name:'Infrastructure & PPP', icon:'🏗'},
+    ]
+  },
+  {
+    label: 'Prelims — Polity',
+    color: 'coral',
+    themes: [
+      {name:'Constitution Basics', icon:'📖'},
+      {name:'FR, DPSP & Duties', icon:'✊'},
+      {name:'Parliament', icon:'🏛'},
+      {name:'Executive', icon:'👔'},
+      {name:'Judiciary', icon:'⚖️'},
+      {name:'Federalism & Local Governance', icon:'🏘'},
+      {name:'Constitutional Bodies', icon:'🔱'},
+      {name:'Amendments & Schemes', icon:'📝'},
+    ]
+  },
+  {
+    label: 'Prelims — History',
+    color: 'gray',
+    themes: [
+      {name:'Ancient India', icon:'🏺'},
+      {name:'Ancient Philosophies', icon:'🕉'},
+      {name:'Medieval India', icon:'🕌'},
+      {name:'Modern India', icon:'🎖'},
+      {name:'Freedom Struggle', icon:'🇮🇳'},
+      {name:'Constitutional Development', icon:'📜'},
+      {name:'Post-Independence', icon:'🌅'},
+    ]
+  },
+  {
+    label: 'Prelims — Geography',
+    color: 'green',
+    themes: [
+      {name:'Physical Geography', icon:'⛰'},
+      {name:'Climate & Monsoon', icon:'🌧'},
+      {name:'Drainage Systems', icon:'🏞'},
+      {name:'Indian Agriculture & Soils', icon:'🌱'},
+      {name:'Indian Resources', icon:'⛏'},
+      {name:'Population & Urbanisation', icon:'🏙'},
+      {name:'World Geography', icon:'🌍'},
+    ]
+  },
+  {
+    label: 'Prelims — CSAT',
+    color: 'pink',
+    themes: [
+      {name:'Reading Comprehension', icon:'📚'},
+      {name:'Logical Reasoning', icon:'🧩'},
+      {name:'Basic Numeracy', icon:'🔢'},
+    ]
+  },
+  {
+    label: 'Mains Themes',
+    color: 'ink',
+    themes: [
+      {name:'Federalism & Centre-State', icon:'🏛'},
+      {name:'Judicial Activism', icon:'⚖️'},
+      {name:'Neighbourhood Policy', icon:'🤝'},
+      {name:'Economic Inequality', icon:'📉'},
+      {name:'Women Empowerment & GBV', icon:'♀️'},
+      {name:'Climate & NDCs', icon:'🌡'},
+      {name:'Technology Governance', icon:'🤖'},
+      {name:'Agricultural Distress', icon:'🌾'},
+      {name:'Urban Governance', icon:'🏙'},
+      {name:'Internal Security & LWE', icon:'🛡'},
+      {name:'Social Movements', icon:'✊'},
+      {name:'Monetary Policy', icon:'🏦'},
+      {name:'Globalisation', icon:'🌐'},
+      {name:'Ethics in Public Service', icon:'🧭'},
+      {name:'Biodiversity & Conservation', icon:'🦋'},
+      {name:'Science & Innovation', icon:'🔬'},
+      {name:'Constitutional Morality', icon:'📖'},
+      {name:'Disaster Management', icon:'🚨'},
+      {name:'Food Security', icon:'🍽'},
+      {name:'Multilateral Diplomacy', icon:'🕊'},
+      {name:'Corruption & Accountability', icon:'🔍'},
+      {name:'Education & Human Dev', icon:'🎓'},
+      {name:'Health Policy & UHC', icon:'🏥'},
+      {name:'Caste & Social Justice', icon:'👥'},
+      {name:'Infrastructure & PPP', icon:'🏗'},
+      {name:'Freedom Struggle Themes', icon:'🇮🇳'},
+      {name:'Media & Democracy', icon:'📰'},
+      {name:'Fiscal Federalism', icon:'💰'},
+      {name:'Civil Services Reform', icon:'📋'},
+      {name:'Demographic Dividend', icon:'👶'},
+      {name:'Governance & Implementation', icon:'⚙️'},
+      {name:'Parliament & Elections', icon:'🗳'},
+      {name:'Geopolitics', icon:'🌍'},
+      {name:'Digital Economy', icon:'💻'},
+      {name:'Industrial Policy', icon:'🏭'},
+      {name:'Rural Economy & Migration', icon:'🚜'},
+    ]
+  },
+];
+
+const THEMES = THEME_CATEGORIES.flatMap(cat => cat.themes);
+
+let entries = [];
+let currentView = 'all';
+let activeFilter = 'All';
+let activeRevFilter = 'all';
+let calTab = 'revision';
+
+function filterThemeChecks(q) {
+  const wrap = document.getElementById('theme-checks-wrap');
+  if (!wrap) return;
+  wrap.querySelectorAll('[data-cat-block]').forEach(block => {
+    const labels = block.querySelectorAll('.theme-checkbox-label');
+    let anyVisible = false;
+    labels.forEach(lbl => {
+      const show = !q || lbl.textContent.toLowerCase().includes(q.toLowerCase());
+      lbl.style.display = show ? '' : 'none';
+      const cb = document.getElementById(lbl.getAttribute('for'));
+      if (cb) cb.style.display = show ? '' : 'none';
+      if (show) anyVisible = true;
+    });
+    block.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+function saveData() {
+  localStorage.setItem('studyhub_entries', JSON.stringify(entries));
+  updateStorageBar();
+}
+
+// ── SIDEBAR THEMES ────────────────────────────────────────────────────────
+function renderSidebarThemes() {
+  const el = document.getElementById('sidebar-theme-list');
+  el.innerHTML = THEME_CATEGORIES.map(cat => {
+    const items = cat.themes.map(t => {
+      const count = entries.filter(e => e.themes.includes(t.name)).length;
+      return `<div class="theme-tag-mini" onclick="showView('all'); setFilter('theme:${t.name}')">
+        <span>${t.icon} ${t.name}</span>
+        <span class="theme-count">${count}</span>
+      </div>`;
+    }).join('');
+    return `<div style="font-size:9px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:rgba(245,240,232,0.25);padding:10px 20px 4px;margin-top:4px">${cat.label}</div>${items}`;
+  }).join('');
+}
+
+// ── VIEWS ─────────────────────────────────────────────────────────────────
+function showView(v) {
+  currentView = v;
+  ['all','calendar','themes','revision'].forEach(id => {
+    document.getElementById('view-'+id).classList.toggle('hidden', id !== v);
+  });
+  document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+
+  const titles = {all:'All Entries', calendar:'Revision Calendar', themes:'By Themes', revision:'Revision Tracker'};
+  document.getElementById('view-title').textContent = titles[v];
+
+  if (v === 'all') renderEntries();
+  if (v === 'calendar') renderCalendar();
+  if (v === 'themes') renderThemes();
+  if (v === 'revision') renderRevision();
+}
+
+// ── FILTER ────────────────────────────────────────────────────────────────
+function setFilter(f) {
+  activeFilter = f;
+  renderEntries();
+}
+
+function renderFilterChips() {
+  const types = ['All','PYQ','Current Affairs','Concept','Case Study'];
+  const el = document.getElementById('filter-chips');
+  el.innerHTML = types.map(t =>
+    `<span class="filter-chip ${activeFilter===t?'active':''}" onclick="setFilter('${t}')">${t}</span>`
+  ).join('') + `<span class="filter-chip ${activeFilter==='multi'?'active':''}" onclick="setFilter('multi')">🔀 Multi-theme</span>`;
+}
+
+function filteredEntries() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  return entries.filter(e => {
+    const matchQ = !q || e.title.toLowerCase().includes(q) || (e.summary||'').toLowerCase().includes(q);
+    let matchF = true;
+    if (activeFilter === 'multi') matchF = e.multiTheme;
+    else if (activeFilter.startsWith('theme:')) matchF = e.themes.includes(activeFilter.slice(6));
+    else if (activeFilter !== 'All') matchF = e.type === activeFilter;
+    return matchQ && matchF;
+  });
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────
+function renderStats() {
+  const today = new Date().toISOString().slice(0,10);
+  const dueSoon = entries.filter(e => e.revisionDate && e.revisionDate <= today && !e.done).length;
+  document.getElementById('stats-row').innerHTML = [
+    {num: entries.length, label: 'Total Entries'},
+    {num: entries.filter(e=>e.type==='PYQ').length, label: 'PYQs'},
+    {num: entries.filter(e=>e.multiTheme).length, label: 'Multi-theme'},
+    {num: dueSoon, label: 'Due for Revision'},
+  ].map(s => `<div class="stat-card"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join('');
+}
+
+// ── ENTRIES ───────────────────────────────────────────────────────────────
+function renderEntries() {
+  renderFilterChips();
+  renderStats();
+  renderSidebarThemes();
+  const data = filteredEntries();
+  const grid = document.getElementById('entries-grid');
+  if (!data.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📂</div><p>No entries yet. Click <strong>+ New Entry</strong> to add one.</p></div>`;
+    return;
+  }
+  grid.innerHTML = data.map((e,i) => {
+    const idx = entries.indexOf(e);
+    const today = new Date().toISOString().slice(0,10);
+    const isDue = e.revisionDate && e.revisionDate <= today && !e.done;
+    return `<div class="entry-card" onclick="openViewModal(${idx})">
+      <div class="entry-card-header">
+        <span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':'case'}">${e.type}</span>
+        <div class="entry-title">${e.title}</div>
+      </div>
+      ${e.summary ? `<div class="entry-summary">${e.summary}</div>` : ''}
+      <div class="entry-themes">
+        ${e.themes.map(t=>`<span class="theme-pill">${t}</span>`).join('')}
+        ${e.multiTheme ? `<span class="multi-badge">🔀 Multi</span>` : ''}
+      </div>
+      <div class="entry-footer">
+        <span class="entry-date">${e.dateAdded||''}</span>
+        <span class="priority-dot priority-${(e.priority||'medium').toLowerCase()}" title="${e.priority} priority"></span>
+        ${isDue ? `<span class="revision-chip rev-due">Revision due</span>` : e.revisionDate ? `<span class="revision-chip rev-ok">📅 ${e.revisionDate}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────
+function switchCalTab(tab, el) {
+  calTab = tab;
+  document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const daysInPrev = new Date(year, month, 0).getDate();
+  const todayStr = now.toISOString().slice(0,10);
+  const monthName = now.toLocaleDateString('en-IN', {month:'long', year:'numeric'});
+
+  const eventsMap = {};
+  entries.forEach(e => {
+    const d = calTab === 'revision' ? e.revisionDate : e.testDate;
+    if (d) {
+      if (!eventsMap[d]) eventsMap[d] = [];
+      eventsMap[d].push({title: e.title, isTest: calTab==='test'});
+    }
+  });
+
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = `<h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:16px">${monthName}</h3>`;
+  html += `<div class="cal-grid">${days.map(d=>`<div class="cal-day-header">${d}</div>`).join('')}`;
+
+  let cellNum = 1;
+  for (let i = 0; i < 42; i++) {
+    let dayNum, isCurrentMonth = true;
+    if (i < firstDay) { dayNum = daysInPrev - firstDay + i + 1; isCurrentMonth = false; }
+    else if (cellNum > daysInMonth) { dayNum = cellNum - daysInMonth; isCurrentMonth = false; cellNum++; }
+    else { dayNum = cellNum++; }
+
+    const dateStr = isCurrentMonth ? `${year}-${String(month+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}` : '';
+    const isToday = dateStr === todayStr;
+    const dayEvents = eventsMap[dateStr] || [];
+
+    html += `<div class="cal-day ${isToday?'today':''} ${!isCurrentMonth?'other-month':''}">
+      <div class="cal-day-num">${dayNum}</div>
+      ${dayEvents.map(ev=>`<div class="cal-event ${ev.isTest?'test':''}" title="${ev.title}">${ev.title.length>14?ev.title.slice(0,13)+'…':ev.title}</div>`).join('')}
+    </div>`;
+  }
+  html += `</div>`;
+  document.getElementById('calendar-area').innerHTML = html;
+}
+
+// ── THEMES ────────────────────────────────────────────────────────────────
+function renderThemes() {
+  const el = document.getElementById('themes-grid');
+  el.innerHTML = THEME_CATEGORIES.map(cat => {
+    const catCount = entries.filter(e => cat.themes.some(t => e.themes.includes(t.name))).length;
+    const cards = cat.themes.map(t => {
+      const count = entries.filter(e => e.themes.includes(t.name)).length;
+      return `<div class="theme-card" onclick="showView('all');setFilter('theme:${t.name}')">
+        <div class="theme-card-icon">${t.icon}</div>
+        <div class="theme-card-name">${t.name}</div>
+        <div class="theme-card-count">${count} entr${count===1?"y":"ies"}</div>
+      </div>`;
+    }).join("");
+    return `<div style="grid-column:1/-1;margin-top:20px;margin-bottom:2px;display:flex;align-items:center;gap:10px">
+      <div style="font-family:Playfair Display,serif;font-size:14px;font-weight:600;color:var(--ink)">${cat.label}</div>
+      <div style="font-size:11px;color:rgba(26,26,46,0.4)">${catCount} entries</div>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>${cards}`;
+  }).join("");
+}
+
+// ── REVISION ──────────────────────────────────────────────────────────────
+function setRevFilter(f, el) {
+  activeRevFilter = f;
+  document.querySelectorAll('#view-revision .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderRevision();
+}
+
+function renderRevision() {
+  const today = new Date().toISOString().slice(0,10);
+  let data = entries.filter(e => e.revisionDate || e.testDate);
+
+  if (activeRevFilter !== 'all') {
+    if (activeRevFilter === 'due') data = data.filter(e => e.revisionDate && e.revisionDate <= today && !e.done);
+    else data = data.filter(e => (e.revStatus||'Not Started') === activeRevFilter);
+  }
+
+  const tbody = document.getElementById('revision-tbody');
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(26,26,46,0.4);padding:40px">No revision entries yet. Add revision dates when creating entries.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map(e => {
+    const idx = entries.indexOf(e);
+    const status = e.revStatus || 'Not Started';
+    const statusClass = status.toLowerCase().replace(' ','-');
+    return `<tr>
+      <td style="font-weight:500;max-width:200px">${e.title}</td>
+      <td><span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':'case'}">${e.type}</span></td>
+      <td>${e.revisionDate||'—'}</td>
+      <td>${e.testDate||'—'}</td>
+      <td>
+        <select onchange="updateStatus(${idx}, this.value)" style="border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer">
+          ${['Not Started','In Progress','Revised','Tested'].map(s=>`<option ${s===status?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td style="text-align:center">
+        <input type="checkbox" ${e.done?'checked':''} onchange="toggleDone(${idx}, this.checked)" style="accent-color:var(--teal);width:16px;height:16px;cursor:pointer">
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function updateStatus(idx, val) {
+  entries[idx].revStatus = val;
+  await updateEntryInFirestore(entries[idx]._id, { revStatus: val });
+}
+
+async function toggleDone(idx, val) {
+  entries[idx].done = val;
+  await updateEntryInFirestore(entries[idx]._id, { done: val });
+  renderRevision();
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────
+// openAddModal defined below
+
+function openViewModal(idx) {
+  const e = entries[idx];
+  document.getElementById('modal-title').textContent = e.title;
+  document.getElementById('modal-body').innerHTML = viewEntry(e, idx);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(ev) {
+  if (ev.target === document.getElementById('modal-overlay')) {
+    if (hasUnsavedFormData()) {
+      if (!confirm('You have unsaved changes. Are you sure you want to close?')) return;
+    }
+    closeModalDirect();
+  }
+}
+
+function closeModalDirect() {
+  clearDraft();
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ── DRAFT AUTO-SAVE ───────────────────────────────────────────────────────
+const DRAFT_KEY = 'studyhub_form_draft';
+let draftTimer = null;
+
+function hasUnsavedFormData() {
+  const title = document.getElementById('f-title');
+  const summary = document.getElementById('f-summary');
+  const keypoints = document.getElementById('f-keypoints');
+  if (!title) return false;
+  return (title.value.trim() || (summary && summary.value.trim()) || (keypoints && keypoints.value.trim()));
+}
+
+function saveDraft() {
+  const title = document.getElementById('f-title');
+  if (!title) return;
+  const draft = {
+    title: title.value,
+    type: document.getElementById('f-type')?.value,
+    priority: document.getElementById('f-priority')?.value,
+    summary: document.getElementById('f-summary')?.value,
+    keypoints: document.getElementById('f-keypoints')?.value,
+    examples: document.getElementById('f-examples')?.value,
+    multithemeNotes: document.getElementById('f-multitheme-notes')?.value,
+    source: document.getElementById('f-source')?.value,
+    revisionDate: document.getElementById('f-revdate')?.value,
+    testDate: document.getElementById('f-testdate')?.value,
+    multiTheme: document.getElementById('f-multi')?.checked,
+    themes: [...document.querySelectorAll('.theme-checkbox:checked')].map(c => c.value),
+    savedAt: new Date().toISOString()
+  };
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  showDraftToast();
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+  if (draftTimer) { clearInterval(draftTimer); draftTimer = null; }
+}
+
+function showDraftToast() {
+  let toast = document.getElementById('draft-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'draft-toast';
+    toast.style.cssText = `
+      position:fixed;bottom:20px;right:20px;z-index:300;
+      background:var(--teal);color:white;
+      padding:8px 14px;border-radius:7px;font-size:11px;font-family:'DM Sans',sans-serif;
+      opacity:0;transition:opacity 0.3s;pointer-events:none;
+    `;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = '✓ Draft saved';
+  toast.style.opacity = '1';
+  setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+}
+
+function startDraftTimer() {
+  if (draftTimer) clearInterval(draftTimer);
+  draftTimer = setInterval(saveDraft, 30000);
+}
+
+function loadDraftIfExists(prefill) {
+  if (prefill) return; // editing existing entry, don't load draft
+  const raw = localStorage.getItem(DRAFT_KEY);
+  if (!raw) return;
+  try {
+    const draft = JSON.parse(raw);
+    const savedAt = new Date(draft.savedAt);
+    const minsAgo = Math.floor((Date.now() - savedAt) / 60000);
+    if (minsAgo > 60) { clearDraft(); return; } // draft older than 1hr, discard
+    if (!confirm(`You have an unsaved draft from ${minsAgo} min ago. Restore it?`)) { clearDraft(); return; }
+    // restore values
+    setTimeout(() => {
+      if (document.getElementById('f-title')) document.getElementById('f-title').value = draft.title || '';
+      if (document.getElementById('f-type') && draft.type) document.getElementById('f-type').value = draft.type;
+      if (document.getElementById('f-priority') && draft.priority) document.getElementById('f-priority').value = draft.priority;
+      if (document.getElementById('f-summary')) document.getElementById('f-summary').value = draft.summary || '';
+      if (document.getElementById('f-keypoints')) document.getElementById('f-keypoints').value = draft.keypoints || '';
+      if (document.getElementById('f-examples')) document.getElementById('f-examples').value = draft.examples || '';
+      if (document.getElementById('f-multitheme-notes')) document.getElementById('f-multitheme-notes').value = draft.multithemeNotes || '';
+      if (document.getElementById('f-source')) document.getElementById('f-source').value = draft.source || '';
+      if (document.getElementById('f-revdate')) document.getElementById('f-revdate').value = draft.revisionDate || '';
+      if (document.getElementById('f-testdate')) document.getElementById('f-testdate').value = draft.testDate || '';
+      if (document.getElementById('f-multi')) document.getElementById('f-multi').checked = draft.multiTheme || false;
+      (draft.themes || []).forEach(t => {
+        const cb = document.getElementById('tc-' + t.replace(/[^a-z0-9]/gi,'_'));
+        if (cb) cb.checked = true;
+      });
+    }, 50);
+  } catch(e) { clearDraft(); }
+}
+
+function addForm(prefill) {
+  const p = prefill || {};
+  return `<div class="form-grid">
+    <div class="form-group full">
+      <div class="form-label">Title *</div>
+      <input class="form-input" id="f-title" placeholder="Enter title…" value="${p.title||''}">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Type *</div>
+      <select class="form-select" id="f-type">
+        ${['PYQ','Current Affairs','Concept','Case Study'].map(t=>`<option ${(p.type||'PYQ')===t?'selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Priority</div>
+      <select class="form-select" id="f-priority">
+        ${['High','Medium','Low'].map(t=>`<option ${(p.priority||'Medium')===t?'selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group full">
+      <div class="form-label">One-line Summary</div>
+      <input class="form-input" id="f-summary" placeholder="Brief summary…" value="${p.summary||''}">
+    </div>
+    <div class="form-group full">
+      <div class="form-label">Key Points</div>
+      <textarea class="form-textarea" id="f-keypoints" placeholder="Add key points (one per line)…">${p.keypoints||''}</textarea>
+    </div>
+    <div class="form-group full">
+      <div class="form-label">Examples & Case Studies</div>
+      <textarea class="form-textarea" id="f-examples" placeholder="Real-world examples…">${p.examples||''}</textarea>
+    </div>
+    <div class="form-group full">
+      <div class="form-label">Multi-theme Applicability</div>
+      <textarea class="form-textarea" id="f-multitheme-notes" placeholder="How does this connect to other themes?">${p.multithemeNotes||''}</textarea>
+    </div>
+    <div class="form-group full">
+      <div class="form-label">Source / Link</div>
+      <input class="form-input" id="f-source" placeholder="https://…" value="${p.source||''}">
+    </div>
+    <div class="form-group full">
+      <div class="form-label">📎 Attach Media <span style="font-weight:300;color:rgba(26,26,46,0.4);font-size:10px">(images, PDFs, notes — stored locally)</span></div>
+      <div class="media-drop-zone" id="media-drop-zone"
+        ondragover="event.preventDefault();this.classList.add('dragover')"
+        ondragleave="this.classList.remove('dragover')"
+        ondrop="handleDrop(event)">
+        <input type="file" id="f-media-input" multiple accept="image/*,.pdf,.txt,.doc,.docx"
+          onchange="handleFileSelect(this.files)">
+        <div class="media-drop-label">
+          <span>📎</span>
+          Drag & drop or click to attach images / PDFs
+        </div>
+      </div>
+      <div class="media-previews" id="media-previews"></div>
+    </div>
+    <div class="form-group full">
+      <div class="form-label">Themes</div>
+      <input type="text" id="theme-search" class="form-input" placeholder="Search themes…" oninput="filterThemeChecks(this.value)" style="margin-bottom:8px">
+      <div class="theme-checkboxes" style="flex-direction:column;gap:10px" id="theme-checks-wrap">
+        ${THEME_CATEGORIES.map(cat=>`
+          <div style="width:100%">
+            <div style="font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:rgba(26,26,46,0.35);margin-bottom:5px">${cat.label}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px">
+              ${cat.themes.map(t=>`
+                <input type="checkbox" class="theme-checkbox" id="tc-${t.name.replace(/[^a-z0-9]/gi,'_')}" value="${t.name}" ${(p.themes||[]).includes(t.name)?'checked':''}>
+                <label class="theme-checkbox-label" for="tc-${t.name.replace(/[^a-z0-9]/gi,'_')}">${t.icon} ${t.name}</label>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Revision Date</div>
+      <input class="form-input" type="date" id="f-revdate" value="${p.revisionDate||''}">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Test Date</div>
+      <input class="form-input" type="date" id="f-testdate" value="${p.testDate||''}">
+    </div>
+    <div class="form-group full">
+      <div class="form-checkbox-row">
+        <input type="checkbox" id="f-multi" ${p.multiTheme?'checked':''}>
+        <label for="f-multi">🔀 Mark as Multi-theme Gem (applies to more than one theme)</label>
+      </div>
+    </div>
+    <div class="form-actions" style="grid-column:1/-1">
+      <button class="btn btn-ghost" onclick="closeModalDirect()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>`;
+}
+
+async function saveEntry(editIdx) {
+  const title = document.getElementById('f-title').value.trim();
+  if (!title) { alert('Please enter a title.'); return; }
+
+  const themes = [...document.querySelectorAll('.theme-checkbox:checked')].map(c => c.value);
+
+  const entry = {
+    title,
+    type: document.getElementById('f-type').value,
+    priority: document.getElementById('f-priority').value,
+    summary: document.getElementById('f-summary').value.trim(),
+    keypoints: document.getElementById('f-keypoints').value.trim(),
+    examples: document.getElementById('f-examples').value.trim(),
+    multithemeNotes: document.getElementById('f-multitheme-notes').value.trim(),
+    source: document.getElementById('f-source').value.trim(),
+    themes,
+    media: [],
+    revisionDate: document.getElementById('f-revdate').value,
+    testDate: document.getElementById('f-testdate').value,
+    multiTheme: document.getElementById('f-multi').checked,
+    dateAdded: new Date().toISOString().slice(0,10),
+    revStatus: 'Not Started',
+    done: false,
+  };
+
+  const saveBtn = document.querySelector('[onclick*="saveEntry"]');
+  if (saveBtn) { saveBtn.textContent = 'Saving…'; saveBtn.disabled = true; }
+
+  try {
+    if (editIdx !== undefined) {
+      const existing = entries[editIdx];
+      entry.revStatus = existing.revStatus;
+      entry.done = existing.done;
+      entry.dateAdded = existing.dateAdded;
+      await updateEntryInFirestore(existing._id, entry);
+    } else {
+      await addEntryToFirestore(entry);
+    }
+    clearDraft();
+    closeModalDirect();
+  } catch(err) {
+    console.error(err);
+    alert('Could not save. Check your internet connection.');
+    if (saveBtn) { saveBtn.textContent = 'Save Entry'; saveBtn.disabled = false; }
+  }
+}
+
+function viewEntry(e, idx) {
+  const kp = (e.keypoints||'').split('\n').filter(Boolean);
+  return `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+      <span class="entry-type-badge badge-${e.type==='PYQ'?'pyq':e.type==='Current Affairs'?'ca':e.type==='Concept'?'concept':'case'}">${e.type}</span>
+      <span class="entry-type-badge" style="background:var(--paper2);color:var(--ink2)">⭐ ${e.priority||'Medium'}</span>
+      ${e.multiTheme?`<span class="multi-badge">🔀 Multi-theme</span>`:''}
+      <span style="font-size:11px;color:rgba(26,26,46,0.4);align-self:center">Added ${e.dateAdded||''}</span>
+    </div>
+
+    ${e.themes.length ? `<div class="entry-themes" style="margin-bottom:18px">${e.themes.map(t=>`<span class="theme-pill">${t}</span>`).join('')}</div>` : ''}
+
+    ${e.summary ? `<div class="modal-section"><div class="modal-section-label">Summary</div><div class="modal-text">${e.summary}</div></div>` : ''}
+
+    ${kp.length ? `<div class="modal-section"><div class="modal-section-label">Key Points</div>
+      <ul class="modal-points">${kp.map(p=>`<li>${p}</li>`).join('')}</ul></div>` : ''}
+
+    ${e.examples ? `<div class="modal-section"><div class="modal-section-label">Examples & Case Studies</div><div class="modal-text" style="white-space:pre-line">${e.examples}</div></div>` : ''}
+
+    ${e.multithemeNotes ? `<div class="modal-section"><div class="modal-section-label">Multi-theme Applicability</div><div class="modal-text" style="white-space:pre-line">${e.multithemeNotes}</div></div>` : ''}
+
+    ${e.revisionDate||e.testDate ? `<div class="modal-section"><div class="modal-section-label">Revision & Test</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        ${e.revisionDate?`<span>📅 Revision: <strong>${e.revisionDate}</strong></span>`:''}
+        ${e.testDate?`<span>📝 Test: <strong>${e.testDate}</strong></span>`:''}
+      </div></div>` : ''}
+
+    ${e.source ? `<div class="modal-section"><div class="modal-section-label">Source</div>
+      <a class="source-link" href="${e.source}" target="_blank">🔗 ${e.source}</a></div>` : ''}
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+      <button class="btn btn-ghost" onclick="deleteEntry(${idx})">🗑 Delete</button>
+      <button class="btn btn-ghost" onclick="editEntry(${idx})">✏️ Edit</button>
+      <button class="btn btn-primary" onclick="closeModalDirect()">Done</button>
+    </div>`;
+}
+
+function editEntry(idx) {
+  const e = entries[idx];
+  pendingMedia = (e.media || []).slice();
+  document.getElementById('modal-title').textContent = 'Edit Entry';
+  document.getElementById('modal-body').innerHTML = addForm(e);
+  renderPreviews();
+  document.querySelector('.btn-primary[onclick="saveEntry()"]').setAttribute('onclick', `saveEntry(${idx})`);
+}
+
+async function deleteEntry(idx) {
+  if (confirm('Delete this entry?')) {
+    try {
+      await deleteEntryFromFirestore(entries[idx]._id);
+      closeModalDirect();
+    } catch(err) {
+      alert('Could not delete. Check your internet connection.');
+    }
+  }
+}
+
+
+// ── MEDIA ─────────────────────────────────────────────────────────────────
+let pendingMedia = [];
+
+function openAddModal() {
+  pendingMedia = [];
+  document.getElementById('modal-title').textContent = 'New Entry';
+  document.getElementById('modal-body').innerHTML = addForm();
+  document.getElementById('modal-overlay').classList.add('open');
+  loadDraftIfExists(null);
+  startDraftTimer();
+  document.getElementById('modal-body').addEventListener('input', saveDraft);
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('media-drop-zone').classList.remove('dragover');
+  handleFileSelect(e.dataTransfer.files);
+}
+
+function handleFileSelect(files) {
+  const MAX_FILE_KB = 500;
+  Array.from(files).forEach(file => {
+    if (file.size > MAX_FILE_KB * 1024) {
+      alert(`"${file.name}" is over ${MAX_FILE_KB}KB. Please compress images before attaching to save storage space.`);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const isImg = file.type.startsWith('image/');
+      const mediaObj = { name: file.name, type: isImg ? 'image' : 'file', data: ev.target.result, size: file.size };
+      pendingMedia.push(mediaObj);
+      renderPreviews();
+      updateStorageBar();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPreviews() {
+  const wrap = document.getElementById('media-previews');
+  if (!wrap) return;
+  wrap.innerHTML = pendingMedia.map((m, i) =>
+    m.type === 'image'
+      ? `<div class="media-thumb">
+           <img src="${m.data}" alt="${m.name}" title="${m.name}" onclick="openLightbox('${m.data}')">
+           <button class="media-remove" onclick="removeMedia(${i})">✕</button>
+         </div>`
+      : `<div class="media-thumb-label">
+           <span class="file-icon">${m.name.endsWith('.pdf')?'📄':'📎'}</span>
+           <span>${m.name.length>10?m.name.slice(0,9)+'…':m.name}</span>
+           <button class="media-remove" style="position:static;margin-top:3px;background:var(--border);color:var(--ink)" onclick="removeMedia(${i})">✕</button>
+         </div>`
+  ).join('');
+}
+
+function removeMedia(i) {
+  pendingMedia.splice(i, 1);
+  renderPreviews();
+  updateStorageBar();
+}
+
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('img-lightbox').classList.add('open');
+}
+
+// ── STORAGE BAR ───────────────────────────────────────────────────────────
+function updateStorageBar() {
+  try {
+    const count = entries.length;
+    const fill = document.getElementById('storage-fill');
+    const label = document.getElementById('storage-label');
+    if (!fill || !label) return;
+    label.textContent = `${count} entries`;
+    // Show fill based on entries (500 entry soft limit for free Firestore)
+    const pct = Math.min((count / 500) * 100, 100).toFixed(1);
+    fill.style.width = pct + '%';
+    fill.style.background = pct > 80 ? '#c84b31' : pct > 50 ? '#e8a020' : '#2a7f6f';
+  } catch(e) {}
+}
+
+// ── BACKUP & RESTORE ──────────────────────────────────────────────────────
+function exportBackup() {
+  const data = { version: 1, exported: new Date().toISOString(), entries };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'studyhub-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  localStorage.setItem('studyhub_last_backup', Date.now().toString());
+  updateStorageBar();
+}
+
+function importBackup() {
+  document.getElementById('import-file').click();
+}
+
+async function handleImport(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const imported = data.entries || data;
+      if (!Array.isArray(imported)) throw new Error('Invalid format');
+      if (!confirm(`This will ADD ${imported.length} entries from the backup to your database. Continue?`)) return;
+      let count = 0;
+      for (const entry of imported) {
+        const clean = { ...entry };
+        delete clean._id;
+        await addEntryToFirestore(clean);
+        count++;
+      }
+      alert(`✅ Imported ${count} entries successfully!`);
+    } catch(err) {
+      alert('Could not read backup file. Make sure it is a valid StudyHub JSON backup.');
+    }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+}
+
+function exportCSV() {
+  const headers = ['Title','Type','Priority','Summary','Key Points','Examples','Multi-theme Notes','Themes','Multi-theme','Revision Date','Test Date','Status','Done','Date Added','Source'];
+  const rows = entries.map(e => [
+    e.title,
+    e.type,
+    e.priority||'',
+    e.summary||'',
+    e.keypoints||'',
+    e.examples||'',
+    e.multithemeNotes||'',
+    (e.themes||[]).join('; '),
+    e.multiTheme?'Yes':'No',
+    e.revisionDate||'',
+    e.testDate||'',
+    e.revStatus||'',
+    e.done?'Yes':'No',
+    e.dateAdded||'',
+    e.source||''
+  ].map(v => '"' + String(v).replace(/"/g,'""') + '"'));
+  const csv = [headers.join(','), ...rows.map(r=>r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'studyhub-notion-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  localStorage.setItem('studyhub_last_backup', Date.now().toString());
+  updateStorageBar();
+}
+
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+// Wait for Firebase to be ready, then init
+if (window._dbReady) {
+  initFirebase();
+} else {
+  window.addEventListener('firebase-ready', initFirebase);
+}
+
+renderEntries();
+renderSidebarThemes();
+updateStorageBar();
+
+// ── LAST BACKUP LABEL ────────────────────────────────────────────────────
+function updateLastBackupLabel() {
+  const lbl = document.getElementById('last-backup-label');
+  if (!lbl) return;
+  const lastBackup = localStorage.getItem('studyhub_last_backup');
+  if (!lastBackup) { lbl.textContent = 'Cloud sync: active ☁️'; lbl.style.color = 'rgba(42,127,111,0.8)'; return; }
+  const days = Math.floor((Date.now() - parseInt(lastBackup)) / 86400000);
+  if (days === 0) { lbl.textContent = 'Last CSV export: today ✓'; lbl.style.color = 'rgba(42,127,111,0.8)'; }
+  else { lbl.textContent = `Last CSV export: ${days} day${days>1?'s':''} ago`; lbl.style.color = 'rgba(245,240,232,0.35)'; }
+}
+updateLastBackupLabel();
+
+// ── SUNDAY BACKUP BANNER ─────────────────────────────────────────────────
+(function() {
+  const isSunday = new Date().getDay() === 0;
+  const lastBackup = localStorage.getItem('studyhub_last_backup');
+  const daysSince = lastBackup ? Math.floor((Date.now() - parseInt(lastBackup)) / 86400000) : 999;
+  const dismissed = localStorage.getItem('studyhub_banner_dismissed');
+  const dismissedToday = dismissed && new Date(parseInt(dismissed)).toDateString() === new Date().toDateString();
+
+  if ((isSunday || daysSince >= 7) && !dismissedToday) {
+    setTimeout(() => {
+      const banner = document.createElement('div');
+      banner.id = 'backup-banner';
+      banner.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+        background: #c84b31; color: white;
+        padding: 10px 20px;
+        display: flex; align-items: center; justify-content: space-between;
+        font-family: 'DM Sans', sans-serif; font-size: 13px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      `;
+      const msg = isSunday
+        ? "📅 It's Sunday — time for your weekly Notion backup! Export CSV → import to Notion → save JSON to Drive."
+        : `⚠️ You haven't backed up in ${daysSince} days. Export your data now.`;
+      banner.innerHTML = `
+        <span>${msg}</span>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button onclick="exportCSV();document.getElementById('backup-banner').remove();"
+            style="background:white;color:#c84b31;border:none;padding:5px 12px;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;">
+            → Export to Notion
+          </button>
+          <button onclick="exportBackup();document.getElementById('backup-banner').remove();"
+            style="background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);padding:5px 12px;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;">
+            ⬇ JSON Backup
+          </button>
+          <button onclick="localStorage.setItem('studyhub_banner_dismissed',Date.now());document.getElementById('backup-banner').remove();"
+            style="background:transparent;color:rgba(255,255,255,0.7);border:none;font-size:18px;cursor:pointer;line-height:1;">✕</button>
+        </div>
+      `;
+      document.body.prepend(banner);
+    }, 1000);
+  }
+})();
+</script>
+
+<div class="img-lightbox" id="img-lightbox" onclick="this.classList.remove('open')">
+  <img id="lightbox-img" src="" alt="Media preview">
+</div>
+</body>
+</html>
