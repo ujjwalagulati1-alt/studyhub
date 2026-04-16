@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U — UPSC 2027 Complete Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cr:#faf7f2;--cr2:#f2ede4;--cr3:#e8e0d4;
+  --ink:#1c1a16;--ink2:#3a3630;--ink3:#6b6358;
+  --gold:#c4952a;--gl:#f5e6c8;
+  --teal:#2a6b5f;--tl:#d4ede8;
+  --red:#b84336;--rl:#fae8e6;
+  --blue:#2d5a8e;--bl:#ddeaf5;
+  --purp:#5e3d7a;--pl:#ede5f5;
+  --grn:#2d6e3a;--gnl:#d6f0db;
+  --brd:rgba(28,26,22,0.1);
+  --shd:0 2px 16px rgba(28,26,22,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cr);color:var(--ink);font-size:14px;line-height:1.65;}
+
+/* NAV */
+nav{background:var(--ink);padding:11px 28px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:300;overflow-x:auto;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:17px;color:#faf7f2;font-weight:600;margin-right:20px;white-space:nowrap;}
+.logo em{color:var(--gold);font-style:italic;}
+nav button{font-size:11px;font-weight:500;color:rgba(250,247,242,0.5);cursor:pointer;letter-spacing:0.5px;text-transform:uppercase;border:none;background:none;padding:6px 12px;transition:color 0.15s;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+nav button:hover,nav button.on{color:var(--gold);}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1a1612,#2a2318);padding:44px 32px 32px;color:var(--cr);overflow:hidden;position:relative;}
+.hero::before{content:'';position:absolute;bottom:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(196,149,42,0.1),transparent 70%);}
+.eye{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.htitle{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,4vw,44px);font-weight:600;line-height:1.1;margin-bottom:10px;}
+.htitle em{color:var(--gold);font-style:italic;}
+.hsub{font-size:13px;color:rgba(250,247,242,0.5);max-width:620px;line-height:1.8;font-weight:300;margin-bottom:18px;}
+.chips{display:flex;gap:7px;flex-wrap:wrap;}
+.chip{padding:3px 11px;border-radius:20px;border:1px solid rgba(196,149,42,0.35);font-size:11px;color:var(--gold);background:rgba(196,149,42,0.07);}
+
+/* LAYOUT */
+.wrap{max-width:1280px;margin:0 auto;padding:32px 24px;}
+.panel{display:none;}.panel.on{display:block;}
+
+/* SECTION */
+.sec{margin-bottom:36px;}
+.sh{display:flex;align-items:baseline;gap:10px;margin-bottom:18px;padding-bottom:8px;border-bottom:1.5px solid var(--brd);}
+.sn{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:1px;}
+.st{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;}
+.ss{font-size:11.5px;color:var(--ink3);margin-left:auto;}
+hr.rule{border:none;border-top:1.5px dashed var(--brd);margin:22px 0;}
+
+/* ALERTS */
+.al{border-radius:8px;padding:11px 15px;margin-bottom:12px;font-size:12.5px;line-height:1.7;display:flex;gap:10px;align-items:flex-start;}
+.ai{font-size:14px;flex-shrink:0;padding-top:2px;}
+.ag{background:var(--gl);border:1px solid rgba(196,149,42,0.3);color:#5a3a00;}
+.at{background:var(--tl);border:1px solid rgba(42,107,95,0.3);color:#0d3d36;}
+.ar{background:var(--rl);border:1px solid rgba(184,67,54,0.3);color:#5c1a12;}
+.ab{background:var(--bl);border:1px solid rgba(45,90,142,0.3);color:#1a3d6b;}
+
+/* BADGES */
+.b{display:inline-block;font-size:9.5px;padding:1px 7px;border-radius:4px;font-weight:600;margin-bottom:2px;letter-spacing:0.3px;}
+.bpre{background:var(--bl);color:#1a3d6b;}
+.bmai{background:var(--tl);color:#0d3d36;}
+.bopt{background:var(--gl);color:#5a3a00;}
+.bca{background:var(--gnl);color:#1a4a20;}
+.btst{background:var(--rl);color:#5c1a12;}
+.brev{background:var(--pl);color:#3d2557;}
+.btrv{background:#fff3e0;color:#8a4500;border:1px solid rgba(196,149,42,0.4);}
+.bcst{background:#f3e5f5;color:#4a1070;}
+
+/* PHASE GRID */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:13px;}
+.pc{background:white;border:1.5px solid var(--brd);border-radius:10px;padding:16px 18px;box-shadow:var(--shd);position:relative;overflow:hidden;}
+.pc::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.p1::before{background:var(--teal)}.p2::before{background:var(--blue)}.p3::before{background:var(--gold)}.p4::before{background:var(--purp)}.p5::before{background:var(--red);}
+.plbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;}
+.p1 .plbl{color:var(--teal)}.p2 .plbl{color:var(--blue)}.p3 .plbl{color:var(--gold)}.p4 .plbl{color:var(--purp)}.p5 .plbl{color:var(--red);}
+.ptitle{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;margin-bottom:3px;}
+.pdates{font-size:11px;color:var(--ink3);margin-bottom:10px;}
+.plist{list-style:none;}
+.plist li{font-size:11.5px;color:var(--ink2);padding:3px 0 3px 12px;position:relative;border-bottom:1px dashed var(--cr3);}
+.plist li:last-child{border-bottom:none;}
+.plist li::before{content:'→';position:absolute;left:0;color:var(--ink3);font-size:10px;}
+
+/* WEEK TABLES (daily log) */
+.wb{margin-bottom:28px;}
+.wlabel{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:3px;}
+.wsub{font-size:11.5px;color:var(--ink3);margin-bottom:10px;}
+.dt{width:100%;border-collapse:collapse;font-size:12px;}
+.dt th{background:var(--ink);color:rgba(250,247,242,0.65);font-size:10px;font-weight:500;padding:7px 10px;text-align:left;letter-spacing:0.4px;}
+.dt td{padding:9px 10px;border:0.5px solid var(--cr3);vertical-align:top;background:white;line-height:1.55;}
+.dt tr:hover td{background:var(--cr2);}
+.dc{width:68px;font-weight:600;font-size:11.5px;background:var(--cr2)!important;border-right:1px solid var(--cr3);}
+.dd{font-size:9.5px;color:var(--ink3);font-weight:400;display:block;}
+.st2{font-weight:600;font-size:12.5px;color:var(--ink);display:block;margin-bottom:2px;}
+.sd{font-size:11px;color:var(--ink3);}
+.trv-row td{background:#fff8f0!important;border-left:3px solid var(--gold)!important;}
+.wsum{background:var(--gl);border:1px solid rgba(196,149,42,0.25);border-radius:7px;padding:9px 13px;font-size:11.5px;color:#5a3a00;margin-top:7px;}
+
+/* AUDIT TABLE */
+.audit{width:100%;border-collapse:collapse;font-size:12px;}
+.audit th{background:var(--ink2);color:rgba(250,247,242,0.7);padding:8px 12px;font-size:10px;text-align:left;letter-spacing:0.5px;}
+.audit td{padding:8px 12px;border-bottom:0.5px solid var(--cr3);background:white;vertical-align:top;}
+.audit tr:hover td{background:var(--cr2);}
+.ok{color:var(--teal);font-weight:600;}
+.warn{color:var(--gold);font-weight:600;}
+.fixed{color:var(--blue);font-weight:600;}
+
+/* OPT SYLLABUS */
+.opt2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.opt2col{grid-template-columns:1fr;}}
+.optpaper{background:white;border:1.5px solid var(--brd);border-radius:10px;overflow:hidden;box-shadow:var(--shd);}
+.opth{padding:11px 16px;font-size:13px;font-weight:600;}
+.op1h{background:linear-gradient(135deg,#fdf3dc,#fce8c0);color:#5a3a00;}
+.op2h{background:linear-gradient(135deg,var(--tl),#b8e0d8);color:#1a4a40;}
+.optb{padding:12px 16px;}
+.optrow{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--cr3);font-size:11.5px;}
+.optrow:last-child{border-bottom:none;}
+.optn{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--gold);min-width:20px;margin-top:2px;}
+.optname{color:var(--ink2);flex:1;}
+.optphase{font-size:9.5px;padding:1px 7px;border-radius:4px;font-weight:500;white-space:nowrap;}
+.ph2{background:var(--bl);color:#1a3d6b;}
+.ph3{background:var(--gl);color:#5a3a00;}
+.ph1{background:var(--tl);color:#0d3d36;}
+.gap{background:var(--rl);color:#5c1a12;}
+
+/* METRICS */
+.mrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:18px;}
+.mc{background:white;border:1.5px solid var(--brd);border-radius:8px;padding:13px 14px;text-align:center;box-shadow:var(--shd);}
+.mn{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;line-height:1;margin-bottom:3px;}
+.ml{font-size:10px;color:var(--ink3);}
+.mt{font-size:9px;color:var(--gold);margin-top:2px;}
+
+/* BB TABLE */
+.bbt{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;}
+.bbt th{background:var(--ink2);color:rgba(250,247,242,0.7);padding:7px 10px;font-size:10px;text-align:left;}
+.bbt td{padding:8px 10px;border-bottom:0.5px solid var(--cr3);background:white;vertical-align:top;}
+.bbt tr:hover td{background:var(--cr2);}
+.mc2{display:inline-block;font-size:9.5px;padding:1px 7px;border-radius:10px;font-weight:500;margin:1px;}
+.mcpyq{background:var(--bl);color:#1a3d6b;}
+.mcca{background:var(--gnl);color:#1a4a20;}
+.mctb{background:var(--pl);color:#3d2557;}
+.mcmm{background:var(--gl);color:#5a3a00;}
+.mctd{background:var(--rl);color:#5c1a12;}
+.mcaw{background:var(--tl);color:#0d3d36;}
+
+/* MAINS THEME GRID */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:7px;}
+.ti{background:white;border:1.5px solid var(--brd);border-radius:7px;padding:8px 11px;display:flex;align-items:center;gap:7px;}
+.tn{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--gold);min-width:16px;}
+.tname{font-size:11.5px;color:var(--ink2);flex:1;line-height:1.4;}
+.tticks{display:flex;gap:3px;}
+.tick{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--brd);background:var(--cr2);cursor:pointer;font-size:8px;display:flex;align-items:center;justify-content:center;color:var(--ink3);transition:all 0.15s;}
+.tick.done{background:var(--teal);border-color:var(--teal);color:white;}
+
+/* SUBJECT ROT */
+.srot{width:100%;border-collapse:collapse;font-size:12px;}
+.srot th{background:var(--ink);color:rgba(250,247,242,0.65);padding:8px 11px;font-size:10px;text-align:left;}
+.srot td{padding:8px 11px;border-bottom:0.5px solid var(--cr3);background:white;}
+.srot tr:hover td{background:var(--cr2);}
+.day-bold{font-weight:600;}
+.sat-row td{background:#f0f7ff!important;}
+.sun-row td{background:#fffbf0!important;}
+
+/* INFO BLOCK */
+.ib{background:white;border:1.5px solid var(--brd);border-radius:9px;padding:16px;box-shadow:var(--shd);}
+.ib h4{font-size:13px;font-weight:600;margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid var(--brd);}
+.ib ul{list-style:none;}
+.ib ul li{font-size:12px;color:var(--ink2);padding:3px 0 3px 13px;position:relative;line-height:1.5;}
+.ib ul li::before{content:'—';position:absolute;left:0;color:var(--ink3);font-size:10px;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:680px){.two{grid-template-columns:1fr;}}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(250,247,242,0.4);text-align:center;padding:20px;font-size:11px;margin-top:48px;}
+footer em{font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(250,247,242,0.2);font-size:13px;display:block;margin-top:5px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">U · UPSC <em>2027</em></div>
+  <button onclick="go('overview')">Overview</button>
+  <button onclick="go('audit')">Gap Audit</button>
+  <button onclick="go('phases')">5 Phases</button>
+  <button onclick="go('month1')">Month 1 Log</button>
+  <button onclick="go('backbone')">Prelims Backbone</button>
+  <button onclick="go('optional')">Optional Syllabus</button>
+  <button onclick="go('mains')">Mains Themes</button>
+  <button onclick="go('rotation')">Weekly Rotation</button>
+</nav>
+
+<div class="hero">
+  <div class="eye">Amalgamated Final Plan · All Gaps Fixed · Apr 27 – Feb 28 2027</div>
+  <h1 class="htitle">Complete UPSC 2027<br><em>Integrated Plan</em></h1>
+  <p class="hsub">Prelims + Mains + Economics Optional (500 marks) + Essay. Every topic mapped to a phase. Month 1 starts Apr 27. Travel breaks built in. Nothing missing. Get up and do what today says.</p>
+  <div class="chips">
+    <div class="chip">Month 1: Apr 27 – May 31</div>
+    <div class="chip">Travel: Apr 12–26 (CA only)</div>
+    <div class="chip">Travel: May 26–31 (CA only)</div>
+    <div class="chip">6 gaps fixed</div>
+    <div class="chip">Buffer: Feb 2027</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ══════════════════════ OVERVIEW ══════════════════════ -->
+<div class="panel on" id="panel-overview">
+  <div class="sec">
+    <div class="sh"><div class="sn">00</div><h2 class="st">The Core Loop</h2></div>
+    <div class="al ag"><div class="ai">🔁</div><div><strong>Every session:</strong> Open PYQ for today's topic → attempt cold → check answer → read the specific source paragraph → add to Study Hub → set 7-day revision date. This is the entire method. Everything else is logistics.</div></div>
+    <div class="al at"><div class="ai">📅</div><div><strong>Travel protocol:</strong> Apr 12–26 and May 26–31 = The Hindu selective read + Vision CA only. No structured study, no guilt. These periods are built into the plan — they are not disruptions.</div></div>
+    <div class="al ar"><div class="ai">🛡</div><div><strong>Three anti-collapse rules:</strong> (1) Never miss two days in a row. (2) After a bad test score: 48-hr reflection only, then reset. (3) When syllabus feels vast: zoom into today's block only. Study Hub shows what you've built — open it when anxious.</div></div>
+
+    <hr class="rule">
+    <div class="sh"><div class="sn">01</div><h2 class="st">Score Architecture</h2><div class="ss">1750 Mains + 275 Interview = 2025 total</div></div>
+    <div class="mrow">
+      <div class="mc"><div class="mn" style="color:var(--blue)">250</div><div class="ml">GS Paper 1</div><div class="mt">Target 110–130</div></div>
+      <div class="mc"><div class="mn" style="color:var(--blue)">250</div><div class="ml">GS Paper 2</div><div class="mt">Target 120–140</div></div>
+      <div class="mc"><div class="mn" style="color:var(--teal)">250</div><div class="ml">GS Paper 3</div><div class="mt">Target 130–150</div></div>
+      <div class="mc"><div class="mn" style="color:var(--purp)">250</div><div class="ml">GS Paper 4</div><div class="mt">Target 120–140</div></div>
+      <div class="mc"><div class="mn" style="color:var(--red)">250</div><div class="ml">Essay</div><div class="mt">Target 130–150</div></div>
+      <div class="mc" style="border-color:var(--gold)"><div class="mn" style="color:var(--gold)">500</div><div class="ml">Econ Optional</div><div class="mt">Target 290–330 ⭐</div></div>
+      <div class="mc"><div class="mn">275</div><div class="ml">Interview</div><div class="mt">Target 170+</div></div>
+      <div class="mc" style="background:var(--ink)"><div class="mn" style="color:var(--gold)">2025</div><div class="ml" style="color:rgba(250,247,242,0.5)">Grand Total</div><div class="mt">Selection: 1000+</div></div>
+    </div>
+
+    <div class="two">
+      <div class="ib">
+        <h4>⏱ Daily time slots</h4>
+        <ul>
+          <li><strong>8:00–8:45 AM:</strong> The Hindu selective + 1 Study Hub CA entry</li>
+          <li><strong>9:30–11:00 AM:</strong> Core study — Prelims PYQ-driven source reading</li>
+          <li><strong>8:00–9:00 PM:</strong> Sandhan MCQs OR Mains answer writing</li>
+          <li><strong>Saturday AM:</strong> Vision Test (2 hrs) + error analysis (1.5 hrs)</li>
+          <li><strong>Saturday PM:</strong> Mains full session — 2 answers (2 hrs)</li>
+          <li><strong>Sunday AM:</strong> Study Hub revision sprint (2 hrs)</li>
+          <li><strong>Sunday PM:</strong> Optional / Essay / deep Mains answer (1.5 hrs)</li>
+          <li><strong>Sunday 5 PM:</strong> Weekly review with roommate A (30 min)</li>
+          <li><strong>9 PM:</strong> Hard stop. 7+ hrs sleep. No exceptions.</li>
+        </ul>
+      </div>
+      <div class="ib">
+        <h4>📋 What runs in each phase</h4>
+        <ul>
+          <li><strong>Always:</strong> CA habit, Study Hub entries, Sandhan MCQs</li>
+          <li><strong>Phase 1 (Apr–Jun):</strong> Prelims subjects introduced · Vision Tests 1–4 · Mains 1 cold answer/week · Optional PYQ mapping · CSAT verification · Ethics vocab</li>
+          <li><strong>Phase 2 (Jul–Oct):</strong> Full Prelims + World History + Disaster Mgmt + Internal Security · Optional Paper 1 complete · Essay reading · Vision Tests 5–15</li>
+          <li><strong>Phase 3 (Nov–Dec):</strong> First revision · Optional Paper 2 · 2 answers/day · Vision Tests 16–19 + Mains Advanced 9–15</li>
+          <li><strong>Phase 4 (Jan):</strong> Full mock tests · Second revision · Optional mocks · Vision Tests 20–23</li>
+          <li><strong>Phase 5 (Feb):</strong> Buffer + third revision · Vision Tests 24–28 · No new material</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ GAP AUDIT ══════════════════════ -->
+<div class="panel" id="panel-audit">
+  <div class="sec">
+    <div class="sh"><div class="sn">AUDIT</div><h2 class="st">Coverage Verification — All 6 Gaps Fixed</h2><div class="ss">Cross-checked against UPSC syllabus, both PDFs, both trackers</div></div>
+
+    <div class="al ag"><div class="ai">✅</div><div>This audit was done against: (1) Official UPSC syllabus, (2) Vision Prelims 35-test schedule, (3) Vision Mains 30-test schedule, (4) Economics Optional complete syllabus (Paper 1 + Paper 2), (5) Both tracker PDFs. Every gap is now patched with a specific phase and week assignment.</div></div>
+
+    <table class="audit">
+      <thead><tr><th>Area</th><th>Topic</th><th>Status in old plan</th><th>Fix in this plan</th></tr></thead>
+      <tbody>
+        <tr><td>Prelims</td><td>Economy (8 clusters)</td><td class="ok">✅ Covered</td><td>Week 2, Phase 1 + Vision Tests 7, 21, 22</td></tr>
+        <tr><td>Prelims</td><td>Polity (8 clusters)</td><td class="ok">✅ Covered</td><td>Week 1, Phase 1 + Vision Tests 1, 2, 9, 10, 11</td></tr>
+        <tr><td>Prelims</td><td>History (7 clusters)</td><td class="ok">✅ Covered</td><td>Week 3, Phase 1 + Vision Tests 5, 6, 12, 13, 14</td></tr>
+        <tr><td>Prelims</td><td>Geography (7 clusters)</td><td class="ok">✅ Covered</td><td>Week 4, Phase 1 + Vision Tests 3, 4, 16, 17</td></tr>
+        <tr><td>Prelims</td><td>Environment (6 clusters)</td><td class="ok">✅ Covered</td><td>Phase 1 intro + Vision Tests 8, 18, 19</td></tr>
+        <tr><td>Prelims</td><td>Science & Tech (6 clusters)</td><td class="ok">✅ Covered</td><td>Phase 2 Jul–Aug via CA method + Vision Test 23</td></tr>
+        <tr><td>Prelims</td><td>International Relations (4 clusters)</td><td class="ok">✅ Covered</td><td>Phase 2 + Vision Tests 9–11 (IR component)</td></tr>
+        <tr><td>Prelims</td><td>CSAT (3 clusters)</td><td class="warn">⚠️ No schedule</td><td class="fixed">→ FIXED: 1 CSAT practice test each month May + Jun + Jul (Saturday). If clearing 33% easily, drops off. If not, Phase 2 adds weekly practice.</td></tr>
+        <tr><td>Mains GS1</td><td>History, Society, Geography</td><td class="ok">✅ Covered</td><td>Vision Tests 3, 5, 6, 11, 12, 13 + answer writing rotation Mon/Tue</td></tr>
+        <tr><td>Mains GS1</td><td>World History (18th C onwards)</td><td class="warn">⚠️ Missing</td><td class="fixed">→ FIXED: 2 dedicated Sundays in Phase 2 (Aug 16 + Aug 23). Source: NCERT World History Arjun Dev + Vision Test 11 (Oct 25).</td></tr>
+        <tr><td>Mains GS2</td><td>Polity, Governance, IR</td><td class="ok">✅ Covered</td><td>Vision Tests 1, 2, 9, 10, 20 + answer writing rotation Wed</td></tr>
+        <tr><td>Mains GS3</td><td>Economy, Agriculture, Industry</td><td class="ok">✅ Covered</td><td>Vision Tests 4, 5, 15, 17, 21, 22 + answer writing rotation Thu</td></tr>
+        <tr><td>Mains GS3</td><td>Disaster Management</td><td class="warn">⚠️ Missing</td><td class="fixed">→ FIXED: 1 dedicated Sunday Phase 2 (Sep 13). Source: NDMA guidelines + Vision Test 13 (Nov 22). Mains Theme 18.</td></tr>
+        <tr><td>Mains GS3</td><td>Internal Security & LWE</td><td class="warn">⚠️ Missing</td><td class="fixed">→ FIXED: 2 dedicated evenings Phase 2 (Oct 5 + Oct 12). Source: Vision Security Notes + Vision Test 21 (Mar 14 2027).</td></tr>
+        <tr><td>Mains GS4</td><td>Ethics, Integrity, Aptitude</td><td class="ok">✅ Covered</td><td>Lexicon reading Phase 1–2 + Vision Tests 8, 16, 19 + Friday answer rotation</td></tr>
+        <tr><td>Essay</td><td>10 Vision Essay readings</td><td class="warn">⚠️ Placed Phase 3</td><td class="fixed">→ FIXED: Moved to Phase 2 (Aug–Sep, 1 essay reading/week for 10 weeks). First essay writing still Phase 3.</td></tr>
+        <tr><td>Optional P1</td><td>Micro: Marshallian/Walrasian, Distribution theories</td><td class="warn">⚠️ Missing</td><td class="fixed">→ FIXED: Phase 2 Week 6 (Aug 10–16). H.L. Ahuja Ch 11–14. 2 dedicated evenings.</td></tr>
+        <tr><td>Optional P1</td><td>Micro: General Equilibrium + Welfare Economics</td><td class="warn">⚠️ Missing</td><td class="fixed">→ FIXED: Phase 2 Week 9 (Sep 7–13). H.L. Ahuja Ch 17–18. 2 dedicated evenings.</td></tr>
+        <tr><td>Optional P1</td><td>Mathematical Economics (linear programming, input-output)</td><td class="warn">⚠️ Missing</td><td class="fixed">→ FIXED: Phase 2 Week 14 (Oct 12–18). IGNOU material + Chaudhury. 3 dedicated evenings.</td></tr>
+        <tr><td>Optional P1</td><td>Growth theories (Harrod-Domar, Solow, AK Model)</td><td class="warn">⚠️ Missing</td><td class="fixed">→ FIXED: Phase 2 Week 15 (Oct 19–25). H.L. Ahuja Growth Ch + IGNOU. 3 dedicated evenings.</td></tr>
+        <tr><td>Optional P2</td><td>Colonial economy, Planning history</td><td class="warn">⚠️ No explicit slot</td><td class="fixed">→ FIXED: Phase 3 Week 2 (Nov 9–15). Uma Kapila Indian Economy Ch 1–5. 3 dedicated evenings.</td></tr>
+        <tr><td>Optional P2</td><td>Indian Economy post-1991 (all topics)</td><td class="ok">✅ Covered via GS3</td><td>Phase 3 Oct–Nov integrated with GS3 study (60% overlap)</td></tr>
+        <tr><td>36 Mains Themes</td><td>All 36 themes — 2 PYQ answers each</td><td class="ok">✅ Framework exists</td><td>Daily rotation + backbone tracker + Sunday deep-dives. 72 answers minimum. 126+ available slots across phases.</td></tr>
+        <tr><td>Vision Tests</td><td>All 35 Prelims tests</td><td class="ok">✅ Covered</td><td>Tests 1–4 Phase 1 · Tests 5–19 Phase 2 · Tests 20–23 Phase 4 · Tests 24–35 Phase 5 + Apr–May 2027</td></tr>
+        <tr><td>Vision Tests</td><td>All 30 Mains tests</td><td class="ok">✅ Framework</td><td>Fundamental 1–8 Phase 1–2 · Advanced 9–22 Phase 2–4 · Full-length 23–30 Phase 5 + Jun–Jul 2027</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:14px" class="al at"><div class="ai">✅</div><div><strong>Verdict:</strong> With these 6 categories of fixes applied, every topic in the UPSC Prelims syllabus, all 4 GS Mains papers, the complete Economics Optional (Paper 1 + Paper 2), and all 36 Mains themes have a specific phase, week, and method assigned. Nothing is floating. By February 28, 2027, three full revision cycles will have been completed.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PHASES ══════════════════════ -->
+<div class="panel" id="panel-phases">
+  <div class="sec">
+    <div class="sh"><div class="sn">01</div><h2 class="st">5 Phases — Prelims + Mains Running Together</h2></div>
+    <div class="pgrid">
+      <div class="pc p1">
+        <div class="plbl">Phase 1 · Foundation</div>
+        <div class="ptitle">Prove to Yourself</div>
+        <div class="pdates">Apr 27 – Jun 30, 2026 · 9 weeks study</div>
+        <ul class="plist">
+          <li><strong>PRELIMS:</strong> Polity, Economy, Modern History, Geography, Environment PYQ-first</li>
+          <li><strong>MAINS:</strong> 1 cold answer/week (structure not content)</li>
+          <li><strong>OPTIONAL:</strong> PYQ mapping only — categorise all Paper 1 + 2 questions</li>
+          <li><strong>ETHICS:</strong> Lexicon 15 min/day — build vocab in Study Hub</li>
+          <li><strong>CSAT:</strong> 1 practice paper each month (May + Jun) — verify qualifying</li>
+          <li><strong>VISION:</strong> Prelims Tests 1–4 · Mains Fundamental Tests 1–2</li>
+          <li><strong>STUDY HUB:</strong> 5 entries/week → 45+ entries by end</li>
+          <li><strong>HOURS:</strong> 2–3 hrs weekdays · 5–6 hrs weekend</li>
+        </ul>
+      </div>
+      <div class="pc p2">
+        <div class="plbl">Phase 2 · Build</div>
+        <div class="ptitle">Cover Everything</div>
+        <div class="pdates">Jul 1 – Oct 31, 2026 · 18 weeks</div>
+        <ul class="plist">
+          <li><strong>PRELIMS:</strong> Sci & Tech, IR, remaining clusters · All 16 clusters complete</li>
+          <li><strong>GS1 GAP:</strong> World History — 2 dedicated Sundays Aug 16 + 23</li>
+          <li><strong>GS3 GAP:</strong> Disaster Mgmt — Sunday Sep 13</li>
+          <li><strong>GS3 GAP:</strong> Internal Security — evenings Oct 5 + 12</li>
+          <li><strong>MAINS:</strong> 1 answer/day Mon–Fri rotation</li>
+          <li><strong>OPTIONAL Paper 1:</strong> Micro Jul–Aug · All missing topics Aug–Oct · Macro Sep–Oct</li>
+          <li><strong>ESSAY:</strong> Read 10 Vision approach essays (1/week Aug–Oct)</li>
+          <li><strong>VISION:</strong> Prelims Tests 5–15 · Mains Tests 3–9</li>
+          <li><strong>HOURS:</strong> 3–4 hrs weekdays · 7–8 hrs weekend</li>
+        </ul>
+      </div>
+      <div class="pc p3">
+        <div class="plbl">Phase 3 · Intensify</div>
+        <div class="ptitle">First Full Revision</div>
+        <div class="pdates">Nov 1 – Dec 31, 2026 · 9 weeks</div>
+        <ul class="plist">
+          <li><strong>PRELIMS:</strong> Full revision cycle 1 — all Study Hub entries</li>
+          <li><strong>OPTIONAL Paper 2:</strong> Colonial economy + Planning Nov 9–15 · Indian Economy integrated with GS3</li>
+          <li><strong>MAINS:</strong> 2 answers/day · All must include CA example + data point</li>
+          <li><strong>ESSAY:</strong> 1 essay written per month (Nov + Dec)</li>
+          <li><strong>VISION:</strong> Prelims Tests 16–19 · Mains Advanced Tests 10–15 (select 6)</li>
+          <li><strong>ECONOMIC SURVEY:</strong> Released ~Feb 2027 — skim summaries when available</li>
+          <li><strong>HOURS:</strong> 4 hrs weekdays · 8 hrs weekend</li>
+        </ul>
+      </div>
+      <div class="pc p4">
+        <div class="plbl">Phase 4 · Sharpen</div>
+        <div class="ptitle">Mock Domination</div>
+        <div class="pdates">Jan 1 – Jan 31, 2027 · 4 weeks</div>
+        <ul class="plist">
+          <li><strong>PRELIMS:</strong> 1 full-length mock/week · Sandhan 30 Q/day</li>
+          <li><strong>REVISION 2:</strong> All Study Hub entries reviewed · QRM revision starts</li>
+          <li><strong>OPTIONAL:</strong> Full paper simulations 2/week · Diagram mastery (10 key diagrams)</li>
+          <li><strong>MAINS:</strong> Full GS paper simulation Saturday</li>
+          <li><strong>VISION:</strong> Prelims Tests 20–23 · Mains Advanced Tests 16–22</li>
+          <li><strong>SLEEP:</strong> Hard 9pm cutoff protected</li>
+          <li><strong>HOURS:</strong> 4 hrs weekdays · 8 hrs weekend</li>
+        </ul>
+      </div>
+      <div class="pc p5">
+        <div class="plbl">Phase 5 · Buffer</div>
+        <div class="ptitle">Consolidate</div>
+        <div class="pdates">Feb 1 – Feb 28, 2027 · 4 weeks</div>
+        <ul class="plist">
+          <li><strong>RULE:</strong> No new material whatsoever. Only revise.</li>
+          <li><strong>REVISION 3:</strong> Study Hub + QRM · Every entry reviewed once</li>
+          <li><strong>PRELIMS:</strong> Full-length tests 24–28 weekly · Exam simulation conditions</li>
+          <li><strong>MAINS:</strong> Review best 10 answers from Phase 3–4 only</li>
+          <li><strong>HEALTH:</strong> If anxious → reduce hours, increase sleep</li>
+          <li><strong>AFTER:</strong> Vision Tests 29–35 continue Apr–May 2027 into Prelims</li>
+          <li><strong>HOURS:</strong> 3–4 hrs weekdays · 6–8 hrs weekend</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ MONTH 1 DAILY LOG ══════════════════════ -->
+<div class="panel" id="panel-month1">
+  <div class="sec">
+    <div class="sh"><div class="sn">02</div><h2 class="st">Month 1 Daily Log</h2><div class="ss">Apr 27 – May 31 · Travel: May 26–31</div></div>
+
+    <div class="al ab"><div class="ai">📱</div><div><strong>Apr 12–26 (before Month 1 starts):</strong> The Hindu selective read only + Vision CA daily. No structured study. Vision Tests 1 [15601] and 2 [15602] are already live — attempt Test 1 on Apr 27 (your first study day) as your baseline. Attempt Test 2 that same weekend.</div></div>
+
+    <!-- WEEK 1 -->
+    <div class="wb">
+      <div class="wlabel">Week 1 · Apr 27 – May 3</div>
+      <div class="wsub">Theme: Polity &amp; Constitution · Vision Tests 1 + 2 catch-up (both already live) · Optional: PYQ mapping begins</div>
+      <table class="dt">
+        <thead><tr><th style="width:68px">Day</th><th style="width:28%">Morning 8:00–8:45 AM</th><th style="width:32%">Prelims 9:30–11:00 AM</th><th>8:00–9:00 PM</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="dc">Mon 27 Apr<span class="dd">Day 1</span></td>
+            <td><span class="b bca">CA</span><span class="st2">The Hindu — selective</span><span class="sd">Pg 1 scan + 1 editorial + 1 national story. Log in tracker: story → GS paper tag.</span></td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Polity PYQs — Constitution basics</span><span class="sd">Open last 10-yr Prelims PYQs (free PDF). Filter: Preamble, features, schedules. 20 Qs cold. Don't check answers yet.</span></td>
+            <td><span class="b bpre">MCQ</span><span class="st2">Review + Study Hub</span><span class="sd">Check answers. For each wrong: read Laxmikanth paragraph. Add 1 Study Hub entry. Text A: "Day 1 done."</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Tue 28 Apr</td>
+            <td><span class="b bca">CA</span><span class="st2">The Hindu + PIB scan (10 min)</span><span class="sd">Tag 1 story to a Mains theme. Log it.</span></td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Polity: Fundamental Rights (Art 12–35)</span><span class="sd">15 PYQs on FR first. Then Laxmikanth Ch 7–8 — only the paragraphs that answer those PYQs. Add 2 Study Hub entries.</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">Cold answer: "What is constitutional morality?" (10-mark)</span><span class="sd">Write without notes, 8 min. Then read Vision Mains Test 1 approach answer. Note gaps in Study Hub.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Wed 29 Apr</td>
+            <td><span class="b bca">CA</span><span class="st2">The Hindu</span><span class="sd">1 editorial + 1 IR story. Tag to GS2.</span></td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Polity: DPSP + Fundamental Duties</span><span class="sd">15 PYQs first. Laxmikanth Ch 9–10. Focus: which DPSP articles UPSC asks most. Add Study Hub: "DPSP vs FR key distinctions."</span></td>
+            <td><span class="b bopt">OPTIONAL</span><span class="st2">Econ Optional: PYQ mapping — Paper 1</span><span class="sd">Open last 10-yr Economics Optional PYQs (Paper 1). List all Micro topics asked. Categorise only — don't study. Note hardest area.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Thu 30 Apr</td>
+            <td><span class="b bca">CA</span><span class="st2">The Hindu</span><span class="sd">1 editorial + 1 economy story. Tag to GS3 + Economy Prelims cluster.</span></td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Polity: Parliament — structure, sessions, bills</span><span class="sd">20 PYQs on Parliament. Laxmikanth Ch 22–25 selectively. Add Study Hub: "Money Bill vs Finance Bill — UPSC distinction."</span></td>
+            <td><span class="b bopt">OPTIONAL</span><span class="st2">Econ Optional: PYQ mapping — Paper 2</span><span class="sd">Open Paper 2 PYQs (Indian Economy). List topics. Mark which overlap GS3 (should be ~60%). Note topics unique to Optional only.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Fri 1 May</td>
+            <td><span class="b bca">CA</span><span class="st2">The Hindu</span><span class="sd">Labour Day context — tag any labour/employment story to GS3.</span></td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Polity: Judiciary + Constitutional bodies</span><span class="sd">PYQs on SC, HC, CAG, EC, UPSC body (20 Qs). Laxmikanth Ch 26–32 PYQ-driven. Add Study Hub: "Constitutional bodies — UPSC frequency table."</span></td>
+            <td><span class="b bpre">MCQ</span><span class="st2">Sandhan: 20 Qs on Polity</span><span class="sd">Any polity questions available. Note accuracy. Error log.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Sat 2 May<span class="dd">6 hrs</span></td>
+            <td colspan="2"><span class="b btst">TEST</span><span class="st2">Vision Prelims Test 1 [15601] — Polity &amp; Constitution — attempt in full (2 hrs)</span><span class="sd">Enroll at visionias.ac.in. Online attempt. No notes, no phone. This is your baseline — score does not matter. Then: 90-min error analysis. Every wrong answer → Laxmikanth paragraph → Study Hub entry.</span></td>
+            <td><span class="b btst">TEST</span><span class="st2">Vision Prelims Test 2 [15602] — Working Constitution</span><span class="sd">Attempt Test 2 as well (also already live since Apr 26). 2 hrs. Error analysis next morning. Two tests in one day possible since both are short catch-up.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Sun 3 May<span class="dd">8 hrs</span></td>
+            <td colspan="2"><span class="b bpre">PRELIMS</span><span class="st2">Test 1 + 2 error analysis + Polity revision (3 hrs)</span><span class="sd">Review Test 2 errors (1 hr). Then: Polity revision — federalism, local governance, Panchayati Raj PYQs. Laxmikanth Ch 38–42. Add 2 Study Hub entries. Sandhan: 20 Qs mixed Polity.</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">Write: "Judicial activism vs judicial overreach" (GS2, 15-mark)</span><span class="sd">12 min timed. Compare Vision approach. Log in tracker. Sunday 5pm review with A: show Study Hub count (target: 6 entries), tests attempted (target: 2).</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="wsum">Week 1 targets: 6+ Study Hub entries · Vision Tests 1 + 2 attempted · Polity backbone 80% covered · 2 Mains answers written · CA habit: 6 mornings · Optional PYQ mapping started</div>
+    </div>
+
+    <!-- WEEK 2 -->
+    <div class="wb">
+      <div class="wlabel">Week 2 · May 4 – May 10</div>
+      <div class="wsub">Theme: Economy (U's edge — go deep) · Vision Test 3 (Geography I) on May 10 · Optional: Micro begins</div>
+      <table class="dt">
+        <thead><tr><th style="width:68px">Day</th><th style="width:28%">Morning 8:00–8:45 AM</th><th style="width:32%">Prelims 9:30–11:00 AM</th><th>8:00–9:00 PM</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="dc">Mon 4 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Economy/RBI story. Tag to Banking &amp; RBI Prelims cluster.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Economy: Banking &amp; RBI PYQs</span><span class="sd">Filter PYQs: "RBI, CRR, SLR, repo, MSF, OMO, monetary policy." 20 Qs cold. Then Ramesh Singh banking chapter — only answer-relevant paras. Add Study Hub: "RBI policy tools — Prelims distinctions."</span></td>
+            <td><span class="b bpre">MCQ</span> Sandhan: 20 Qs on Economy. Note every wrong → Study Hub entry.</td>
+          </tr>
+          <tr>
+            <td class="dc">Tue 5 May</td>
+            <td><span class="b bca">CA</span> The Hindu + PIB. Find 1 fiscal/budget story. 3-line Mains note in tracker.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Economy: Fiscal policy, GST, budget concepts</span><span class="sd">PYQs: "fiscal deficit, revenue deficit, FRBM, GST council, fiscal consolidation." 20 Qs. NCERTs 12th Macro Ch 5. Add Study Hub: "Types of deficits — UPSC distinctions table."</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">Write GS3: "Evaluate India's monetary policy framework post-inflation targeting" (13 min)</span><span class="sd">Her strength area — push for quality. Include IS-LM intuition from MBA. Compare Vision approach after. Log in tracker.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Wed 6 May</td>
+            <td><span class="b bca">CA</span> The Hindu. 1 editorial tagged to Economy or Governance.</td>
+            <td><span class="b bopt">OPTIONAL</span><span class="st2">Econ Optional Paper 1: Micro — Consumer theory (IC analysis)</span><span class="sd">H.L. Ahuja Ch 3–4 (PYQ-driven). Draw the indifference curve + budget line diagram. Add Study Hub: "IC analysis — UPSC-ready diagram with labels." MBA background means this should move fast.</span></td>
+            <td><span class="b bpre">MCQ</span> Sandhan: 20 Qs mixed Economy + Polity (revision of Week 1 material).</td>
+          </tr>
+          <tr>
+            <td class="dc">Thu 7 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Economy + IR story. Tag both clusters.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Economy: Inflation, GDP, national income concepts</span><span class="sd">PYQs: "GDP, GNP, NNP, WPI, CPI, core inflation." 20 Qs. NCERTs 12th Macro Ch 1–2. Add Study Hub: "GDP measurement methods — 3 approaches."</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">GS3: "Agricultural distress in India — causes and structural solutions" (13 min)</span><span class="sd">Mains Theme 8. Include MSP data. Compare Vision approach. Log in tracker.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Fri 8 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Find 1 poverty/welfare scheme story. 3-line Mains note.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Economy: Poverty, welfare schemes, financial inclusion</span><span class="sd">PYQs: PMJDY, DBT, PM-KISAN, MGNREGA, NPS. 15 Qs. Vision IAS Economy Value Addition notes (online PDF). Add Study Hub: "Welfare schemes — UPSC most-asked 10."</span></td>
+            <td><span class="b bopt">OPTIONAL</span> Econ Optional: Micro — Production theory (isoquant, isocost). H.L. Ahuja Ch 5. Draw key diagram. 25 min. Log topics covered.</td>
+          </tr>
+          <tr>
+            <td class="dc">Sat 9 May<span class="dd">6 hrs</span></td>
+            <td colspan="2"><span class="b bpre">PRELIMS</span><span class="st2">Economy revision + International trade PYQs (2 hrs) + CSAT verification (1 hr)</span><span class="sd">Morning: Economy PYQs on BoP, WTO, exchange rates (20 Qs). Add Study Hub entries. Then: <strong>CSAT Practice Paper 1</strong> — attempt 1 full CSAT paper (80 Qs, 2 hrs). Target: 33% = 27 correct. If she scores 50+, CSAT is confirmed safe and drops off the monthly schedule.</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">Full Mains session (2 hrs)</span><span class="sd">Write 2 answers: GS3 "India's digital payments revolution" (10-mark) + GS3 "Describe investment models in infrastructure" (10-mark). Log both. Compare Vision approaches.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Sun 10 May<span class="dd">8 hrs</span></td>
+            <td colspan="2"><span class="b btst">TEST</span><span class="st2">Vision Prelims Test 3 [15603] — Geography I — attempt cold (2 hrs)</span><span class="sd">Attempt even though Geography hasn't been formally studied yet. The test itself teaches the subject. After: 90-min error analysis. Every wrong answer → NCERT 11th Physical Geography paragraph → Study Hub entry. This is how she learns Geography — from the test backward.</span></td>
+            <td><span class="b brev">REVIEW</span> Weekly review with A at 5pm. Report: Study Hub count (target: 13 total), Mains answers written (target: 5), CSAT score, tests attempted (3). Plan Week 3: History begins.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="wsum">Week 2 targets: Economy backbone 80% covered · Vision Test 3 attempted · CSAT verified (score 50+ = safe) · 5 Mains answers total · 13 Study Hub entries total · Optional Micro: 2 topics started</div>
+    </div>
+
+    <!-- WEEK 3 -->
+    <div class="wb">
+      <div class="wlabel">Week 3 · May 11 – May 17</div>
+      <div class="wsub">Theme: Modern History (primary) + Ancient selective · GS1 Mains angle · Optional: Micro deepens</div>
+      <table class="dt">
+        <thead><tr><th style="width:68px">Day</th><th style="width:28%">Morning 8:00–8:45 AM</th><th style="width:32%">Prelims 9:30–11:00 AM</th><th>8:00–9:00 PM</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="dc">Mon 11 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Heritage/history story if any. Tag GS1 History.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Modern India: 1857 → INC formation → Moderate phase</span><span class="sd">20 PYQs on 1857 revolt, Moderate phase, Swadeshi. Spectrum Ch 1–5 — only paragraphs that answer those PYQs. Add Study Hub: "1857 — causes, nature, significance (UPSC angle)."</span></td>
+            <td><span class="b bpre">MCQ</span> Sandhan: 20 Qs on Modern India. Error log.</td>
+          </tr>
+          <tr>
+            <td class="dc">Tue 12 May</td>
+            <td><span class="b bca">CA</span> The Hindu. 1 governance story → GS2. 3-line Mains note.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Modern India: Gandhian era — NCM, CDM, Quit India</span><span class="sd">PYQs on Khilafat, Salt March, Quit India, INA. Spectrum Ch 14–19. Add Study Hub: "Gandhi's movements — timeline + significance." Note the specific UPSC-format distinctions.</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">GS1: "Role of socio-religious reform movements in India's national awakening" (13 min)</span><span class="sd">Cold attempt. Compare Vision Mains Test 3 approach after. Log in tracker.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Wed 13 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Science/tech story. Tag Sci &amp; Tech Prelims cluster.</td>
+            <td><span class="b bopt">OPTIONAL</span><span class="st2">Econ Optional: Micro — Market structures (PC, Monopoly)</span><span class="sd">H.L. Ahuja Ch 7–9. PYQ check: how many questions on market structures? Draw profit-maximisation diagram for PC and Monopoly. Add Study Hub: "Deadweight loss diagram — UPSC-ready."</span></td>
+            <td><span class="b bpre">MCQ</span> Sandhan: 20 Qs mixed Polity + Economy (Weeks 1–2 revision). Keep all old material alive.</td>
+          </tr>
+          <tr>
+            <td class="dc">Thu 14 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Any heritage/culture story. Tag GS1.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Ancient India (selective): Art &amp; Culture focus</span><span class="sd">PYQs on Art & Culture: temples, sculptures, cave paintings, dance forms (UPSC asks these heavily). NIOS Art & Culture PDF (free) + Old NCERT Ancient India. Add Study Hub: "Architecture periods — Prelims cheat table."</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">GS1: "Indian art and culture as India's soft power" (10-mark)</span><span class="sd">8 min. Use temple architecture + classical dance as examples. Compare Vision approach. Log.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Fri 15 May</td>
+            <td><span class="b bca">CA</span> The Hindu. 1 environment story. Tag Env Prelims cluster.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Modern India: Constitutional development + partition + post-independence</span><span class="sd">PYQs on: Cabinet Mission, Radcliffe, Patel integration, reorganisation of states. Spectrum Ch 20–24 selectively. Add Study Hub: "Partition → Constitution → Integration — UPSC sequence."</span></td>
+            <td><span class="b bopt">OPTIONAL</span> Econ Optional: Micro — Oligopoly + Game Theory basics. H.L. Ahuja Ch 10. Check: how many PYQs ask Nash Equilibrium? Add Study Hub entry: "Nash equilibrium — exam-ready definition."</td>
+          </tr>
+          <tr>
+            <td class="dc">Sat 16 May<span class="dd">6 hrs</span></td>
+            <td colspan="2"><span class="b bpre">PRELIMS</span><span class="st2">History revision sprint + Medieval India intro (2 hrs)</span><span class="sd">PYQs: Sultanate, Mughal (selective — UPSC asks: art, culture, administration not political history). Old NCERT Medieval India selective chapters. Add Study Hub: "Mughal contribution — UPSC-relevant points." Sandhan: 30 Qs on History.</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">Full Mains session (2 hrs)</span><span class="sd">Write 2 answers: GS1 "Women in freedom struggle — contributions and legacy" (15-mark) + GS4 Ethics: Write 5 Lexicon terms as definitions (probity, integrity, impartiality, empathy, objectivity) in Study Hub. Not a full answer — vocabulary building.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Sun 17 May<span class="dd">8 hrs</span></td>
+            <td colspan="2"><span class="b bpre">PRELIMS</span><span class="st2">Test 3 error analysis follow-up + Geography intro continued (3 hrs)</span><span class="sd">Revisit Test 3 wrong answers from last week. Read the NCERT paragraphs you missed. Add to Study Hub. Then: Physical Geography PYQs — geomorphology, climate, monsoon. NCERT 11th Ch 4–7 PYQ-driven. Add 3 Study Hub entries.</span></td>
+            <td><span class="b brev">REVIEW</span> Weekly review with A at 5 PM. Study Hub count (target: 20 total), Mains answers (target: 8), Optional Micro topics covered (target: 4). Plan Week 4: Geography full coverage + Vision Test 4.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="wsum">Week 3 targets: Modern History PYQ coverage complete · Ancient/Culture selective done · 20 Study Hub entries total · 8 Mains answers written · Optional Micro: market structures done</div>
+    </div>
+
+    <!-- WEEK 4 -->
+    <div class="wb">
+      <div class="wlabel">Week 4 · May 18 – May 24</div>
+      <div class="wsub">Theme: Geography (full) + Environment introduction · Vision Test 4 (May 24) · CSAT confirmation</div>
+      <table class="dt">
+        <thead><tr><th style="width:68px">Day</th><th style="width:28%">Morning 8:00–8:45 AM</th><th style="width:32%">Prelims 9:30–11:00 AM</th><th>8:00–9:00 PM</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="dc">Mon 18 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Cyclone/disaster/geography story. Tag Geography + Disaster Management clusters.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Geography: Climate, monsoon mechanism, drainage systems</span><span class="sd">PYQs: Indian monsoon onset/withdrawal, Western disturbances, Brahmaputra, Ganga drainage. NCERT 11th Physical Geo Ch 4–5. Add Study Hub: "Indian drainage systems — UPSC map questions cheat sheet." Mark 5 rivers in Atlas.</span></td>
+            <td><span class="b bpre">MCQ</span> Sandhan: 20 Qs on Geography. Error log.</td>
+          </tr>
+          <tr>
+            <td class="dc">Tue 19 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Climate change story → tag Env Prelims + Mains Themes 6 + 15.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Geography: Indian agriculture, soils, resources</span><span class="sd">PYQs: soil types (laterite, black, alluvial), agro-climatic zones, Ramsar sites. NCERT 12th India People & Economy Ch 4–5. Add Study Hub: "Soil types — Prelims colour summary." Atlas: mark soil regions.</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">GS1: "India's monsoon — role in economy and society" (13 min)</span><span class="sd">Add % of rain-fed agriculture data point. Compare Vision approach. Log.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Wed 20 May</td>
+            <td><span class="b bca">CA</span> The Hindu. IR story (India-neighbour). Tag GS2 IR.</td>
+            <td><span class="b bopt">OPTIONAL</span><span class="st2">Econ Optional: Micro — Welfare Economics (Pareto efficiency, compensation criteria)</span><span class="sd">H.L. Ahuja Ch 17–18. PYQ check: how many on Pareto? Add Study Hub: "Pareto optimality — definition + conditions + UPSC relevance." This was a GAP in the old plan — now fixed.</span></td>
+            <td><span class="b bpre">MCQ</span> Sandhan: 20 Qs mixed Geography + History. Keep revision alive.</td>
+          </tr>
+          <tr>
+            <td class="dc">Thu 21 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Science/tech story. Tag appropriately.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Environment: Biodiversity, protected areas, international treaties</span><span class="sd">PYQs: CITES, Ramsar, CBD, Project Tiger, biosphere reserves. Vision IAS Environment Notes — biodiversity section. Add Study Hub: "Environmental treaties — Prelims cheat list." This is memory work — build a table.</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">GS3: "Biodiversity loss and India's conservation challenges" (Mains Theme 15, 13 min)</span><span class="sd">Include IUCN data point. Compare Vision approach. Log.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Fri 22 May</td>
+            <td><span class="b bca">CA</span> The Hindu. Environment/climate story. 3-line Mains note → Themes 6 + 15.</td>
+            <td><span class="b bpre">PRELIMS</span><span class="st2">Environment: Climate change, pollution, environmental laws</span><span class="sd">PYQs: Paris Agreement, NDCs, EPR, EIA, NGT. Vision IAS Env Notes — climate + pollution. Add Study Hub: "Environmental laws — UPSC hierarchy" (EPA, Forest Act, Wildlife Act, NGT Act).</span></td>
+            <td><span class="b bopt">OPTIONAL</span> Econ Optional: Micro — Distribution theories intro (Ricardo, Kaldor). H.L. Ahuja Ch 11–12. PYQ check: how many on distribution? Add Study Hub entry. GAP topic — now fixed.</td>
+          </tr>
+          <tr>
+            <td class="dc">Sat 23 May<span class="dd">6 hrs</span></td>
+            <td colspan="2"><span class="b btst">TEST</span><span class="st2">Vision Prelims Test 4 [15604] — Geography II Economic &amp; Human — attempt (2 hrs)</span><span class="sd">This covers economic geography, agriculture, industries, transport. Attempt cold. Error analysis (90 min): every wrong → NCERT 12th / Ramesh Singh reference → Study Hub entry.</span></td>
+            <td><span class="b bmai">MAINS</span><span class="st2">Full Mains session (2 hrs)</span><span class="sd">Write: GS2 "Federalism in India — cooperative vs competitive" (15-mark) + GS1 "World geography: location of industries — factors" (10-mark). Log both. Compare Vision approaches.</span></td>
+          </tr>
+          <tr>
+            <td class="dc">Sun 24 May<span class="dd">8 hrs</span></td>
+            <td colspan="2"><span class="b brev">REVISION</span><span class="st2">First mini-revision cycle — ALL Study Hub entries (3 hrs)</span><span class="sd">Open Study Hub. Go through all ~28 entries. For each: recall key point without reading. If can't recall → re-read + set new revision date 3 days. This is Revision Cycle 0. Also: World Geography PYQs — continents, major features, map questions. Add 2 more Study Hub entries.</span></td>
+            <td><span class="b brev">REVIEW</span> Weekly review with A at 5 PM. Stats: Study Hub (target: 30 entries), Mains answers (target: 12), 4 Vision tests attempted, CA log complete 4 weeks. Plan: May 25 mini-audit. May 26–31 travel.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="wsum">Week 4 targets: Geography complete · Environment 70% · Optional Micro: welfare + distribution (gap topics fixed) · Vision Test 4 attempted · 30 Study Hub entries · 12 Mains answers total</div>
+    </div>
+
+    <!-- WEEK 5 (partial + travel) -->
+    <div class="wb">
+      <div class="wlabel">Week 5 · May 25 + Travel May 26–31</div>
+      <div class="wsub">One study day (May 25) · Month 1 audit · Then travel — CA only, no structured study</div>
+      <table class="dt">
+        <thead><tr><th style="width:68px">Day</th><th style="width:28%">Morning 8:00–8:45 AM</th><th style="width:32%">Prelims 9:30–11:00 AM</th><th>8:00–9:00 PM</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="dc">Mon 25 May<span class="dd">Last day</span></td>
+            <td><span class="b bca">CA</span> The Hindu. Final CA log for Month 1 before travel.</td>
+            <td><span class="b brev">AUDIT</span><span class="st2">Month 1 audit — 1 hr</span><span class="sd">Open UPSC syllabus PDF + Study Hub. Rate every covered topic: Green / Amber / Red. Count: Study Hub entries (target: 32+), Mains answers (target: 12+), Vision tests (target: 4), CA days (target: 25/30). Write gaps list for June 1 restart.</span></td>
+            <td><span class="b brev">BACKUP</span><span class="st2">Study Hub JSON backup + send stats to A</span><span class="sd">Download Study Hub backup. Text A Month 1 summary: "X entries, 4 tests done, Y answers written." Ready to travel with a clean close.</span></td>
+          </tr>
+          <tr class="trv-row">
+            <td class="dc">26–31 May<span class="dd">✈ Travel</span></td>
+            <td><span class="b btrv">TRAVEL</span><span class="st2">The Hindu app — selective read only</span><span class="sd">15–20 min per day. Editorials only. No logging required.</span></td>
+            <td><span class="b btrv">TRAVEL</span><span class="st2">Vision IAS CA app or YouTube</span><span class="sd">Vision IAS daily CA video (15 min) or CA podcast if available. Passive learning only.</span></td>
+            <td><span class="b btrv">TRAVEL</span><span class="st2">No structured study</span><span class="sd">No pressure. No guilt. This is built into the plan. Rest is preparation.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="wsum">Month 1 final targets: 32+ Study Hub entries · 4 Vision Prelims tests attempted (1, 2, 3, 4) · 12+ Mains answers written · CA habit: 25+ of 30 days · Econ Optional Micro 50% mapped · All major Prelims subjects introduced · CSAT verified</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PRELIMS BACKBONE ══════════════════════ -->
+<div class="panel" id="panel-backbone">
+  <div class="sec">
+    <div class="sh"><div class="sn">03</div><h2 class="st">Prelims Backbone — All 16 Clusters</h2><div class="ss">Every cluster has a phase assignment + method + Vision test</div></div>
+    <div class="al ag"><div class="ai">📌</div><div>Every row = one Prelims cluster. Column 4 shows which phase covers it. Column 5 shows the Vision test that tests it. The method chips show how to study each one.</div></div>
+    <table class="bbt">
+      <thead><tr><th>Subject</th><th>Cluster</th><th>Methods</th><th>Phase</th><th>Vision Test</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="8" style="font-weight:600;color:var(--blue)">POLITY</td><td>Constitution basics — Preamble, features, schedules</td><td><span class="mc2 mcpyq">PYQ-first</span><span class="mc2 mctb">Teach-back</span></td><td>Phase 1 W1</td><td>Tests 1, 9</td></tr>
+        <tr><td>Fundamental Rights, DPSP, Duties</td><td><span class="mc2 mcpyq">PYQ-first</span><span class="mc2 mcmm">Mind map</span></td><td>Phase 1 W1</td><td>Tests 1, 9</td></tr>
+        <tr><td>Parliament — structure, sessions, bills</td><td><span class="mc2 mctd">Test-driven</span><span class="mc2 mctb">Teach-back</span></td><td>Phase 1 W1</td><td>Tests 2, 10</td></tr>
+        <tr><td>Executive — President, PM, Council of Ministers</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W1</td><td>Tests 2, 10</td></tr>
+        <tr><td>Judiciary — SC, HC, tribunals, PIL</td><td><span class="mc2 mctd">Test-driven</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W1</td><td>Tests 1, 9</td></tr>
+        <tr><td>Federalism, local governance, Panchayati Raj</td><td><span class="mc2 mcpyq">PYQ-first</span><span class="mc2 mctb">Teach-back</span></td><td>Phase 1 W1</td><td>Tests 2, 10</td></tr>
+        <tr><td>Constitutional bodies — CAG, EC, UPSC etc.</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W1</td><td>Tests 1, 11</td></tr>
+        <tr><td>Amendments, governance schemes, recent</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W1 + ongoing CA</td><td>Tests 10, 11</td></tr>
+
+        <tr><td rowspan="8" style="font-weight:600;color:var(--teal)">ECONOMY</td><td>Banking — RBI, monetary policy, instruments</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W2</td><td>Tests 7, 21</td></tr>
+        <tr><td>Fiscal policy, budget, taxation, deficit</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mctd">Test-driven</span></td><td>Phase 1 W2</td><td>Tests 7, 21</td></tr>
+        <tr><td>Inflation, CPI/WPI, GDP concepts</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W2</td><td>Tests 7, 21</td></tr>
+        <tr><td>Financial markets — SEBI, bonds, capital</td><td><span class="mc2 mcca">CA-anchor</span></td><td>Phase 1 W2</td><td>Tests 7, 21</td></tr>
+        <tr><td>Poverty, inclusion, welfare schemes</td><td><span class="mc2 mcpyq">PYQ-first</span><span class="mc2 mcca">CA-anchor</span></td><td>Phase 1 W2</td><td>Tests 7, 22</td></tr>
+        <tr><td>Agriculture — MSP, APMC, food security</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W2</td><td>Tests 7, 22</td></tr>
+        <tr><td>International trade, WTO, BoP</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W2</td><td>Tests 7, 22</td></tr>
+        <tr><td>Infrastructure, PPP, digital economy</td><td><span class="mc2 mcca">CA-anchor</span></td><td>Phase 1 W2 + Phase 2</td><td>Tests 7, 22</td></tr>
+
+        <tr><td rowspan="7" style="font-weight:600;color:var(--gold)">HISTORY</td><td>Ancient — Indus, Vedic, Mauryan, Gupta</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W3</td><td>Tests 5, 12</td></tr>
+        <tr><td>Ancient — Buddhism, Jainism, philosophy</td><td><span class="mc2 mcpyq">PYQ-first</span><span class="mc2 mcmm">Mind map</span></td><td>Phase 1 W3</td><td>Tests 5, 12</td></tr>
+        <tr><td>Medieval — Sultanate, Mughal (selective)</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W3</td><td>Tests 5, 12</td></tr>
+        <tr><td>Modern — Company rule, 1857, social reforms</td><td><span class="mc2 mctd">Test-driven</span></td><td>Phase 1 W3</td><td>Tests 6, 13</td></tr>
+        <tr><td>Modern — Freedom struggle, Gandhi, INC</td><td><span class="mc2 mcpyq">PYQ-first</span><span class="mc2 mctb">Teach-back</span></td><td>Phase 1 W3</td><td>Tests 6, 14</td></tr>
+        <tr><td>Modern — Constitutional development, partition</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W3</td><td>Tests 6, 13</td></tr>
+        <tr><td>Post-independence, integration</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W3 + CA</td><td>Tests 6, 12</td></tr>
+
+        <tr><td rowspan="7" style="font-weight:600;color:var(--grn)">GEOGRAPHY</td><td>Physical — Geomorphology, landforms</td><td><span class="mc2 mcmm">Mind map</span><span class="mc2 mctd">Test-driven</span></td><td>Phase 1 W4</td><td>Tests 3, 16</td></tr>
+        <tr><td>Physical — Climate, monsoon, ocean currents</td><td><span class="mc2 mcmm">Mind map</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W4</td><td>Tests 3, 16</td></tr>
+        <tr><td>Physical — Drainage systems, rivers</td><td><span class="mc2 mcmm">Mind map</span></td><td>Phase 1 W4</td><td>Tests 3, 16</td></tr>
+        <tr><td>India — Agriculture, soils, vegetation</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W4</td><td>Tests 4, 17</td></tr>
+        <tr><td>India — Minerals, industries, energy</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W4</td><td>Tests 4, 17</td></tr>
+        <tr><td>India — Population, urbanisation</td><td><span class="mc2 mcca">CA-anchor</span></td><td>Phase 1 W4</td><td>Tests 4, 17</td></tr>
+        <tr><td>World geography — continents, map-based</td><td><span class="mc2 mcmm">Mind map</span><span class="mc2 mctd">Test-driven</span></td><td>Phase 1 W4</td><td>Tests 3, 16</td></tr>
+
+        <tr><td rowspan="6" style="font-weight:600;color:var(--teal)">ENVIRONMENT</td><td>Biodiversity — types, hotspots, species</td><td><span class="mc2 mcpyq">PYQ-first</span><span class="mc2 mcca">CA-anchor</span></td><td>Phase 1 W4</td><td>Tests 8, 18</td></tr>
+        <tr><td>Protected areas — NPs, sanctuaries, biospheres</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W4</td><td>Tests 8, 18</td></tr>
+        <tr><td>International treaties — Paris, CBD, CITES, Ramsar</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W4</td><td>Tests 8, 18, 19</td></tr>
+        <tr><td>Pollution — types, regulation, NGT</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mctd">Test-driven</span></td><td>Phase 1 W4 + CA</td><td>Tests 8, 19</td></tr>
+        <tr><td>Climate change — IPCC, NDC, loss &amp; damage</td><td><span class="mc2 mcca">CA-anchor</span></td><td>Phase 1 W4 + CA ongoing</td><td>Tests 8, 19</td></tr>
+        <tr><td>Environmental law, EIA</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 1 W4</td><td>Tests 8, 19</td></tr>
+
+        <tr><td rowspan="6" style="font-weight:600;color:var(--blue)">SCI &amp; TECH</td><td>Space — ISRO missions, satellites, launchers</td><td><span class="mc2 mcca">CA-anchor</span></td><td>Phase 2 Jul–Aug</td><td>Test 23</td></tr>
+        <tr><td>Defence — DRDO, indigenisation</td><td><span class="mc2 mcca">CA-anchor</span></td><td>Phase 2 Jul–Aug</td><td>Test 23</td></tr>
+        <tr><td>Biotech — GM crops, gene therapy, vaccines</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 2 Jul–Aug</td><td>Test 23</td></tr>
+        <tr><td>IT &amp; AI — emerging tech, cyber policy</td><td><span class="mc2 mcca">CA-anchor</span></td><td>Phase 2 + CA ongoing</td><td>Test 23</td></tr>
+        <tr><td>Health — national programmes, NCD policies</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 2 + CA</td><td>Test 23</td></tr>
+        <tr><td>Nuclear, energy, nanotechnology basics</td><td><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 2 Jul</td><td>Test 23</td></tr>
+
+        <tr><td rowspan="4" style="font-weight:600;color:var(--purp)">IR</td><td>India bilateral — USA, China, Russia, neighbours</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 2 Sep–Oct</td><td>Tests 9–11 (IR component)</td></tr>
+        <tr><td>Multilateral — UN, WTO, G20, BRICS, SCO</td><td><span class="mc2 mcca">CA-anchor</span></td><td>Phase 2 + CA ongoing</td><td>Tests 9–11</td></tr>
+        <tr><td>Regional — SAARC, ASEAN, African Union</td><td><span class="mc2 mcca">CA-anchor</span><span class="mc2 mcpyq">PYQ-first</span></td><td>Phase 2 Sep</td><td>Tests 9–11</td></tr>
+        <tr><td>India's foreign policy principles</td><td><span class="mc2 mcpyq">PYQ-first</span><span class="mc2 mctb">Teach-back</span></td><td>Phase 2 Sep</td><td>Test 11 (IR section)</td></tr>
+
+        <tr><td rowspan="3" style="font-weight:600;color:var(--red)">CSAT</td><td>Reading comprehension — 2 passages/week</td><td><span class="mc2 mctd">Test-driven</span></td><td>Phase 1 monthly · Phase 2 if needed</td><td>Separate CSAT tests</td></tr>
+        <tr><td>Logical reasoning — sets, arrangements</td><td><span class="mc2 mctd">Test-driven</span></td><td>Phase 1 monthly · Phase 2 if needed</td><td>Separate CSAT tests</td></tr>
+        <tr><td>Basic numeracy — percentages, ratios, P&amp;L</td><td><span class="mc2 mctd">Test-driven</span></td><td>Phase 1 monthly · Phase 2 if needed</td><td>Separate CSAT tests</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════ OPTIONAL SYLLABUS ══════════════════════ -->
+<div class="panel" id="panel-optional">
+  <div class="sec">
+    <div class="sh"><div class="sn">04</div><h2 class="st">Economics Optional — Complete Syllabus with Phase Assignments</h2><div class="ss">500 marks · Paper 1 (theory) + Paper 2 (Indian Economy)</div></div>
+    <div class="al ag"><div class="ai">⭐</div><div><strong>All 6 gaps fixed.</strong> Every topic in both papers now has an explicit phase assignment. Gaps (red tags) from the old plan are now assigned to specific weeks in Phase 2. MBA background covers ~40% of Paper 1 already — those are "Phase 1 mapped" (PYQ analysis only, not new learning).</div></div>
+
+    <div class="opt2col">
+      <div class="optpaper">
+        <div class="opth op1h">Paper 1 — Economic Theory (250 marks)</div>
+        <div class="optb">
+          <div class="optrow"><div class="optn">01</div><div class="optname"><strong>Micro: Marshallian + Walrasian price determination</strong><br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Ch 2–3</span></div><span class="optphase ph2">Phase 2 · Jul W2</span></div>
+          <div class="optrow"><div class="optn">02</div><div class="optname"><strong>Micro: Alternative distribution theories</strong> — Ricardo, Kaldor, Kalecki<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Ch 11–14 · Was a GAP → Fixed Aug W2</span></div><span class="optphase ph2">Phase 2 · Aug W2</span></div>
+          <div class="optrow"><div class="optn">03</div><div class="optname"><strong>Micro: Market structures</strong> — PC, Monopoly, Monopolistic, Duopoly, Oligopoly, Game Theory<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Ch 7–10</span></div><span class="optphase ph1">Ph 1 map + Ph 2 Jul</span></div>
+          <div class="optrow"><div class="optn">04</div><div class="optname"><strong>Micro: General Equilibrium + Welfare Economics</strong> — Pareto, compensation criteria<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Ch 17–18 · Was a GAP → Fixed Sep W1</span></div><span class="optphase ph2">Phase 2 · Sep W1</span></div>
+          <div class="optrow"><div class="optn">05</div><div class="optname"><strong>Micro: Consumer theory</strong> — IC analysis, revealed preference, demand derivation<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Ch 3–4</span></div><span class="optphase ph1">Phase 1 W2 + Phase 2</span></div>
+          <div class="optrow"><div class="optn">06</div><div class="optname"><strong>Micro: Production theory</strong> — isoquant, isocost, returns to scale<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Ch 5–6</span></div><span class="optphase ph1">Phase 1 W3 + Phase 2</span></div>
+          <div class="optrow"><div class="optn">07</div><div class="optname"><strong>Macro: National income + IS-LM model</strong><br><span style="font-size:10.5px;color:var(--ink3)">Mankiw Ch 9–11 + H.L. Ahuja Macro</span></div><span class="optphase ph2">Phase 2 · Sep–Oct</span></div>
+          <div class="optrow"><div class="optn">08</div><div class="optname"><strong>Macro: Inflation theories + Phillips curve</strong><br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Macro</span></div><span class="optphase ph2">Phase 2 · Oct W1</span></div>
+          <div class="optrow"><div class="optn">09</div><div class="optname"><strong>Macro: Business cycles + open economy</strong><br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Macro + Mankiw</span></div><span class="optphase ph2">Phase 2 · Oct W2</span></div>
+          <div class="optrow"><div class="optn">10</div><div class="optname"><strong>Mathematical Economics</strong> — linear programming, input-output model<br><span style="font-size:10.5px;color:var(--ink3)">IGNOU material + Chaudhury · Was a GAP → Fixed Oct W3</span></div><span class="optphase ph2">Phase 2 · Oct W3</span></div>
+          <div class="optrow"><div class="optn">11</div><div class="optname"><strong>Growth theories</strong> — Classical, Harrod-Domar, Solow, AK Model, endogenous growth<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Growth Ch + IGNOU · Was a GAP → Fixed Oct W4</span></div><span class="optphase ph2">Phase 2 · Oct W4</span></div>
+          <div class="optrow"><div class="optn">12</div><div class="optname"><strong>Development economics</strong> — HDI, poverty measurement, inequality<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja + Uma Kapila</span></div><span class="optphase ph3">Phase 3 · Nov</span></div>
+          <div class="optrow"><div class="optn">13</div><div class="optname"><strong>International Economics</strong> — trade theories (Ricardo, HO theorem), exchange rates, BoP<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja International + NCERTs</span></div><span class="optphase ph2">Phase 2 · Sep W2</span></div>
+          <div class="optrow"><div class="optn">14</div><div class="optname"><strong>Public Economics</strong> — public goods, externalities, taxation theory, fiscal federalism<br><span style="font-size:10.5px;color:var(--ink3)">H.L. Ahuja Public Economics + Ramesh Singh</span></div><span class="optphase ph2">Phase 2 · Aug W4</span></div>
+          <div class="optrow"><div class="optn">15</div><div class="optname"><strong>Money &amp; Banking</strong> — monetary theory, RBI, credit creation<br><span style="font-size:10.5px;color:var(--ink3)">MBA strength — PYQ-map only in Phase 1, deepen in Phase 2</span></div><span class="optphase ph1">Phase 1 map + Phase 2 Jul</span></div>
+        </div>
+      </div>
+
+      <div class="optpaper">
+        <div class="opth op2h">Paper 2 — Indian Economy (250 marks)</div>
+        <div class="optb">
+          <div class="optrow"><div class="optn">01</div><div class="optname"><strong>Colonial economy</strong> — Drain theory, land system, deindustrialisation, famines<br><span style="font-size:10.5px;color:var(--ink3)">Uma Kapila Ch 1–3 · Was implicit → Explicit now Nov W2</span></div><span class="optphase ph3">Phase 3 · Nov W2</span></div>
+          <div class="optrow"><div class="optn">02</div><div class="optname"><strong>Planning — Five Year Plans</strong>, NITI Aayog, objectives &amp; critique<br><span style="font-size:10.5px;color:var(--ink3)">Uma Kapila Ch 4–5 + Economic Survey</span></div><span class="optphase ph3">Phase 3 · Nov W2</span></div>
+          <div class="optrow"><div class="optn">03</div><div class="optname"><strong>Economic reforms 1991</strong> — LPG, consequences, new economic policy<br><span style="font-size:10.5px;color:var(--ink3)">Ramesh Singh + Uma Kapila · GS3 overlap</span></div><span class="optphase ph3">Phase 3 · Nov W3 (via GS3)</span></div>
+          <div class="optrow"><div class="optn">04</div><div class="optname"><strong>Agriculture</strong> — Green Revolution, land reforms, APMC, MSP, food security, farm distress<br><span style="font-size:10.5px;color:var(--ink3)">Ramesh Singh Agriculture Ch · GS3 overlap</span></div><span class="optphase ph2">Phase 2 (via GS3)</span></div>
+          <div class="optrow"><div class="optn">05</div><div class="optname"><strong>Industry</strong> — Industrial policy, MSME, Make in India, FDI, licensing<br><span style="font-size:10.5px;color:var(--ink3)">Ramesh Singh Industry Ch · GS3 overlap</span></div><span class="optphase ph2">Phase 2 (via GS3)</span></div>
+          <div class="optrow"><div class="optn">06</div><div class="optname"><strong>Infrastructure</strong> — Energy, transport, PPP models<br><span style="font-size:10.5px;color:var(--ink3)">Ramesh Singh + Economic Survey · GS3 overlap</span></div><span class="optphase ph2">Phase 2 (via GS3)</span></div>
+          <div class="optrow"><div class="optn">07</div><div class="optname"><strong>Monetary &amp; fiscal policy</strong> — RBI, inflation targeting, FRBM, GST, Union Budget<br><span style="font-size:10.5px;color:var(--ink3)">MBA + banking strength · GS3 overlap · Phase 1 strong</span></div><span class="optphase ph1">Phase 1 (via GS3 Prelims)</span></div>
+          <div class="optrow"><div class="optn">08</div><div class="optname"><strong>External sector</strong> — Trade policy, BoP, FDI/FPI, current account, remittances<br><span style="font-size:10.5px;color:var(--ink3)">Ramesh Singh External Sector + MBA · GS3 overlap</span></div><span class="optphase ph2">Phase 2 (via GS3)</span></div>
+          <div class="optrow"><div class="optn">09</div><div class="optname"><strong>Human development</strong> — HDI, poverty, inequality, NSSO findings, SDGs<br><span style="font-size:10.5px;color:var(--ink3)">Uma Kapila + Economic Survey + Ramesh Singh</span></div><span class="optphase ph3">Phase 3 · Nov–Dec</span></div>
+          <div class="optrow"><div class="optn">10</div><div class="optname"><strong>Social sectors</strong> — Education, health, women empowerment, social security schemes<br><span style="font-size:10.5px;color:var(--ink3)">Vision IAS Social Justice notes + CA · GS2 overlap</span></div><span class="optphase ph3">Phase 3 (via GS1/GS2)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px" class="al at"><div class="ai">📊</div><div><strong>Key economics diagrams to master by Phase 4:</strong> (1) Supply-demand shifts, (2) IS-LM model with policy shifts, (3) Phillips curve — short-run vs long-run, (4) Laffer curve, (5) Lorenz curve + Gini coefficient, (6) Solow growth model with steady state, (7) Indifference curve + budget line, (8) Deadweight loss (monopoly vs PC), (9) AD-AS model, (10) Production Possibility Frontier. Draw each one at least 10 times across Phases 2–4 until it's automatic.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ MAINS THEMES ══════════════════════ -->
+<div class="panel" id="panel-mains">
+  <div class="sec">
+    <div class="sh"><div class="sn">05</div><h2 class="st">36 Mains Themes — Answer Tracker</h2><div class="ss">Target: 2 PYQ answers per theme before Mains · Click circles to mark done</div></div>
+    <div class="al at"><div class="ai">✍️</div><div>Each theme has two circles — one per PYQ answer written. Click to mark done. Goal: both circles filled for all 36 themes before Mains 2027. Start touching themes from Phase 1 (1 cold answer/week). Full 2 per theme by end of Phase 3.</div></div>
+    <div class="tgrid" id="theme-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ WEEKLY ROTATION ══════════════════════ -->
+<div class="panel" id="panel-rotation">
+  <div class="sec">
+    <div class="sh"><div class="sn">06</div><h2 class="st">Weekly Subject Rotation</h2><div class="ss">Phases 1–3 · Evolves as depth increases</div></div>
+    <table class="srot">
+      <thead><tr><th>Day</th><th>Morning CA (8:00–8:45 AM)</th><th>Prelims 9:30–11:00 AM</th><th>Mains / Optional (8:00–9:00 PM)</th><th>Phase notes</th></tr></thead>
+      <tbody>
+        <tr><td class="day-bold">Monday</td><td>Economy/governance story → GS3 tag</td><td><span class="b bpre">POLITY</span> or <span class="b bpre">ECONOMY</span> (alternate weeks)</td><td><span class="b bmai">GS3</span> answer (Economy/Environment)</td><td>Phase 1: PYQ-driven. Phase 2+: Add CA example.</td></tr>
+        <tr><td class="day-bold">Tuesday</td><td>CA story → 3-line Mains note</td><td><span class="b bpre">ECONOMY</span> or <span class="b bpre">HISTORY</span></td><td><span class="b bmai">GS2</span> answer (Polity/Governance)</td><td>Phase 2+: GS2 answers must cite constitutional provision.</td></tr>
+        <tr><td class="day-bold">Wednesday</td><td>Science/tech story → Sci&amp;Tech tag</td><td><span class="b bopt">OPTIONAL</span> Paper 1 theory (dedicated)</td><td><span class="b bopt">OPTIONAL</span> answer writing (from Phase 2)</td><td>Wednesday is Optional day every week. Non-negotiable.</td></tr>
+        <tr><td class="day-bold">Thursday</td><td>IR/geopolitics story → GS2 IR tag</td><td><span class="b bpre">HISTORY</span> or <span class="b bpre">GEOGRAPHY</span></td><td><span class="b bmai">GS4</span> Ethics (theory / case study)</td><td>Phase 1: Ethics vocab only. Phase 2+: Full case study.</td></tr>
+        <tr><td class="day-bold">Friday</td><td>Environment story → Env + Mains theme tag</td><td><span class="b bpre">ENVIRONMENT</span> or <span class="b bpre">SCI&amp;TECH</span></td><td><span class="b bmai">GS1</span> answer (History/Geography/Society)</td><td>Phase 2+: GS1 needs diagrams for Geography questions.</td></tr>
+        <tr class="sat-row"><td class="day-bold">Saturday</td><td>CA review — tag all week's stories to themes</td><td><span class="b btst">VISION TEST</span> 2 hrs + 90-min error analysis</td><td><span class="b bmai">MAINS</span> full session — 2 answers (2 hrs, from Phase 2)</td><td>Non-test Saturdays: PYQ sprint on that week's subject.</td></tr>
+        <tr class="sun-row"><td class="day-bold">Sunday</td><td>Vision CA consolidation — Vision monthly mag</td><td><span class="b brev">REVISION</span> Study Hub sprint (2 hrs)</td><td><span class="b bmai">ESSAY</span> reading (Phase 2) / writing (Phase 3) + review with A</td><td>Sunday is revision + consolidation. No new material.</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="rule">
+    <div class="sh"><div class="sn">07</div><h2 class="st">The 7 Non-Negotiable Rules</h2></div>
+    <div class="two">
+      <div class="ib">
+        <h4>📌 The core 7</h4>
+        <ul>
+          <li><strong>PYQ first, always</strong> — Questions drive what you read and how deep</li>
+          <li><strong>Study Hub is sacred</strong> — Every session ends with at least 1 entry. Back up every Sunday.</li>
+          <li><strong>Revise more than you learn</strong> — 40% learning, 60% revision. Study Hub tracker enforces this.</li>
+          <li><strong>Attempt every Vision test</strong> — Never postpone because "not ready." Attempt cold. Review is the learning.</li>
+          <li><strong>Wednesday = Optional</strong> — Non-negotiable. Economics Optional needs consistent dedicated time.</li>
+          <li><strong>9 PM is the wall</strong> — Sleep is memory consolidation. A tired brain studying is worse than not studying.</li>
+          <li><strong>Sunday report to A</strong> — 3 numbers: Study Hub entries, Mains answers written, Sandhan accuracy %.</li>
+        </ul>
+      </div>
+      <div class="ib">
+        <h4>🛡 The 5 bad-day protocols</h4>
+        <ul>
+          <li><strong>Bad test score:</strong> 48-hr reflection maximum. Write one thing you learned. Then reset. No spiralling.</li>
+          <li><strong>Missed 2 days:</strong> Don't try to "catch up" in double sessions. Resume normal schedule. Two-day rule: never miss a third.</li>
+          <li><strong>Syllabus anxiety:</strong> Open Study Hub. Count your entries. You're building something real. Then do just the next PYQ.</li>
+          <li><strong>Travel / illness:</strong> CA + Hindu reading only. No structured study. Built into the plan — not a disruption.</li>
+          <li><strong>Confidence below 5/10:</strong> Name one win from this week first (to A, on Sunday). Then plan. Never plan from anxiety.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end wrap -->
+
+<footer>
+  U's UPSC 2027 — Amalgamated Final Plan · All gaps verified and fixed · Month 1 starts Apr 27 · Buffer: February 2027<br>
+  <em>"A genuine, complete attempt — regardless of outcome — yields self-respect that abandonment never can."</em>
+</footer>
+
+<script>
+// Tab switching
+function go(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('on'));
+  document.getElementById('panel-' + id).classList.add('on');
+  event.target.classList.add('on');
+  window.scrollTo(0, 0);
+}
+
+// Mains themes
+const themes = [
+  "Federalism & Centre-State","Judicial activism & overreach","India's neighbourhood policy",
+  "Economic inequality & inclusion","Women's empowerment & GBV","Climate change & India's NDCs",
+  "Technology governance & AI","Agricultural distress & reforms","Urban governance & smart cities",
+  "Internal security & LWE","Social movements & reforms","Monetary policy & RBI",
+  "Globalisation & discontents","Ethics in public service","Biodiversity & conservation",
+  "Science, innovation & startups","Constitutional morality","Disaster management",
+  "Food security & nutrition","India's multilateral diplomacy","Corruption & accountability",
+  "Education & human development","Health policy & UHC","Caste, identity & social justice",
+  "Infrastructure & PPP","Freedom struggle themes","Media, democracy & disinformation",
+  "Fiscal federalism","Civil services reform","India's demographic dividend",
+  "Governance & implementation gap","Parliamentary & electoral processes","Geopolitics & great power",
+  "Digital economy & data governance","Industrial policy & manufacturing","Rural economy & migration"
+];
+
+const saved = JSON.parse(localStorage.getItem('mains_ticks') || '{}');
+const grid = document.getElementById('theme-grid');
+
+themes.forEach((t, i) => {
+  const div = document.createElement('div');
+  div.className = 'ti';
+  const t1 = saved[i+'_1'] ? 'done' : '';
+  const t2 = saved[i+'_2'] ? 'done' : '';
+  div.innerHTML = `<div class="tn">${String(i+1).padStart(2,'0')}</div>
+    <div class="tname">${t}</div>
+    <div class="tticks">
+      <div class="tick ${t1}" onclick="markTick(${i},1,this)" title="Answer 1">1</div>
+      <div class="tick ${t2}" onclick="markTick(${i},2,this)" title="Answer 2">2</div>
+    </div>`;
+  grid.appendChild(div);
+});
+
+function markTick(i, n, el) {
+  const key = i + '_' + n;
+  const s = JSON.parse(localStorage.getItem('mains_ticks') || '{}');
+  s[key] = !s[key];
+  localStorage.setItem('mains_ticks', JSON.stringify(s));
+  el.classList.toggle('done', s[key]);
+}
+
+// Set first tab button as active
+document.querySelector('nav button').classList.add('on');
+</script>
+</body>
+</html>

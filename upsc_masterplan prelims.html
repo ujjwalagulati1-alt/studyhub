@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U's UPSC 2027 Master Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --cream2: #f2ede4;
+    --cream3: #e8e0d4;
+    --ink: #1c1a16;
+    --ink2: #3a3630;
+    --ink3: #6b6358;
+    --gold: #c4952a;
+    --gold-light: #f5e6c8;
+    --teal: #2a6b5f;
+    --teal-light: #d4ede8;
+    --red: #b84336;
+    --red-light: #fae8e6;
+    --blue: #2d5a8e;
+    --blue-light: #ddeaf5;
+    --purple: #5e3d7a;
+    --purple-light: #ede5f5;
+    --border: rgba(28,26,22,0.1);
+    --shadow: 0 2px 16px rgba(28,26,22,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  .nav {
+    background: var(--ink);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: #faf7f2;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-right: auto;
+  }
+
+  .nav-logo span { color: var(--gold); font-style: italic; }
+
+  .nav-link {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(250,247,242,0.6);
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    border: none;
+    background: none;
+    padding: 0;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--ink) 0%, #2a2318 60%, #1c1a16 100%);
+    padding: 64px 40px 48px;
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,149,42,0.12), transparent 70%);
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .hero-title em { color: var(--gold); font-style: italic; }
+
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(250,247,242,0.55);
+    max-width: 560px;
+    font-weight: 300;
+    margin-bottom: 28px;
+  }
+
+  .hero-chips {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .hero-chip {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(196,149,42,0.4);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gold);
+    background: rgba(196,149,42,0.08);
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 48px; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  .section-sub {
+    font-size: 12.5px;
+    color: var(--ink3);
+    margin-left: auto;
+  }
+
+  /* PHILOSOPHY BOX */
+  .philosophy-box {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .philosophy-box::after {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 200px;
+    position: absolute;
+    right: 20px;
+    top: -30px;
+    color: rgba(196,149,42,0.08);
+    line-height: 1;
+  }
+
+  .philosophy-box h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .philosophy-box p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(250,247,242,0.75);
+    max-width: 700px;
+  }
+
+  .philosophy-box strong { color: var(--cream); }
+
+  /* PHASE CARDS */
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .phase-card {
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    padding: 24px;
+    background: white;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+  }
+
+  .phase-1::before { background: var(--teal); }
+  .phase-2::before { background: var(--blue); }
+  .phase-3::before { background: var(--gold); }
+  .phase-4::before { background: var(--purple); }
+  .phase-5::before { background: var(--red); }
+
+  .phase-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .phase-1 .phase-label { color: var(--teal); }
+  .phase-2 .phase-label { color: var(--blue); }
+  .phase-3 .phase-label { color: var(--gold); }
+  .phase-4 .phase-label { color: var(--purple); }
+  .phase-5 .phase-label { color: var(--red); }
+
+  .phase-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .phase-dates {
+    font-size: 12px;
+    color: var(--ink3);
+    margin-bottom: 14px;
+    font-weight: 300;
+  }
+
+  .phase-hours {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .hours-chip {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+
+  .hours-wd { background: var(--cream2); color: var(--ink2); }
+  .hours-we { background: var(--gold-light); color: #7a5500; }
+
+  .phase-goals { list-style: none; }
+
+  .phase-goals li {
+    font-size: 12.5px;
+    color: var(--ink2);
+    padding: 4px 0 4px 14px;
+    position: relative;
+    border-bottom: 1px dashed var(--cream3);
+  }
+
+  .phase-goals li:last-child { border-bottom: none; }
+
+  .phase-goals li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--ink3);
+    font-size: 11px;
+  }
+
+  /* BOOKS TABLE */
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .book-block {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .book-block-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .book-block-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .book-block-subject {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .book-list { list-style: none; }
+
+  .book-list li {
+    font-size: 12px;
+    color: var(--ink2);
+    padding: 3px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.5;
+  }
+
+  .book-list li::before {
+    content: '·';
+    color: var(--ink3);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .book-primary { font-weight: 500; color: var(--ink); }
+  .book-skip { text-decoration: line-through; color: var(--ink3); font-size: 11px; }
+
+  /* DAILY ROUTINE */
+  .routine-blocks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 600px) { .routine-blocks { grid-template-columns: 1fr; } }
+
+  .routine-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .routine-card-header {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .wd-header { background: var(--cream2); color: var(--ink); }
+  .we-header { background: var(--gold-light); color: #7a5500; }
+
+  .routine-slot {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--cream3);
+  }
+
+  .routine-slot:last-child { border-bottom: none; }
+
+  .slot-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink3);
+    white-space: nowrap;
+    min-width: 72px;
+    padding-top: 2px;
+  }
+
+  .slot-content { font-size: 12.5px; color: var(--ink2); }
+  .slot-content strong { color: var(--ink); font-weight: 600; font-size: 13px; }
+  .slot-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-left: 6px;
+  }
+
+  .tag-ca { background: var(--teal-light); color: var(--teal); }
+  .tag-core { background: var(--blue-light); color: var(--blue); }
+  .tag-test { background: var(--red-light); color: var(--red); }
+  .tag-rest { background: var(--cream2); color: var(--ink3); }
+  .tag-write { background: var(--purple-light); color: var(--purple); }
+
+  /* WEEKLY RHYTHM */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  @media (max-width: 700px) {
+    .week-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .day-block {
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 11px;
+  }
+
+  .day-name {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+
+  .day-tasks { font-size: 10.5px; color: var(--ink3); line-height: 1.6; }
+  .day-wd { background: white; border: 1px solid var(--border); }
+  .day-sat { background: var(--blue-light); border: 1px solid rgba(45,90,142,0.2); }
+  .day-sun { background: var(--gold-light); border: 1px solid rgba(196,149,42,0.2); }
+
+  /* STUDY HABITS */
+  .habits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+  }
+
+  .habit-card {
+    border-radius: 10px;
+    padding: 18px;
+    border: 1.5px solid var(--border);
+    background: white;
+    box-shadow: var(--shadow);
+  }
+
+  .habit-icon { font-size: 22px; margin-bottom: 8px; }
+  .habit-title { font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+  .habit-desc { font-size: 12px; color: var(--ink3); line-height: 1.6; }
+
+  /* TEST PLAN */
+  .test-timeline {
+    position: relative;
+    padding-left: 24px;
+  }
+
+  .test-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 8px; bottom: 8px;
+    width: 1.5px;
+    background: var(--border);
+  }
+
+  .test-item {
+    position: relative;
+    margin-bottom: 20px;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .test-item::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: var(--cream);
+  }
+
+  .test-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+
+  .test-title { font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+  .test-desc { font-size: 12px; color: var(--ink3); line-height: 1.5; }
+
+  /* HEALTH */
+  .health-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .health-card {
+    padding: 16px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: white;
+  }
+
+  .health-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .health-card ul { list-style: none; }
+  .health-card ul li {
+    font-size: 12px;
+    color: var(--ink3);
+    padding: 2px 0 2px 12px;
+    position: relative;
+  }
+  .health-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--teal); font-size: 10px; }
+
+  /* COMMAND CENTRE BOX */
+  .command-box {
+    background: linear-gradient(135deg, #1c1a16, #2a2318);
+    border-radius: 12px;
+    padding: 28px 32px;
+    color: var(--cream);
+    border: 1px solid rgba(196,149,42,0.2);
+    margin-bottom: 32px;
+  }
+
+  .command-box h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .command-box p {
+    font-size: 13px;
+    color: rgba(250,247,242,0.7);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .command-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  .cmd-feature {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(196,149,42,0.2);
+    background: rgba(196,149,42,0.05);
+    font-size: 12px;
+    color: rgba(250,247,242,0.75);
+  }
+
+  .cmd-feature strong { display: block; color: var(--gold); font-size: 12.5px; margin-bottom: 2px; }
+
+  /* ALERT BOXES */
+  .alert {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .alert-icon { font-size: 18px; flex-shrink: 0; }
+  .alert-gold { background: var(--gold-light); border: 1px solid rgba(196,149,42,0.3); color: #5a3a00; }
+  .alert-teal { background: var(--teal-light); border: 1px solid rgba(42,107,95,0.3); color: #0d3d36; }
+  .alert-red { background: var(--red-light); border: 1px solid rgba(184,67,54,0.3); color: #5c1a12; }
+
+  /* CA STRATEGY */
+  .ca-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .ca-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .ca-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
+  .ca-card p { font-size: 12px; color: var(--ink3); line-height: 1.6; }
+
+  /* MONTHLY TRACKER */
+  .monthly-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .month-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .month-header {
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .month-body {
+    padding: 10px 14px;
+    font-size: 11.5px;
+    color: var(--ink3);
+    line-height: 1.7;
+  }
+
+  /* BUFFER BOX */
+  .buffer-box {
+    background: var(--teal-light);
+    border: 1.5px solid rgba(42,107,95,0.25);
+    border-radius: 10px;
+    padding: 20px 24px;
+  }
+
+  .buffer-box h3 { font-size: 14px; font-weight: 600; color: var(--teal); margin-bottom: 8px; }
+  .buffer-box p { font-size: 13px; color: var(--ink2); line-height: 1.7; }
+
+  /* FOOTER */
+  .footer {
+    background: var(--ink);
+    color: rgba(250,247,242,0.45);
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    margin-top: 60px;
+  }
+
+  /* TABS */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1.5px solid var(--border);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    padding: 9px 18px;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink3);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1.5px;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* RULE */
+  hr.rule { border: none; border-top: 1.5px dashed var(--border); margin: 32px 0; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  .info-block {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .info-block h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-block ul { list-style: none; }
+  .info-block ul li {
+    font-size: 12.5px;
+    color: var(--ink2);
+    padding: 3px 0 3px 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .info-block ul li::before { content: '—'; position: absolute; left: 0; color: var(--ink3); font-size: 10px; }
+
+  .badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+
+  .badge-key { background: var(--gold-light); color: #7a5500; }
+  .badge-opt { background: var(--cream2); color: var(--ink3); }
+
+  @media print {
+    .nav { position: relative; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">U's UPSC <span>2027</span></div>
+  <button class="nav-link" onclick="scrollTo('#philosophy')">Philosophy</button>
+  <button class="nav-link" onclick="scrollTo('#phases')">Phases</button>
+  <button class="nav-link" onclick="scrollTo('#sources')">Sources</button>
+  <button class="nav-link" onclick="scrollTo('#daily')">Daily Rhythm</button>
+  <button class="nav-link" onclick="scrollTo('#tests')">Test Plan</button>
+  <button class="nav-link" onclick="scrollTo('#ca')">Current Affairs</button>
+  <button class="nav-link" onclick="scrollTo('#health')">Health</button>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Master Preparation Plan · April 2026 – February 2027</div>
+  <h1 class="hero-title">The Complete Roadmap<br>to <em>UPSC 2027 Prelims</em></h1>
+  <p class="hero-sub">Built for a working professional. 4 hrs weekdays · 8 hrs weekends. Prelims-first, Mains-parallel. Buffer built in. No burnout.</p>
+  <div class="hero-chips">
+    <div class="hero-chip">~22 months to Prelims</div>
+    <div class="hero-chip">Target: Ready by Feb 2027</div>
+    <div class="hero-chip">Vision IAS Test Series integrated</div>
+    <div class="hero-chip">Study Hub as Command Centre</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PHILOSOPHY -->
+  <div id="philosophy" class="section">
+    <div class="philosophy-box">
+      <h3>The One Rule That Changes Everything</h3>
+      <p><strong>Don't read to cover — read to answer.</strong> Every chapter you read, every CA article you scan, every concept you touch: the question is always "what could UPSC ask me about this?" You're not a student. You're someone training to answer questions under time pressure. The question-first method is your natural learning style — that is actually <strong>the topper method</strong>. PYQs first, then reverse-engineer the source material. This plan is built around that instinct.</p>
+    </div>
+
+    <div class="alert alert-gold">
+      <div class="alert-icon">⚡</div>
+      <div><strong>Your core loop every week:</strong> PYQ / mock question → "Why is this the answer?" → Read that specific section in source → Add to Study Hub → Revisit in 7 days. This is it. Everything else supports this loop.</div>
+    </div>
+
+    <div class="alert alert-teal">
+      <div class="alert-icon">🧠</div>
+      <div><strong>The topper formula (distilled from interviews):</strong> Limited Sources + Revision (3x minimum) + Mock Tests with error analysis + Current Affairs daily = UPSC success. You don't need to read everything. You need to revise the right things repeatedly.</div>
+    </div>
+
+    <div class="alert alert-red">
+      <div class="alert-icon">🚫</div>
+      <div><strong>Your known failure modes — actively defended against:</strong> Confidence collapse when syllabus feels vast → solved by phase-by-phase proof of concept. Studying in isolation → Study Hub + Vision IAS test series as external accountability. Inconsistency → 4-hour minimum on weekdays is non-negotiable, not optional.</div>
+    </div>
+  </div>
+
+  <!-- PHASES -->
+  <div id="phases" class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2 class="section-title">The 5 Phases</h2>
+      <div class="section-sub">April 2026 → February 2027</div>
+    </div>
+
+    <div class="phases">
+      <div class="phase-card phase-1">
+        <div class="phase-label">Phase 1 · Foundation</div>
+        <div class="phase-title">Prove to Yourself</div>
+        <div class="phase-dates">April 15 – June 30, 2026 (11 weeks)</div>
+        <div class="phase-hours">
+          <div class="hours-chip hours-wd">Weekday: 2–3 hrs</div>
+          <div class="hours-chip hours-we">Weekend: 5–6 hrs</div>
+        </div>
+        <ul class="phase-goals">
+          <li>Pick all source materials, create Study Hub categories</li>
+          <li>Do Vision Prelims Tests 1–2 (Polity + Geography) — attempt, don't worry about score</li>
+          <li>Build the CA habit: 30 min daily The Hindu/Vision CA</li>
+          <li>Cover Laxmikanth Polity via PYQ method: question → chapter → note</li>
+          <li>Solve 5-year Prelims PYQs: Polity + Geography (questions only, no solutions first)</li>
+          <li>Weekly: Add 5 entries to Study Hub</li>
+          <li>No Mains writing yet — just absorb, question-first</li>
+        </ul>
+      </div>
+
+      <div class="phase-card phase-2">
+        <div class="phase-label">Phase 2 · Build</div>
+        <div class="phase-title">Cover the Syllabus</div>
+        <div class="phase-dates">July 1 – October 31, 2026 (18 weeks)</div>
+        <div class="phase-hours">
+          <div class="hours-chip hours-wd">Weekday: 3–4 hrs</div>
+          <div class="hours-chip hours-we">Weekend: 7–8 hrs</div>
+        </div>
+        <ul class="phase-goals">
+          <li>Vision Prelims Tests 3–11 (steady pace, 1 test every ~2 weeks)</li>
+          <li>Cover all Prelims subjects via PYQ method: History, Economy, Env, Sci</li>
+          <li>Start NCERTs for History (selective: Old 11th Modern India, 12th new)</li>
+          <li>Begin Mains 36-theme backbone: 2 themes/week, shallow first pass</li>
+          <li>Start Vision Mains Fundamental Tests 1–4 (attempt + review)</li>
+          <li>Study Hub: 8–10 entries/week, especially multi-theme gems</li>
+          <li>Saturday: Test or PYQ sprint | Sunday: Mains theme deep dive</li>
+        </ul>
+      </div>
+
+      <div class="phase-card phase-3">
+        <div class="phase-label">Phase 3 · Intensify</div>
+        <div class="phase-title">First Full Revision</div>
+        <div class="phase-dates">Nov 1 – Dec 31, 2026 (9 weeks)</div>
+        <div class="phase-hours">
+          <div class="hours-chip hours-wd">Weekday: 4 hrs</div>
+          <div class="hours-chip hours-we">Weekend: 8 hrs</div>
+        </div>
+        <ul class="phase-goals">
+          <li>Vision Prelims Tests 12–19 (applied tests) — go back to fundamentals post-test</li>
+          <li>First complete revision of all Prelims notes in Study Hub</li>
+          <li>Prelims PYQ: 10-year full paper attempts (timed)</li>
+          <li>Vision Mains Fundamental Tests 5–8: attempt all, review discussions</li>
+          <li>Mains answer writing begins: 1 answer/day (10-marker), WhatsApp to roommate A for accountability</li>
+          <li>Economic Survey 2026-27 (released ~Feb): skim chapter summaries</li>
+          <li>CA: Vision Monthly Magazine + Hindu daily — 45 mins</li>
+        </ul>
+      </div>
+
+      <div class="phase-card phase-4">
+        <div class="phase-label">Phase 4 · Sharpen</div>
+        <div class="phase-title">Mock Test Domination</div>
+        <div class="phase-dates">Jan 1 – Jan 31, 2027 (4 weeks)</div>
+        <div class="phase-hours">
+          <div class="hours-chip hours-wd">Weekday: 4 hrs</div>
+          <div class="hours-chip hours-we">Weekend: 8 hrs</div>
+        </div>
+        <ul class="phase-goals">
+          <li>Vision Prelims Tests 20–23 (Economy + Science full applied)</li>
+          <li>1 full-length Prelims mock per week (timed, exam conditions)</li>
+          <li>Error analysis: every wrong answer → Study Hub entry</li>
+          <li>Vision Mains Advanced Tests 9–15: pick 4, attempt under time pressure</li>
+          <li>Second revision of all Study Hub entries (use revision tracker)</li>
+          <li>Sandhan personalized tests: 30 Q per day on weak areas</li>
+          <li>Sleep protection begins: hard 10pm cutoff, 7+ hours mandatory</li>
+        </ul>
+      </div>
+
+      <div class="phase-card phase-5">
+        <div class="phase-label">Phase 5 · Buffer</div>
+        <div class="phase-title">Consolidate &amp; Stay Ready</div>
+        <div class="phase-dates">Feb 1 – Feb 28, 2027 (4 weeks)</div>
+        <div class="phase-hours">
+          <div class="hours-chip hours-wd">Weekday: 3–4 hrs</div>
+          <div class="hours-chip hours-we">Weekend: 6–8 hrs</div>
+        </div>
+        <ul class="phase-goals">
+          <li>This is your buffer month — if phases 1–4 went well, you're in revision-only mode</li>
+          <li>If anything slipped in Phase 4, catch up here without panic</li>
+          <li>Vision Prelims Tests 24–28 (full-length): 1 per week, exam simulation</li>
+          <li>Only revise — no new material. Everything should be in Study Hub by now</li>
+          <li>Third revision cycle using QRM + Study Hub</li>
+          <li>CA intensive: Vision monthly + 6-month current affairs summary</li>
+          <li>Mental health priority: reduce hours if anxious, increase revision quality</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCES -->
+  <div id="sources" class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2 class="section-title">Source Books — Minimum Stack</h2>
+      <div class="section-sub">Rule: Read 5 books 5 times, not 25 books once</div>
+    </div>
+
+    <div class="alert alert-gold">
+      <div class="alert-icon">📌</div>
+      <div><strong>Your reading method:</strong> PYQ first → find the answer in the source → read that section + 2 pages around it → make a Study Hub entry. You never read chapter 1 to chapter end. You read driven by questions. This works with ALL the books below.</div>
+    </div>
+
+    <div class="books-grid">
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#ddeaf5">🏛</div>
+          <div class="book-block-subject">Polity</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">Laxmikanth — Indian Polity</span> <span class="badge badge-key">Core</span></li>
+          <li>NCERTs Class 9–11 (Democratic Politics 1&2 + Constitution at Work) — selective chapters only</li>
+          <li>Vision IAS Value Addition Polity Notes (online)</li>
+          <li>Your MBA + banking background = economy–polity links are your strength here</li>
+        </ul>
+      </div>
+
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#fae8e6">🌍</div>
+          <div class="book-block-subject">Geography</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">NCERT 11th Physical Geography + 12th India People & Economy</span> <span class="badge badge-key">Core</span></li>
+          <li>Goh Cheng Leong — Certificate Physical & Human Geography (selective)</li>
+          <li>Oxford/Orient Atlas — map practice is non-negotiable</li>
+          <li class="book-skip">Savinder Singh — skip unless weak after NCERTs</li>
+        </ul>
+      </div>
+
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#fdf3dc">📜</div>
+          <div class="book-block-subject">History + Art & Culture</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">Spectrum — Brief History of Modern India</span> <span class="badge badge-key">Core</span></li>
+          <li>Old NCERT — Ancient India + Medieval India (selective chapters)</li>
+          <li>NIOS Art & Culture (free PDF online) — Art & Culture is pure memory</li>
+          <li class="book-skip">Bipan Chandra — use only if Spectrum is unclear on a specific event</li>
+          <li>NCERT Class 12 Themes in Indian History Part 1, 2, 3 — selective</li>
+        </ul>
+      </div>
+
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#d4ede8">💰</div>
+          <div class="book-block-subject">Economy</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">Ramesh Singh — Indian Economy</span> <span class="badge badge-key">Core</span></li>
+          <li>NCERT 11th Indian Economic Development + 12th Macroeconomics</li>
+          <li>Economic Survey (Chapter summaries + Part A — 20 key themes)</li>
+          <li>Your banking/consulting background = massive edge here. Use it.</li>
+          <li>Vision IAS Economy Value Addition (online) — very sufficient for Prelims</li>
+        </ul>
+      </div>
+
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#ede5f5">🌿</div>
+          <div class="book-block-subject">Environment & Ecology</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">Vision IAS Environment Notes</span> <span class="badge badge-key">Core</span></li>
+          <li>NCERT Class 12 Biology Unit 10 (Ecology chapters 13–16)</li>
+          <li>Shankar IAS Environment (only for deeper treaty/convention data)</li>
+          <li>Down To Earth magazine — follow current env stories via CA method</li>
+        </ul>
+      </div>
+
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#fae8e6">🔬</div>
+          <div class="book-block-subject">Science & Technology</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">NCERTs 6th–10th Science (selective chapters)</span> <span class="badge badge-key">Core</span></li>
+          <li>Vision IAS Science & Tech Monthly + Current Affairs</li>
+          <li>This section is 80% current affairs. Follow ISRO, DRDO, health tech via CA</li>
+          <li class="book-skip">No separate textbook needed — CA covers 90% of Sci-Tech in Prelims</li>
+        </ul>
+      </div>
+
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#fdf3dc">⚖️</div>
+          <div class="book-block-subject">Ethics (GS4 — Mains)</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">Lexicon for Ethics — Chronicle Publications</span> <span class="badge badge-key">Core</span></li>
+          <li>2nd ARC Report 4th — Ethics in Governance (Chapter summaries)</li>
+          <li>Vision IAS Ethics Value Addition Notes</li>
+          <li>G Subba Rao — Case Studies in Ethics (for case study practice)</li>
+          <li>This is a scoring paper — your people-facing career is an asset</li>
+        </ul>
+      </div>
+
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#ddeaf5">🌐</div>
+          <div class="book-block-subject">International Relations</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">Vision IAS IR Notes</span> <span class="badge badge-key">Core</span></li>
+          <li>The Hindu editorial (IR-tagged) — daily 1 article</li>
+          <li>Shyam Saran — "How India Sees the World" (selective chapters for Mains)</li>
+          <li class="book-skip">No standalone IR textbook needed for Prelims — CA is sufficient</li>
+        </ul>
+      </div>
+
+      <div class="book-block">
+        <div class="book-block-header">
+          <div class="book-block-icon" style="background:#d4ede8">📰</div>
+          <div class="book-block-subject">Current Affairs</div>
+        </div>
+        <ul class="book-list">
+          <li><span class="book-primary">The Hindu (daily — selective reading method)</span> <span class="badge badge-key">Core</span></li>
+          <li>Vision IAS Monthly CA Magazine (PDF — mandatory)</li>
+          <li>Vision IAS Value Addition / Mains 365 (for Mains integration)</li>
+          <li>Vision Quick Revision Material — QRM (pre-Prelims revision sprint)</li>
+          <li>Yojana — 2 issues/month, relevant articles only</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <div class="alert alert-teal">
+        <div class="alert-icon">📚</div>
+        <div><strong>What to skip entirely:</strong> DD Basu (for Prelims — Laxmikanth is enough). Bipan Chandra full book (Spectrum is sufficient). Any coaching institute notes beyond Vision IAS (one source only). Multiple economy books — pick one and revise it. Don't let FOMO make you collect books instead of revising the ones you have.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY RHYTHM -->
+  <div id="daily" class="section">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2 class="section-title">Daily Study Rhythm</h2>
+      <div class="section-sub">Evolves across phases — starts gentle, builds to 4 hrs</div>
+    </div>
+
+    <div class="routine-blocks">
+      <div class="routine-card">
+        <div class="routine-card-header wd-header">🗓 Weekday (Phase 1: 2–3 hrs → Phase 3+: 4 hrs)</div>
+        <div class="routine-slot">
+          <div class="slot-time">6:30–7:15am</div>
+          <div class="slot-content"><strong>The Hindu — selective</strong> <span class="slot-tag tag-ca">CA</span><br>Editorials + 1 national story + 1 IR story. No full paper reading.</div>
+        </div>
+        <div class="routine-slot">
+          <div class="slot-time">7:15–7:30am</div>
+          <div class="slot-content"><strong>Study Hub entry</strong><br>Convert 1 CA article into a Study Hub entry. 15 mins only.</div>
+        </div>
+        <div class="routine-slot">
+          <div class="slot-time">Eve: 8–9:30pm</div>
+          <div class="slot-content"><strong>Core Study Block</strong> <span class="slot-tag tag-core">Core</span><br>PYQ-driven source reading. 1 topic per session. Add to Study Hub.</div>
+        </div>
+        <div class="routine-slot">
+          <div class="slot-time">9:30–10pm</div>
+          <div class="slot-content"><strong>Sandhan MCQs</strong> <span class="slot-tag tag-test">Test</span><br>20–30 questions on topic just studied. Error analysis. Study Hub.</div>
+        </div>
+        <div class="routine-slot">
+          <div class="slot-time">10pm →</div>
+          <div class="slot-content"><strong>Hard stop</strong> <span class="slot-tag tag-rest">Rest</span><br>No screens. 7–8 hours sleep is part of the preparation strategy.</div>
+        </div>
+      </div>
+
+      <div class="routine-card">
+        <div class="routine-card-header we-header">📅 Weekend (Saturday + Sunday: 8 hrs total)</div>
+        <div class="routine-slot">
+          <div class="slot-time">Saturday</div>
+          <div class="slot-content"><strong>Vision Prelims Test Day</strong> <span class="slot-tag tag-test">Test</span><br>Morning: 3-hr test (wherever you are in the schedule). Afternoon: 2-hr detailed review. Evening: Study Hub entries from wrong answers.</div>
+        </div>
+        <div class="routine-slot">
+          <div class="slot-time">Saturday eve</div>
+          <div class="slot-content"><strong>Mains theme block</strong> <span class="slot-tag tag-write">Mains</span><br>1 Mains theme from the 36-theme backbone. Deep dive, note-making. 1.5 hrs.</div>
+        </div>
+        <div class="routine-slot">
+          <div class="slot-time">Sunday AM</div>
+          <div class="slot-content"><strong>Revision sprint</strong> <span class="slot-tag tag-core">Core</span><br>Review all Study Hub entries added this week. Use spaced repetition. 2 hrs.</div>
+        </div>
+        <div class="routine-slot">
+          <div class="slot-time">Sunday PM</div>
+          <div class="slot-content"><strong>Mains answer writing</strong> <span class="slot-tag tag-write">Mains</span><br>Phase 3+: Write 1 answer (10-mark → 15-mark). Share with roommate A. 1.5 hrs.</div>
+        </div>
+        <div class="routine-slot">
+          <div class="slot-time">Sunday eve</div>
+          <div class="slot-content"><strong>Week planning + rest</strong> <span class="slot-tag tag-rest">Rest</span><br>Plan next week topics. Backup Study Hub data (Sunday ritual). No guilt about downtime.</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:16px;">Weekly Subject Rotation</h3>
+
+    <div class="week-grid">
+      <div class="day-block day-wd">
+        <div class="day-name">Mon</div>
+        <div class="day-tasks">Polity<br>or<br>Governance</div>
+      </div>
+      <div class="day-block day-wd">
+        <div class="day-name">Tue</div>
+        <div class="day-tasks">Economy<br>or<br>Banking/Fiscal</div>
+      </div>
+      <div class="day-block day-wd">
+        <div class="day-name">Wed</div>
+        <div class="day-tasks">History<br>or<br>Art & Culture</div>
+      </div>
+      <div class="day-block day-wd">
+        <div class="day-name">Thu</div>
+        <div class="day-tasks">Geography<br>or<br>Environment</div>
+      </div>
+      <div class="day-block day-wd">
+        <div class="day-name">Fri</div>
+        <div class="day-tasks">IR + Sci&Tech<br>or<br>Weak subject</div>
+      </div>
+      <div class="day-block day-sat">
+        <div class="day-name">Sat</div>
+        <div class="day-tasks" style="color:#2d5a8e">Vision Test<br>+ Review<br>+ Mains theme</div>
+      </div>
+      <div class="day-block day-sun">
+        <div class="day-name">Sun</div>
+        <div class="day-tasks" style="color:#7a5500">Revision<br>+ Answer writing<br>+ Planning</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST PLAN -->
+  <div id="tests" class="section">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2 class="section-title">Vision IAS Test Integration</h2>
+      <div class="section-sub">Prelims: 35 tests · Mains: 30 tests · Pace yourself</div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:24px">
+      <div class="info-block">
+        <h4>📋 Prelims Test Strategy</h4>
+        <ul>
+          <li>Enroll: VisionIAS Prelims Test Series 2027 (Code 3970, ₹21,000)</li>
+          <li>8 Fundamental Tests (Apr–Jul 2026): do all, score doesn't matter yet</li>
+          <li>17 Applied Tests (Aug 2026–Jan 2027): 1 every ~10 days</li>
+          <li>10 Full-Length Tests (Feb–Apr 2027): 1 per week, timed</li>
+          <li>After EVERY test: 90-min error analysis, Study Hub entry for every wrong answer</li>
+          <li>Sandhan: 30 personalized Q/day on weak subject — treat as daily dose</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h4>✍️ Mains Test Strategy</h4>
+        <ul>
+          <li>Enroll: VisionIAS Mains Test Series 2027 Module I (₹25,000)</li>
+          <li>Fundamental Tests 1–8 (Apr–Sep 2026): attempt at 50% capacity, review fully</li>
+          <li>Advanced Tests 9–22 (Sep 2026–Jan 2027): pick 8–10 strategically by subject strength</li>
+          <li>Full-Length Tests 23–30 (Jun–Jul 2027): all 8, simulated conditions</li>
+          <li>Attend ALL test discussions (online videos at minimum)</li>
+          <li>5 Master Classes on Answer Writing: watch all, implement immediately</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="test-timeline">
+      <div class="test-item">
+        <div class="test-date">April 12, 2026</div>
+        <div class="test-title">Vision Prelims Test 1 (Polity & Constitution) + Mains Test 1 (Polity)</div>
+        <div class="test-desc">Both series start on the same day. Prelims Test 1 is your first real benchmark. Don't panic at the score. Review every wrong answer. This is Day 1 of building the loop.</div>
+      </div>
+      <div class="test-item">
+        <div class="test-date">Apr–Jun 2026</div>
+        <div class="test-title">Prelims Fundamental Tests 1–3 (Polity, Working Constitution, Geography I)</div>
+        <div class="test-desc">Go slow, go deep. After each test: error analysis → Study Hub → Sandhan practice on that topic next day. Score target: don't set one. Learning target: understand every wrong answer.</div>
+      </div>
+      <div class="test-item">
+        <div class="test-date">Jul–Oct 2026</div>
+        <div class="test-title">Prelims Fundamental Tests 4–8 + Applied Tests 9–11</div>
+        <div class="test-desc">You should now be hitting 50%+ on fundamentals. Applied tests are harder — expect drops. That's the point. Mains Fundamental Tests 2–5 running parallel. Answer writing begins (10-mark only).</div>
+      </div>
+      <div class="test-item">
+        <div class="test-date">Nov–Dec 2026</div>
+        <div class="test-title">Prelims Applied Tests 12–19 (History, Modern India, Geography II, Environment)</div>
+        <div class="test-desc">These test current affairs integration. Your CA habit should be solid by now. Target: 60%+ on applied tests. Start doing timed attempts (2 hr limit for 100 questions).</div>
+      </div>
+      <div class="test-item">
+        <div class="test-date">Jan 2027</div>
+        <div class="test-title">Prelims Applied Tests 20–23 + First Full-Length Test 24</div>
+        <div class="test-desc">One full-length test per week minimum. These are your real barometer. Target: 65–70% (130–140/200 marks in actual UPSC logic). Third revision cycle running alongside.</div>
+      </div>
+      <div class="test-item">
+        <div class="test-date">Feb 2027 (Buffer)</div>
+        <div class="test-title">Full-Length Tests 25–28 — Exam Simulation Mode</div>
+        <div class="test-desc">Full exam conditions: Sunday morning, pen & paper ORS-style, phone away. Target: consistency above scores. If you're here and ready, the plan worked.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CURRENT AFFAIRS -->
+  <div id="ca" class="section">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2 class="section-title">Current Affairs Strategy</h2>
+      <div class="section-sub">The 45-minute daily habit that compounds over 10 months</div>
+    </div>
+
+    <div class="command-box">
+      <h3>Your Command Centre: Study Hub</h3>
+      <p>Every CA article you read that matters goes into Study Hub at <strong>ujjwalagulati1-alt.github.io/studyhub</strong>. This is your living knowledge base. When you read a news item, ask: which of the 36 Mains themes does this touch? Which Prelims subject? Mark as multi-theme if it crosses more than one. This is how you build integrated knowledge, not silo'd notes.</p>
+      <div class="command-features">
+        <div class="cmd-feature"><strong>PYQ Entry</strong>Paste the question, explain why the answer is what it is, link to the news event that made it relevant</div>
+        <div class="cmd-feature"><strong>Current Affairs Entry</strong>Title + 3-line summary + themes tagged + revision date set to 7 days</div>
+        <div class="cmd-feature"><strong>Concept Entry</strong>Definition + why UPSC cares + real example + cross-theme links</div>
+        <div class="cmd-feature"><strong>Multi-theme Gem</strong>Flag anything that connects 3+ themes — these are your high-value Mains answers</div>
+      </div>
+    </div>
+
+    <div class="ca-grid">
+      <div class="ca-card">
+        <h4>🗞 The Hindu — Daily (20 min)</h4>
+        <p>Don't read cover to cover. Read: Page 1 headlines (scan), Editorial (read fully), National page (2–3 stories), International (1 story). Skip sports, crime, market prices. Use the "would UPSC ask this?" filter on everything.</p>
+      </div>
+      <div class="ca-card">
+        <h4>📘 Vision Monthly Magazine (2 hrs/month)</h4>
+        <p>Read in the first weekend of each month. This is your CA consolidation. Highlight what's new vs. what you've already captured. Add gaps to Study Hub. This is your safety net for The Hindu misses.</p>
+      </div>
+      <div class="ca-card">
+        <h4>📺 Vision Value Addition / Mains 365 (ongoing)</h4>
+        <p>These are your Mains CA notes. Start using seriously from Phase 3 (Nov 2026). Each topic in Mains 365 maps to a theme in your 36-theme backbone — cross-reference Study Hub entries.</p>
+      </div>
+      <div class="ca-card">
+        <h4>📖 Yojana (selective, 2 issues/month)</h4>
+        <p>Only read themes that overlap your weak areas or upcoming test topics. Agriculture, rural economy, governance schemes — these are Yojana's strengths. 1 hr per issue, selective reading only.</p>
+      </div>
+      <div class="ca-card">
+        <h4>🌍 PIB (pib.gov.in) — 3x/week</h4>
+        <p>Scan for scheme launches, government reports, committees, policy announcements. 10 minutes, scan headlines only. Flag anything UPSC-relevant and add to Study Hub that evening.</p>
+      </div>
+      <div class="ca-card">
+        <h4>🔄 Weekly CA Consolidation (Sunday eve, 30 min)</h4>
+        <p>Every Sunday: review all CA Study Hub entries from the week. Update revision dates. Check which Mains themes got new examples. This 30-min habit is worth 2 hours of random reading.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTH -->
+  <div id="health" class="section">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <h2 class="section-title">Health, Sleep & Anxiety Management</h2>
+      <div class="section-sub">Non-negotiable — burnout ends attempts</div>
+    </div>
+
+    <div class="alert alert-red">
+      <div class="alert-icon">🔴</div>
+      <div><strong>The one mistake that killed the last two attempts:</strong> Confidence collapse when the syllabus felt overwhelming. This plan is structured to prevent that by always making you feel momentum — you're not covering a syllabus, you're building a database, one question at a time.</div>
+    </div>
+
+    <div class="health-grid">
+      <div class="health-card">
+        <h4>😴 Sleep (Non-Negotiable)</h4>
+        <ul>
+          <li>10pm phone down — hard rule, no exceptions</li>
+          <li>7–8 hours minimum, especially pre-test nights</li>
+          <li>Revision done tired is worse than not revising</li>
+          <li>Sleep = consolidation. Every night you sleep, memory consolidates</li>
+          <li>No cramming the night before a Vision test</li>
+        </ul>
+      </div>
+      <div class="health-card">
+        <h4>😰 Anxiety Protocol</h4>
+        <ul>
+          <li>If syllabus feels overwhelming: zoom into today's 2-hr block only</li>
+          <li>Fear of quitting again: focus on the process, not the exam date</li>
+          <li>Study Hub shows you what you've built — open it when anxious</li>
+          <li>Weekly check-in with roommate A: share one win + one challenge</li>
+          <li>Permission to have a bad week without spiraling is built into buffer month</li>
+        </ul>
+      </div>
+      <div class="health-card">
+        <h4>🏃 Physical Routine</h4>
+        <ul>
+          <li>30-min walk or exercise 5x/week — non-negotiable for focus</li>
+          <li>Schedule it before study, not after (willpower is finite)</li>
+          <li>No desk study for more than 90 minutes without a 10-min break</li>
+          <li>Weekend: one complete study-free afternoon per month (minimum)</li>
+        </ul>
+      </div>
+      <div class="health-card">
+        <h4>📊 Progress Tracking</h4>
+        <ul>
+          <li>Study Hub entry count: visible proof of work done</li>
+          <li>Test scores: track trajectory, not absolute numbers</li>
+          <li>Weekly: which Vision tests attempted, Sandhan Q count</li>
+          <li>Monthly: how many themes covered, revision cycles completed</li>
+          <li>Share weekly stats with roommate A every Sunday</li>
+        </ul>
+      </div>
+      <div class="health-card">
+        <h4>⚡ Consistency Hacks</h4>
+        <ul>
+          <li>Study same time every weekday (same chair, same lamp, same ritual)</li>
+          <li>Start with MCQ/quiz — not reading. Gets you into flow faster</li>
+          <li>When unmotivated: do 10 Sandhan questions only. Often becomes an hour</li>
+          <li>Never miss two days in a row — the two-day rule</li>
+          <li>Monthly backup of Study Hub on Sunday = habit that feels like progress</li>
+        </ul>
+      </div>
+      <div class="health-card">
+        <h4>🤝 Accountability (Roommate A)</h4>
+        <ul>
+          <li>Weekly: share 3 things learned + 1 test score</li>
+          <li>Monthly: show Study Hub entry count (screenshot is enough)</li>
+          <li>She doesn't need to know UPSC — she just needs to ask "did you study today?"</li>
+          <li>Pre-agree: she texts you every weekday at 9pm. You reply with what you studied</li>
+          <li>This one habit has outsized impact vs. any planning alone</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- MONTH BY MONTH -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <h2 class="section-title">Month-by-Month Milestones</h2>
+    </div>
+
+    <div class="monthly-grid">
+      <div class="month-card">
+        <div class="month-header" style="background:var(--teal-light);color:var(--teal)">April–May 2026</div>
+        <div class="month-body">Start Vision tests · Build CA habit · PYQ sprint: Polity 10 yrs · 20 Study Hub entries · Enroll both test series</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--teal-light);color:var(--teal)">June 2026</div>
+        <div class="month-body">Complete Polity via Laxmikanth · Geography NCERTs done · 40 Study Hub entries total · Prelims Test 3 attempted</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--blue-light);color:var(--blue)">July 2026</div>
+        <div class="month-body">Modern History (Spectrum) 70% done · Economy NCERTs begin · Mains Test 4 attempted · 60 Study Hub entries</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--blue-light);color:var(--blue)">August 2026</div>
+        <div class="month-body">History complete · Environment (Vision Notes) done · First applied Prelims tests · Mains: 10 themes covered shallow</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--blue-light);color:var(--blue)">September 2026</div>
+        <div class="month-body">Science & Tech (CA-driven) · Economy first pass done · 100 Study Hub entries milestone · Mains Test 9 attempted</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--gold-light);color:#7a5500">October 2026</div>
+        <div class="month-body">First complete Prelims syllabus pass done · PYQ 10-year timed attempt · All 36 Mains themes touched (shallow)</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--gold-light);color:#7a5500">November 2026</div>
+        <div class="month-body">FIRST REVISION CYCLE begins · Applied tests 12–16 · Answer writing: 1/day · 150 Study Hub entries total</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--gold-light);color:#7a5500">December 2026</div>
+        <div class="month-body">Revision cycle complete · Economic Survey scan · Vision Mains Advanced tests 9–12 · 180 Study Hub entries</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--purple-light);color:var(--purple)">January 2027</div>
+        <div class="month-body">SECOND REVISION · Full-length mock weekly · Sandhan 30 Q/daily · Study Hub: all entries revised · 200+ entries</div>
+      </div>
+      <div class="month-card">
+        <div class="month-header" style="background:var(--red-light);color:var(--red)">February 2027</div>
+        <div class="month-body">BUFFER MONTH · Third revision via QRM + Study Hub · Full-length tests weekly · No new material · Ready.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUFFER -->
+  <div class="buffer-box" style="margin-bottom:32px">
+    <h3>🛡 About the Buffer Month (February 2027)</h3>
+    <p>This isn't a bonus — it's structural. If Phase 3 or 4 had a bad month (job pressure, illness, family), February absorbs it. If everything went on track, February becomes your sharpest preparation month. Either way, you win. The mistake previous attempts made was leaving no margin. This plan has margin built in deliberately. <strong>Prelims 2027 is expected around May–June 2027</strong>, giving you another 3–4 months of Vision full-length tests after February to polish further.</p>
+  </div>
+
+  <!-- DISCIPLINE RULES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <h2 class="section-title">The 7 Non-Negotiable Rules</h2>
+    </div>
+
+    <div class="habits-grid">
+      <div class="habit-card">
+        <div class="habit-icon">📌</div>
+        <div class="habit-title">PYQ First, Always</div>
+        <div class="habit-desc">Before reading any chapter, do the PYQs for that topic first. Let the questions guide what you read and how deep. This is your learning style — lean into it completely.</div>
+      </div>
+      <div class="habit-card">
+        <div class="habit-icon">🏛</div>
+        <div class="habit-title">Study Hub is Sacred</div>
+        <div class="habit-desc">Every study session ends with at least 1 Study Hub entry. It's your external memory. If it's not in Study Hub, it's not in your preparation. Back it up every Sunday.</div>
+      </div>
+      <div class="habit-card">
+        <div class="habit-icon">🔄</div>
+        <div class="habit-title">Revise More Than You Learn</div>
+        <div class="habit-desc">The UPSC is not a knowledge test — it's a retention test under time pressure. Spend 40% of time learning, 60% of time revising. Study Hub revision tracker enforces this.</div>
+      </div>
+      <div class="habit-card">
+        <div class="habit-icon">📊</div>
+        <div class="habit-title">Attempt Every Test</div>
+        <div class="habit-desc">Never postpone a Vision test because you "haven't covered the topic." Attempt blind, score whatever, then review. The review is where the learning happens — not the study before.</div>
+      </div>
+      <div class="habit-card">
+        <div class="habit-icon">😴</div>
+        <div class="habit-title">Protect Your Sleep</div>
+        <div class="habit-desc">10pm is the cutoff. Not 10:30. Not "just this chapter." Sleep is when your brain files what you studied. A tired brain studying is worse than not studying at all.</div>
+      </div>
+      <div class="habit-card">
+        <div class="habit-icon">📱</div>
+        <div class="habit-title">Accountability is Weekly</div>
+        <div class="habit-desc">Every Sunday, message roommate A: tests attempted, Study Hub count, one thing learned. This 2-minute ritual is the single most powerful anti-quit mechanism in this plan.</div>
+      </div>
+      <div class="habit-card">
+        <div class="habit-icon">🎯</div>
+        <div class="habit-title">One Source Per Topic</div>
+        <div class="habit-desc">Pick one source for each subject and stick with it. Revision of one source 5 times beats reading 5 sources once. FOMO is the enemy of consolidation.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  U's UPSC 2027 Master Plan · Built April 2026 · Target: Prelims-ready by February 2027 · Command Centre: Study Hub<br>
+  <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(250,247,242,0.3);font-size:14px;margin-top:6px;display:block">"A genuine, complete attempt — regardless of outcome — yields self-respect that abandonment never can."</span>
+</div>
+
+<script>
+function scrollTo(id) {
+  const el = document.querySelector(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
