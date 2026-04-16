@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyCmVVpzoLrRGfnRGDq45fDgqtfoMvzQdkE",
+    authDomain: "studyhub-upsc.firebaseapp.com",
+    projectId: "studyhub-upsc",
+    storageBucket: "studyhub-upsc.firebasestorage.app",
+    messagingSenderId: "541078992966",
+    appId: "1:541078992966:web:841a57a40bc5bbd52cf247"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window._db = db;
+  window._fsDoc = { doc, getDoc, setDoc };
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+<title>U's UPSC 2027 — Monthly Planner Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple: #534AB7; --purple-lt: #EEEDFE; --purple-dk: #26215C;
+  --teal: #0F6E56; --teal-lt: #E1F5EE; --teal-mid: #1D9E75;
+  --amber: #854F0B; --amber-lt: #FAEEDA; --amber-mid: #BA7517;
+  --coral: #993C1D; --coral-lt: #FAECE7;
+  --blue: #185FA5; --blue-lt: #E6F1FB;
+  --pink: #993556; --pink-lt: #FBEAF0;
+  --green: #3B6D11; --green-lt: #EAF3DE; --green-mid: #1D9E75;
+  --gray: #444441; --gray-lt: #F1EFE8; --gray-mid: #888780; --gray-border: #D3D1C7;
+  --white: #ffffff; --bg: #F5F3EE; --black: #2C2C2A;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --radius: 10px; --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--black); font-size: 14px; line-height: 1.6; }
+a { color: var(--purple); text-decoration: none; }
+
+/* ── TOP NAV ── */
+.topbar {
+  background: var(--purple-dk);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 52px; position: sticky; top: 0; z-index: 100;
+}
+.topbar-title { font-family: var(--serif); color: white; font-size: 16px; letter-spacing: 0.01em; }
+.topbar-meta { font-family: var(--mono); color: rgba(255,255,255,0.55); font-size: 11px; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.progress-pill {
+  background: rgba(255,255,255,0.12); color: white; border-radius: 20px;
+  padding: 4px 12px; font-size: 11px; font-family: var(--mono); font-weight: 500;
+}
+
+/* ── LAYOUT ── */
+.shell { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 52px); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: white; border-right: 1px solid var(--gray-border);
+  padding: 16px 0; overflow-y: auto; height: calc(100vh - 52px);
+  position: sticky; top: 52px;
+}
+.sidebar-section { padding: 8px 16px 4px; font-size: 10px; font-weight: 600;
+  color: var(--gray-mid); letter-spacing: 0.08em; text-transform: uppercase; }
+.week-group { margin-bottom: 4px; }
+.week-label {
+  padding: 6px 16px; font-size: 11px; font-weight: 600;
+  color: var(--gray); letter-spacing: 0.04em; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.week-label:hover { background: var(--gray-lt); }
+.week-label .wk-tag { font-size: 9px; padding: 1px 6px; border-radius: 10px; font-weight: 500; }
+.day-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 16px 6px 28px; font-size: 12px; color: var(--gray);
+  cursor: pointer; transition: all 0.12s; border-left: 3px solid transparent;
+  margin-left: 0;
+}
+.day-link:hover { background: var(--gray-lt); color: var(--black); }
+.day-link.active { background: var(--purple-lt); color: var(--purple); border-left-color: var(--purple); font-weight: 500; }
+.day-link.done { color: var(--teal); }
+.day-link.done .day-check { background: var(--teal-mid); }
+.day-check {
+  width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--gray-border);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  background: white; transition: all 0.15s;
+}
+.day-check.checked { background: var(--teal-mid); border-color: var(--teal-mid); }
+.day-check svg { width: 8px; height: 8px; }
+.type-badge { font-size: 9px; padding: 1px 5px; border-radius: 6px; font-weight: 600; flex-shrink: 0; }
+.type-P { background: var(--teal-lt); color: var(--teal); }
+.type-M { background: var(--pink-lt); color: var(--pink); }
+.type-MIX { background: var(--purple-lt); color: var(--purple); }
+
+/* ── SIDEBAR STATS ── */
+.sidebar-stats { padding: 12px 16px; border-top: 1px solid var(--gray-border); margin-top: 8px; }
+.stat-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; font-size: 12px; }
+.stat-label { color: var(--gray-mid); }
+.stat-val { font-weight: 600; color: var(--black); font-family: var(--mono); font-size: 11px; }
+
+/* ── MAIN CONTENT ── */
+.main { padding: 24px 28px; overflow-y: auto; }
+
+/* ── OVERVIEW PANEL ── */
+.overview {
+  background: white; border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-border); padding: 24px; margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.overview-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+.overview h1 { font-family: var(--serif); font-size: 26px; color: var(--purple-dk); line-height: 1.2; }
+.overview p { color: var(--gray-mid); font-size: 13px; margin-top: 4px; }
+.metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.metric-box { border-radius: var(--radius); padding: 14px 16px; }
+.metric-box .val { font-family: var(--mono); font-size: 22px; font-weight: 600; }
+.metric-box .lbl { font-size: 11px; margin-top: 2px; opacity: 0.75; }
+.progress-bar-wrap { background: var(--gray-lt); border-radius: 6px; height: 8px; margin-top: 12px; overflow: hidden; }
+.progress-bar { height: 100%; border-radius: 6px; background: var(--teal-mid); transition: width 0.4s ease; }
+
+/* ── COMMAND BOX ── */
+.command-box {
+  background: var(--purple-dk); border-radius: var(--radius); padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.command-box .cmd-icon { color: rgba(255,255,255,0.5); font-family: var(--mono); font-size: 13px; }
+.command-box p { color: rgba(255,255,255,0.7); font-size: 12px; line-height: 1.5; }
+.command-box strong { color: white; }
+.cmd-examples { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.cmd-tag { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8);
+  font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 6px; cursor: pointer; }
+.cmd-tag:hover { background: rgba(255,255,255,0.2); }
+
+/* ── DAY CARD ── */
+.day-card {
+  background: white; border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-border); margin-bottom: 16px;
+  box-shadow: var(--shadow); overflow: hidden; transition: all 0.15s;
+}
+.day-card.completed { border-color: var(--teal-mid); }
+.day-card.today { border-color: var(--purple); border-width: 2px; }
+.day-header {
+  display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+  border-bottom: 1px solid var(--gray-lt); cursor: pointer;
+  background: white; transition: background 0.1s;
+}
+.day-header:hover { background: var(--gray-lt); }
+.day-num { font-family: var(--mono); font-size: 11px; color: var(--gray-mid); min-width: 52px; }
+.day-date { font-weight: 600; font-size: 14px; color: var(--black); }
+.day-focus { font-size: 12px; color: var(--gray-mid); flex: 1; }
+.day-subject-tag { font-size: 11px; font-weight: 600; color: var(--purple); }
+.chevron { margin-left: auto; color: var(--gray-mid); transition: transform 0.2s; font-size: 12px; }
+.chevron.open { transform: rotate(180deg); }
+.done-btn {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gray-border);
+  background: white; cursor: pointer; flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; transition: all 0.15s; margin-left: 8px;
+}
+.done-btn.checked { background: var(--teal-mid); border-color: var(--teal-mid); color: white; }
+.done-btn svg { width: 12px; height: 12px; }
+
+/* ── DAY BODY ── */
+.day-body { display: none; padding: 18px; }
+.day-body.open { display: block; }
+.approach-box {
+  background: linear-gradient(135deg, var(--amber-lt) 0%, #fff8ee 100%);
+  border-left: 3px solid var(--amber-mid); border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 12px 16px; margin-bottom: 16px;
+}
+.approach-box .lbl { font-size: 10px; font-weight: 700; color: var(--amber); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.approach-box p { font-size: 13px; color: var(--black); line-height: 1.6; }
+
+.blocks-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.block { border-radius: var(--radius); padding: 14px; }
+.block-am { background: var(--teal-lt); }
+.block-mid { background: var(--blue-lt); }
+.block-pm { background: var(--pink-lt); }
+.block-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.block-am .block-lbl { color: var(--teal); }
+.block-mid .block-lbl { color: var(--blue); }
+.block-pm .block-lbl { color: var(--pink); }
+.block-task { font-size: 12px; color: var(--black); line-height: 1.6; }
+.block-time { font-family: var(--mono); font-weight: 600; font-size: 11px; }
+.block-am .block-time { color: var(--teal); }
+.block-mid .block-time { color: var(--blue); }
+.block-pm .block-time { color: var(--pink); }
+
+.mains-note {
+  background: var(--purple-lt); border-radius: var(--radius); padding: 10px 14px;
+  font-size: 12px; color: var(--purple-dk); margin-bottom: 14px;
+}
+.mains-note strong { color: var(--purple); }
+
+/* ── DAILY CHECKLIST ── */
+.checklist { display: flex; flex-wrap: wrap; gap: 8px; }
+.check-item {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--gray-lt); border-radius: 20px; padding: 5px 12px;
+  font-size: 12px; cursor: pointer; user-select: none;
+  border: 1.5px solid transparent; transition: all 0.12s;
+}
+.check-item:hover { border-color: var(--gray-border); }
+.check-item.done { background: var(--teal-lt); border-color: var(--teal-mid); color: var(--teal); }
+.check-item .ci-box {
+  width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid var(--gray-border);
+  background: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.check-item.done .ci-box { background: var(--teal-mid); border-color: var(--teal-mid); }
+
+/* ── METHOD CHIPS ── */
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+.chip { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 12px; letter-spacing: 0.03em; }
+.chip-ca { background: var(--blue-lt); color: var(--blue); }
+.chip-pyq { background: var(--teal-lt); color: var(--teal); }
+.chip-aw { background: var(--pink-lt); color: var(--pink); }
+.chip-tb { background: var(--purple-lt); color: var(--purple); }
+.chip-mm { background: var(--amber-lt); color: var(--amber); }
+.chip-td { background: var(--coral-lt); color: var(--coral); }
+.chip-vid { background: var(--green-lt); color: var(--green); }
+.chip-rev { background: var(--gray-lt); color: var(--gray); }
+
+/* ── TODAY BADGE ── */
+.today-badge {
+  background: var(--purple); color: white; font-size: 9px; font-weight: 700;
+  padding: 2px 7px; border-radius: 8px; letter-spacing: 0.05em;
+}
+
+/* ── WEEK DIVIDER ── */
+.week-divider {
+  display: flex; align-items: center; gap: 12px; margin: 20px 0 12px;
+}
+.week-divider .wk-name { font-family: var(--serif); font-size: 18px; color: var(--purple-dk); }
+.week-divider .wk-dates { font-size: 11px; color: var(--gray-mid); font-family: var(--mono); }
+.week-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray-border); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-border); border-radius: 3px; }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .blocks-grid { grid-template-columns: 1fr; }
+  .metrics-row { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── FADE IN ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.day-card { animation: fadeUp 0.25s ease both; }
+
+.notes-area {
+  width: 100%; border: 1px solid var(--gray-border); border-radius: var(--radius);
+  padding: 10px 12px; font-family: var(--sans); font-size: 12px; color: var(--black);
+  background: var(--gray-lt); resize: vertical; min-height: 56px; margin-top: 10px;
+  outline: none; transition: border-color 0.15s;
+}
+.notes-area:focus { border-color: var(--purple); background: white; }
+.notes-lbl { font-size: 10px; font-weight: 600; color: var(--gray-mid); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">U's UPSC 2027 — Monthly Planner</div>
+  <div class="topbar-meta">27 Apr – 01 Jun 2026  ·  Phase 1: Foundation</div>
+  <div class="topbar-right">
+    <span id="save-indicator" style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:0.5px;"></span>
+    <button onclick="manualBackup()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);font-family:var(--mono);font-size:10px;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">⬆ Backup</button>
+    <div class="progress-pill" id="topbar-progress">0 / 30 days</div>
+  </div>
+</div>
+
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-section">Navigation</div>
+  <div id="sidebar-days"></div>
+
+  <div class="sidebar-stats">
+    <div class="sidebar-section" style="padding:0 0 6px;margin-bottom:6px;">Month Stats</div>
+    <div class="stat-row"><span class="stat-label">Days completed</span><span class="stat-val" id="stat-days">0/30</span></div>
+    <div class="stat-row"><span class="stat-label">Blocks ticked</span><span class="stat-val" id="stat-blocks">0</span></div>
+    <div class="stat-row"><span class="stat-label">Mains AW days</span><span class="stat-val" id="stat-mains">0</span></div>
+    <div class="stat-row"><span class="stat-label">P days</span><span class="stat-val" id="stat-p">0</span></div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main" id="main">
+
+  <!-- Overview -->
+  <div class="overview">
+    <div class="overview-header">
+      <div>
+        <h1>30-Day Foundation Plan</h1>
+        <p>27 April — 01 June 2026 &nbsp;·&nbsp; Phase 1 &nbsp;·&nbsp; Travel: Apr 12–26 (CA only) · May 26–31 (CA only)</p>
+      </div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-box" style="background:var(--teal-lt)">
+        <div class="val" id="m-done" style="color:var(--teal)">0</div>
+        <div class="lbl" style="color:var(--teal)">Days done</div>
+      </div>
+      <div class="metric-box" style="background:var(--purple-lt)">
+        <div class="val" id="m-pct" style="color:var(--purple)">0%</div>
+        <div class="lbl" style="color:var(--purple)">Complete</div>
+      </div>
+      <div class="metric-box" style="background:var(--pink-lt)">
+        <div class="val" id="m-mains" style="color:var(--pink)">0</div>
+        <div class="lbl" style="color:var(--pink)">Mains AW days</div>
+      </div>
+      <div class="metric-box" style="background:var(--amber-lt)">
+        <div class="val" id="m-streak" style="color:var(--amber)">0</div>
+        <div class="lbl" style="color:var(--amber)">Current streak</div>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div style="background:var(--teal-lt);border-left:3px solid var(--teal-mid);border-radius:0 var(--radius) var(--radius) 0;padding:14px 18px;margin-top:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--teal);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">The CA-Anchor Rule — Read This First</div>
+      <p style="font-size:13px;color:var(--black);line-height:1.7;margin-bottom:10px">When a day says <strong>"scan Hindu for [topic] news"</strong> — that is a suggested topic, not a rigid instruction. The Hindu may not have that story today. <strong>That is fine.</strong> Find the most relevant article you see, tag it to a GS paper, and use it as your anchor. The static PYQ task for that day stays the same regardless of which article you found.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px">
+        <div style="background:white;border-radius:var(--radius);padding:10px 12px">
+          <div style="font-weight:600;color:var(--teal);margin-bottom:4px">What U did today (correct)</div>
+          <div style="color:var(--gray)">Found asset tokenisation article → tagged to GS3 Financial Markets → pulled PYQs on capital markets → did fiscal PYQs separately as the day's static task. Perfect execution.</div>
+        </div>
+        <div style="background:white;border-radius:var(--radius);padding:10px 12px">
+          <div style="font-weight:600;color:var(--coral);margin-bottom:4px">If topic not in Hindu</div>
+          <div style="color:var(--gray)">Scan <strong>Business Standard</strong>, <strong>PIB daily digest</strong>, or the <strong>Insights Prelims Brief</strong> (linked below). One of these will always have a relevant story. Never skip the CA step — just flex the source.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--purple-lt);border-radius:var(--radius);padding:14px 18px;margin-top:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--purple);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px">Daily CA Resources — Fixed into Every Day (8:00 AM block)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:12px">
+        <div style="background:white;border-radius:var(--radius);padding:10px 12px">
+          <div style="font-weight:600;color:var(--purple);margin-bottom:3px">Vision IAS Daily Quiz</div>
+          <div style="color:var(--gray);margin-bottom:6px">10 Qs, 8 min. Do BEFORE reading Hindu — it primes your brain for what is relevant in today's news.</div>
+          <a href="https://visionias.in/current-affairs/upsc-daily-current-affairs-quiz?date=&filter=daily&status=all" target="_blank" style="font-size:11px;color:var(--purple);font-weight:500">visionias.in/quiz →</a>
+        </div>
+        <div style="background:white;border-radius:var(--radius);padding:10px 12px">
+          <div style="font-weight:600;color:var(--blue);margin-bottom:3px">Insights Prelims Brief</div>
+          <div style="color:var(--gray);margin-bottom:6px">Daily CA digest, 10 min read. Do AFTER Hindu. Acts as a gap-filler — catches what Hindu missed.</div>
+          <a href="https://www.insightsonindia.com/current-affairs-upsc/?tab=current-affairs#ca-hub-filters" target="_blank" style="font-size:11px;color:var(--blue);font-weight:500">insightsonindia.com/ca →</a>
+        </div>
+        <div style="background:white;border-radius:var(--radius);padding:10px 12px">
+          <div style="font-weight:600;color:var(--pink);margin-bottom:3px">Insights Mains Editorials</div>
+          <div style="color:var(--gray);margin-bottom:6px">On MIX days (Tue/Thu) only. 15 min read, 3-line Mains note per editorial. Tags to Example Bank.</div>
+          <a href="https://www.insightsonindia.com/current-affairs-upsc/?tab=current-affairs#ca-hub-filters" target="_blank" style="font-size:11px;color:var(--pink);font-weight:500">insightsonindia.com/ca →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="command-box" style="margin-top:12px">
+      <div class="cmd-icon">~/</div>
+      <div style="flex:1">
+        <p><strong>How to update via Claude.ai:</strong> Come back to this conversation and type a command like the ones below. Claude will update this dashboard accordingly.</p>
+        <div class="cmd-examples">
+          <span class="cmd-tag">Mark Day 5 complete</span>
+          <span class="cmd-tag">Add a note to Day 3</span>
+          <span class="cmd-tag">Change Day 7 subject to Polity</span>
+          <span class="cmd-tag">Add Day 31 on May 13</span>
+          <span class="cmd-tag">Update Day 12 evening block</span>
+          <span class="cmd-tag">I found a great article on X — how do I use it today?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day cards rendered here -->
+  <div id="days-container"></div>
+
+</main>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+const DAYS = [
+// ── WEEK 1: Apr 27 – May 3 · POLITY + Economy Optional PYQ mapping ──
+{d:"27 Apr Mon",wk:"Week 1",day:1,type:"P",subj:"Polity",focus:"Constitution basics — Preamble, features, schedules",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"Day 1 starts here. Vision Tests 1 and 2 are already live (Apr 12 and 26) — attempt Test 1 this Saturday. Today: PYQ-first on Constitution basics. Open the last 10-yr Prelims PYQ PDF, filter for Preamble, schedules, and features. Attempt 20 Qs cold before reading anything. Every wrong answer points to exactly what to read in Laxmikanth. Do not read chapter by chapter.",
+ am:"8:00 AM · The Hindu selective: Pg 1 scan + 1 editorial + 1 national story. Log: story → GS paper tag.\n8:30 AM · Tag the story to a Prelims cluster OR Mains theme. Write 2-line CA note.",
+ mid:"9:30 AM · Open Prelims PYQs: filter Preamble, features, schedules, fundamental duties. 20 Qs cold.\n10:30 AM · Check answers. For each wrong: read ONLY the relevant Laxmikanth paragraph. Add 1 Study Hub entry.\n11:00 AM · Sandhan: 20 Qs on Polity. Note accuracy baseline.",
+ pm:"8:00 PM · Mains: Write cold answer — 'What is constitutional morality?' (10-mark GS2, 8 min). No notes.\n8:10 PM · Read Vision Mains Test 1 approach answer. Note dimensions missed.\n8:45 PM · Add 1 Study Hub entry. Text A: Day 1 done.",
+ mains:"GS2 Theme: Constitutional morality. 1 cold answer. Study Hub target: 2 entries today."},
+
+{d:"28 Apr Tue",wk:"Week 1",day:2,type:"MIX",subj:"Polity + Optional mapping",focus:"Fundamental Rights + Optional PYQ mapping Paper 1",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"Two jobs today. Morning: Fundamental Rights PYQs (high yield — 8-10 Qs every Prelims). Evening: Economics Optional PYQ mapping for Paper 1. This is not studying — it is categorising every Paper 1 PYQ by topic. The map you build tonight shapes Phase 2 optional schedule.",
+ am:"8:00 AM · The Hindu + PIB scan (10 min). Tag 1 story to a Mains theme. Log.\n8:35 AM · 15 PYQs on Fundamental Rights (Arts 12–35). Attempt cold.",
+ mid:"9:30 AM · Check answers. Laxmikanth Ch 7–8 selectively.\n10:30 AM · Add 2 Study Hub entries: 'FR exceptions — Art 19' + 'Art 32 vs 226 writ comparison'.",
+ pm:"8:00 PM · Econ Optional: Open last 10-yr Economics Optional PYQs (Paper 1). List all Micro topics asked. Categorise: Consumer theory / Producer theory / Market structures / Game theory / Welfare+GE. Count questions per area. Mark MBA-familiar vs needs fresh study.\n8:50 PM · Add Study Hub entry: 'Econ Optional Paper 1 — topic frequency map.'",
+ mains:"Optional PYQ mapping Paper 1 done. Study Hub target: 4 entries total."},
+
+{d:"29 Apr Wed",wk:"Week 1",day:3,type:"P",subj:"Polity",focus:"DPSP + Fundamental Duties",
+ chips:["PYQ-first","Mind map"],
+ approach:"DPSP and Fundamental Duties together. UPSC loves the FR vs DPSP distinction. PYQ-first: pull 15 PYQs on both, attempt cold, then read only Laxmikanth sections that fix gaps. Evening: Economics Optional Paper 2 PYQ mapping — categorise Indian Economy topics, mark GS3 overlap (~60%).",
+ am:"8:00 AM · The Hindu. 1 editorial + 1 IR story. Tag to GS2.\n8:35 AM · 15 PYQs on DPSP and Fundamental Duties. Attempt cold.",
+ mid:"9:30 AM · Check answers. Laxmikanth Ch 9–10 selectively. Add Study Hub: 'DPSP vs FR — key UPSC distinctions.'\n10:30 AM · Mind map: DPSP articles → most-tested → recent SC judgements on them.",
+ pm:"8:00 PM · Econ Optional: Open Paper 2 PYQs (Indian Economy). List topics. Mark GS3 overlap (~60%). List topics unique to Optional only — those need Phase 3 time.\n8:50 PM · Add Study Hub entry: 'Econ Optional Paper 2 — GS3 overlap map.'",
+ mains:"Optional PYQ mapping Paper 2 done. Study Hub target: 6 entries total."},
+
+{d:"30 Apr Thu",wk:"Week 1",day:4,type:"MIX",subj:"Polity + Mains GS2",focus:"Parliament — structure, sessions, bills + Mains AW",
+ chips:["PYQ-first","Answer-write"],
+ approach:"Parliament is high-yield Prelims Polity. PYQ-first. Evening Mains AW on a Parliamentary theme — use the structure: intro (constitutional provision) → body (3 dimensions) → conclusion (forward-looking). 12 minutes maximum. Stop the pen at 12 min regardless of where you are.",
+ am:"8:00 AM · The Hindu. 1 editorial + 1 economy story. Tag to GS3 + Economy cluster.\n8:35 AM · 20 PYQs on Parliament — sessions, bills, Question Hour, Zero Hour, Joint Sitting.",
+ mid:"9:30 AM · Check answers. Laxmikanth Ch 22–25 selectively. Add Study Hub: 'Money Bill vs Finance Bill — UPSC distinction.'\n10:30 AM · Reference table: bill types → procedure → constitutional article.",
+ pm:"8:00 PM · Mains AW: 'The anti-defection law has strengthened party discipline but weakened parliamentary democracy — critically examine.' (GS2, 15-mark, 12 min timed).\n8:15 PM · Read Vision approach answer. Note missed dimensions. Study Hub target: 8 entries.",
+ mains:"GS2 Theme: Parliamentary & electoral processes (Theme 32). Study Hub: 8."},
+
+{d:"01 May Fri",wk:"Week 1",day:5,type:"P",subj:"Polity",focus:"Judiciary + Constitutional bodies",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"Judiciary and constitutional bodies close out Polity week. After today Polity should be ~85% covered. Check the backbone checklist — any cluster still partial? Note for Saturday deep block.",
+ am:"8:00 AM · Labour Day — The Hindu. Tag any labour/employment story to GS3.\n8:35 AM · 20 PYQs on SC, HC, tribunals, CAG, EC, Finance Commission, UPSC body. Mark gaps.",
+ mid:"9:30 AM · Check answers. Laxmikanth Ch 26–32 PYQ-driven. Add Study Hub: 'Constitutional bodies — appointment + removal + UPSC distinctions table.'\n10:30 AM · Polity backbone check: tick completed clusters. Any red? Note.",
+ pm:"8:00 PM · Sandhan: 20 Qs mixed Polity. Accuracy target: 50%+.\n8:30 PM · Add 1 Study Hub entry from today's gaps.\n8:55 PM · Text A: Polity week done. Plan: Saturday = Vision Tests 1+2.",
+ mains:"Polity coverage ~85% complete. Study Hub target: 10 entries total."},
+
+{d:"02 May Sat",wk:"Week 1",day:6,type:"MIX",subj:"Vision Tests 1+2",focus:"Vision Tests 1 & 2 — baseline assessment",
+ chips:["Test-driven","Answer-write"],
+ approach:"Both Test 1 and Test 2 are live. Attempt Test 1 morning — exam conditions, no notes, no phone. 90-min error analysis after. Every wrong answer becomes a Study Hub entry. Then attempt Test 2 (shorter since back-to-back). Afternoon: Mains session.",
+ am:"8:00 AM · The Hindu. CA tag.\n8:35 AM · Vision Prelims Test 1 [15601] — Polity & Constitution — 2 hours. Online, exam conditions. Score is your baseline, not a verdict.",
+ mid:"10:35 AM · Test 1 error analysis (90 min): every wrong → Laxmikanth → Study Hub entry.\n12:15 PM · Vision Prelims Test 2 [15602] — Working Constitution — 1 hour attempt.",
+ pm:"8:00 PM · Mains full session: Write 2 answers — 'Judicial overreach vs judicial activism' (GS2, 15-mark, 12 min) + 'The Preamble is the soul of the Constitution' (GS2, 10-mark, 8 min). Compare Vision approaches. Log both.",
+ mains:"Tests 1+2 attempted. 2 Mains answers. Study Hub target: 15 entries total."},
+
+{d:"03 May Sun",wk:"Week 1",day:7,type:"MIX",subj:"Review",focus:"Week 1 review + Test 2 error analysis",
+ chips:["Review","Planning"],
+ approach:"System day. Complete Test 2 error analysis if not done yesterday. Fill Week 1 tracker: clusters covered, Study Hub count (target 15), Mains answers (target 3), CA days (target 6/7). Then plan Week 2: Economy — her strongest subject.",
+ am:"8:00 AM · The Hindu. CA review.\n8:30 AM · Test 2 error analysis remainder if any. Add Study Hub entries.",
+ mid:"9:30 AM · Week 1 tracker fill: Polity clusters covered (target 7/8 green), Study Hub count (target 15+), Mains AW (target 3).\n10:30 AM · CSAT check: do 10 RC questions from any past CSAT paper. Is reading speed comfortable? Just a diagnostic — not a test.",
+ pm:"8:00 PM · Optional: recheck Paper 1 PYQ map from Day 2. Add any missed topics. Mark your 3 weakest-looking areas.\n8:45 PM · Sunday review with A: show Study Hub count, share 1 Mains answer. A asks: 'What dimension is missing?'",
+ mains:"Week 1 done. Polity ~85%. Tests 1+2 attempted. Mains AW: 3. Study Hub: 15+."},
+
+// ── WEEK 2: May 4–10 · ECONOMY + Vision Test 3 + CSAT verification ──
+{d:"04 May Mon",wk:"Week 2",day:8,type:"P",subj:"Economy",focus:"Banking & RBI — monetary policy",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"Economy week. MBA + 6 years banking = real-world edge. PYQ-first: attempt cold, then fill only the gaps. Morning CA-anchor on any RBI/banking story — there is always one in Hindu Business section.",
+ am:"8:00 AM · The Hindu Business section. Find today's RBI/banking/economy story. Write 2-line CA note: story → concept → GS3 tag.\n8:35 AM · 20 PYQs on RBI tools: CRR, SLR, repo, MSF, OMO, monetary transmission. Attempt cold.",
+ mid:"9:30 AM · Check answers. Ramesh Singh banking chapter — only answer-relevant paragraphs. Add Study Hub: 'RBI policy tools — Prelims distinctions table.'\n10:30 AM · Sandhan: 20 Qs Economy. Note accuracy baseline for this subject.",
+ pm:"8:00 PM · Mains AW: 'Evaluate India's monetary policy framework post-adoption of inflation targeting.' (GS3, 13 min). Use real RBI data.\n8:15 PM · Compare Vision approach. Add current repo rate + CPI data to Study Hub.\n8:50 PM · Study Hub target: 18 entries.",
+ mains:"GS3 Theme: Monetary policy & RBI (Theme 12). Study Hub: 18."},
+
+{d:"05 May Tue",wk:"Week 2",day:9,type:"P",subj:"Economy",focus:"Fiscal policy, budget, GST, deficits",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"Fiscal PYQs reveal UPSC loves: types of deficits, FRBM targets, GST Council composition, budget terminology. Morning CA-anchor on any budget/tax/fiscal story. Then PYQs reveal exactly what to read.",
+ am:"8:00 AM · The Hindu. Find 1 fiscal/budget/tax story. Write CA note → GS3 tag.\n8:35 AM · 20 PYQs on fiscal deficit, revenue deficit, FRBM, GST council, capital vs revenue expenditure.",
+ mid:"9:30 AM · Check answers. NCERT 12th Macro Ch 5 selectively. Add Study Hub: 'Types of deficits — UPSC distinctions table.'\n10:30 AM · Mind map: fiscal policy tools → direct + indirect tax → GST structure → FRBM targets.",
+ pm:"8:00 PM · Econ Optional: H.L. Ahuja Micro Ch 3–4. Consumer theory — IC analysis + budget line. Draw IC diagram with labels. Add Study Hub: 'IC analysis — UPSC-ready diagram.'\n8:50 PM · Study Hub target: 20 entries.",
+ mains:"Optional Micro: Consumer theory started. Study Hub: 20."},
+
+{d:"06 May Wed",wk:"Week 2",day:10,type:"P",subj:"Economy",focus:"Inflation, GDP, national income concepts",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"National income and inflation are Prelims staples. UPSC loves: GDP vs GNP vs NNP, deflator vs CPI, core vs headline inflation. MBA background means this is largely revision — PYQs first to confirm and spot the 2-3 UPSC-specific twists.",
+ am:"8:00 AM · The Hindu. Economy or governance story. Tag.\n8:35 AM · 20 PYQs: GDP, GNP, NNP, WPI, CPI, core inflation, GDP deflator. Attempt cold.",
+ mid:"9:30 AM · Check answers. NCERT 12th Macro Ch 1–2 for gaps. Add Study Hub: 'GDP measurement — 3 approaches + UPSC distinctions.'\n10:30 AM · Sandhan: 20 Qs Economy. Track accuracy improvement vs Monday.",
+ pm:"8:00 PM · Econ Optional: Micro — Production theory (isoquant, isocost, returns to scale). H.L. Ahuja Ch 5–6. Draw isoquant diagram. Add Study Hub entry.\n8:50 PM · Study Hub target: 22 entries.",
+ mains:"Optional Micro: Production theory done. Study Hub: 22."},
+
+{d:"07 May Thu",wk:"Week 2",day:11,type:"MIX",subj:"Economy + Mains GS3",focus:"Poverty, welfare schemes + Mains AW",
+ chips:["CA-anchor","Answer-write"],
+ approach:"Welfare schemes: Prelims (names + features) and Mains (implementation critique). Morning CA-anchor on any poverty/welfare news. Evening Mains: consulting background = critique the implementation gap from a systems perspective.",
+ am:"8:00 AM · The Hindu. Any scheme/poverty/welfare story. 3-line CA note.\n8:35 AM · 15 PYQs on poverty, schemes (PMJDY, DBT, PM-KISAN, MGNREGA, NPS). Study gaps only.",
+ mid:"9:30 AM · Vision IAS Economy Value Addition notes — welfare section. Add Study Hub: 'Welfare schemes — UPSC most-asked 10.'\n10:30 AM · Sandhan: 20 Qs poverty + welfare.",
+ pm:"8:00 PM · Mains AW: 'Social welfare schemes suffer from last-mile delivery failure — critically examine with solutions.' (GS3, 15-mark, 12 min).\n8:15 PM · Compare Vision approach. Add governance + implementation gap example.\n8:50 PM · Study Hub target: 24 entries.",
+ mains:"GS3 Theme: Governance & implementation gap (Theme 31). Study Hub: 24."},
+
+{d:"08 May Fri",wk:"Week 2",day:12,type:"P",subj:"Economy",focus:"International trade, WTO, BoP + Economy wrap",
+ chips:["CA-anchor","PYQ-first"],
+ approach:"Trade, WTO and BoP are CA-rich right now. Morning CA-anchor on any trade story. PYQs. Then Economy backbone check — all 8 clusters should be amber or green. Saturday: Vision Test 3 + CSAT verification.",
+ am:"8:00 AM · The Hindu. Trade/tariff/WTO story. Write CA note → link to BoP, trade deficit.\n8:35 AM · 15 PYQs on BoP, WTO, trade policy, exchange rate.",
+ mid:"9:30 AM · Ramesh Singh trade chapter selectively. Add Study Hub: 'BoP vs BoT + current account components.'\n10:30 AM · Economy backbone check: tick all 8 clusters. Any gaps? Note for Sunday.",
+ pm:"8:00 PM · Econ Optional: Micro — Market structures. H.L. Ahuja Ch 7–9. Draw PC and Monopoly profit-maximisation diagrams. Add Study Hub: 'Deadweight loss diagram — UPSC-ready.'\n8:50 PM · Study Hub target: 26 entries.",
+ mains:"Optional Micro: Market structures. Economy backbone ~85% complete. Study Hub: 26."},
+
+{d:"09 May Sat",wk:"Week 2",day:13,type:"MIX",subj:"Vision Test 3 + CSAT verification",focus:"Vision Test 3 (Geography I) + CSAT paper",
+ chips:["Test-driven","CA-anchor"],
+ approach:"Two tests today. Morning: Vision Test 3 Geography I — attempt cold, the test teaches the subject. Afternoon: CSAT verification — 1 full paper, 80 Qs, 2 hours. Target: score 50+/80. If yes: CSAT drops off the plan entirely. If below 40: flag for Phase 2.",
+ am:"8:00 AM · The Hindu. CA tag.\n8:35 AM · Vision Prelims Test 3 [15603] — Geography I — 2 hours. Exam conditions.",
+ mid:"10:35 AM · Test 3 error analysis (60 min): every wrong → NCERT 11th Physical Geography → Study Hub entry.\n12:00 PM · Lunch.",
+ pm:"8:00 PM · CSAT Verification: 1 full CSAT practice paper (80 Qs, 2 hrs). Score 50+/80 = confirmed safe, drops from plan. Below 40 = flag Phase 2.\n8:50 PM · Log CSAT score in tracker.",
+ mains:"Test 3 attempted. CSAT verified. Study Hub target: 28 entries total."},
+
+{d:"10 May Sun",wk:"Week 2",day:14,type:"MIX",subj:"Review",focus:"Week 2 review + Week 3 prep",
+ chips:["Review","Planning"],
+ approach:"System day. Fill Week 2 tracker. Economy clusters (target 7+/8 green), Study Hub (28+), Mains AW (6 total), CSAT result logged. Plan Week 3: Modern History.",
+ am:"8:00 AM · The Hindu. CA review.\n8:35 AM · Economy revision: 20 mixed Economy PYQs across all clusters. Target 60%+ accuracy now.",
+ mid:"9:30 AM · Week 2 tracker fill: clusters, Study Hub count, Mains AW, CSAT logged.\n10:30 AM · Optional Micro review: draw IC + isoquant + deadweight loss from memory.",
+ pm:"8:00 PM · Mains AW: 'India's digital payments revolution — UPI and financial inclusion.' (GS3, 10-mark, 8 min). Write from banking experience.\n8:45 PM · Sunday review with A: show Study Hub count, Economy Mains answer.",
+ mains:"Week 2: Economy ~85% covered. Test 3 done. CSAT result logged. Mains AW: 6 total."},
+
+// ── WEEK 3: May 11–17 · MODERN HISTORY + Ancient selective ──
+{d:"11 May Mon",wk:"Week 3",day:15,type:"P",subj:"Modern History",focus:"1857 → INC formation → Moderate phase",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"Modern History. Spectrum is your source — never cover to cover. PYQs reveal which events UPSC asks. 1857, Moderate Phase, Swadeshi, social reforms are consistently tested. PYQ-first: pull these topics cold, then read only Spectrum sections that fix wrong answers.",
+ am:"8:00 AM · The Hindu. Any heritage/history story. Tag GS1 History cluster.\n8:35 AM · 20 PYQs on 1857, Moderate Phase, Swadeshi, INC formation (1885).",
+ mid:"9:30 AM · Check answers. Spectrum Ch 1–5 selectively. Add Study Hub: '1857 — causes, nature, significance (UPSC framing).'\n10:30 AM · Sandhan: 20 Qs Modern India.",
+ pm:"8:00 PM · Mains AW: 'Role of socio-religious reform movements in India's national awakening.' (GS1, 13 min).\n8:15 PM · Compare Vision Mains Test 3 approach.\n8:50 PM · Study Hub target: 30 entries.",
+ mains:"GS1 Theme: Freedom struggle themes (Theme 26). Study Hub: 30."},
+
+{d:"12 May Tue",wk:"Week 3",day:16,type:"P",subj:"Modern History",focus:"Gandhian era — NCM, CDM, Quit India, INA",
+ chips:["PYQ-first","Teach-back"],
+ approach:"Gandhian era is the most-tested History section. UPSC loves: NCM conditions, CDM triggers, INA's political significance. PYQ-first strictly. Teach-back voice note at end — explain the Salt March significance in 3 minutes.",
+ am:"8:00 AM · The Hindu. Governance story. Tag GS2.\n8:35 AM · 20 PYQs on Khilafat, Salt March, NCM, CDM, Quit India, INA, Partition.",
+ mid:"9:30 AM · Check answers. Spectrum Ch 14–19 selectively. Add Study Hub: 'Gandhi's movements — year + demand + outcome + govt response table.'\n10:30 AM · Teach-back voice note: 'Why was the Salt March significant beyond salt?' 3 min to phone.",
+ pm:"8:00 PM · Econ Optional: Micro — Oligopoly + Game Theory basics. H.L. Ahuja Ch 10. Nash Equilibrium — is it in PYQs? Add Study Hub entry.\n8:50 PM · Study Hub target: 32 entries.",
+ mains:"Optional Micro: Oligopoly + Game Theory. 5 of 6 Micro areas covered. Study Hub: 32."},
+
+{d:"13 May Wed",wk:"Week 3",day:17,type:"MIX",subj:"History + Mains GS1",focus:"Art & Culture + Mains AW",
+ chips:["PYQ-first","Answer-write"],
+ approach:"Art & Culture: 2-3 Prelims Qs but recurring in Mains GS1. Efficient PYQ-first approach. UPSC focuses on temple architecture (Nagara vs Dravidian), dance forms, UNESCO sites. Evening: Mains answer using today's learning.",
+ am:"8:00 AM · The Hindu. Science/tech or heritage story. Tag.\n8:35 AM · 10 Art & Culture PYQs. Gaps: temple architecture types, classical dance forms, UNESCO heritage sites.",
+ mid:"9:30 AM · Study gaps: NIOS Art & Culture PDF (free) — relevant sections only. Add Study Hub: 'Architecture periods — Prelims cheat table.'\n10:30 AM · Sandhan: 20 Qs History mixed.",
+ pm:"8:00 PM · Mains AW: 'Indian art and architecture reflect the socio-political milieu of their times.' (GS1, 10-mark, 8 min).\n8:10 PM · Compare Vision approach.\n8:50 PM · Study Hub target: 34 entries.",
+ mains:"GS1: Art & Culture covered. Study Hub: 34."},
+
+{d:"14 May Thu",wk:"Week 3",day:18,type:"P",subj:"Modern History",focus:"Constitutional development + post-independence integration",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"Constitutional development and Patel's integration are consistent Prelims topics. PYQs focus on: Cabinet Mission, Constituent Assembly, Radcliffe, instrument of accession, states reorganisation. Spectrum Ch 20–24 after PYQs.",
+ am:"8:00 AM · The Hindu. IR or governance story. Tag.\n8:35 AM · 15 PYQs on Cabinet Mission, Constituent Assembly, partition, Patel integration, states reorganisation.",
+ mid:"9:30 AM · Check answers. Spectrum selectively. Add Study Hub: 'Partition → Constitution → Integration — UPSC sequence.'\n10:30 AM · Econ Optional: Micro — Welfare Economics. H.L. Ahuja Ch 17–18. Pareto efficiency, compensation criteria. GAP topic now fixed. Add Study Hub entry.",
+ pm:"8:00 PM · Mains AW: 'Women played a decisive role in India's freedom struggle — substantiate.' (GS1, 15-mark, 12 min).\n8:15 PM · Compare Vision approach.\n8:50 PM · Study Hub target: 36 entries.",
+ mains:"Optional Micro Welfare Econ: done (gap fixed). GS1: Women + freedom struggle. Study Hub: 36."},
+
+{d:"15 May Fri",wk:"Week 3",day:19,type:"P",subj:"Ancient History selective",focus:"Ancient India — Indus, Vedic, Mauryan, Gupta",
+ chips:["PYQ-first","Mind map"],
+ approach:"Ancient History PYQ-first strictly. UPSC repeats: Indus seals and trade, Vedic social structure, Ashoka's Dhamma, Buddhist councils, Gupta art. Pull 2019-25 PYQs only, study what those patterns demand.",
+ am:"8:00 AM · The Hindu. Environment story. Tag Env cluster.\n8:35 AM · 15 PYQs on Indus, Vedic, Mauryan, Gupta eras.",
+ mid:"9:30 AM · Check answers. Old NCERT Ancient India — exact chapters. Add Study Hub: 'Ancient India — UPSC most-asked topics table.'\n10:30 AM · Buddhist + Jain philosophy PYQs: 4 Noble Truths, 8-Fold Path, Buddhist councils.",
+ pm:"8:00 PM · Econ Optional: Micro — Distribution theories. H.L. Ahuja Ch 11–14. Ricardo, Kaldor, Kalecki. GAP topic from old plan. PYQ count? Add Study Hub entry.\n8:50 PM · Study Hub target: 38 entries.",
+ mains:"Optional Micro: Distribution theories done (gap fixed). All 6 Micro areas complete. Study Hub: 38."},
+
+{d:"16 May Sat",wk:"Week 3",day:20,type:"MIX",subj:"History deep + Medieval",focus:"Medieval History + History revision + Mains AW",
+ chips:["PYQ-first","Answer-write"],
+ approach:"Medieval History deep block. UPSC focuses on Bhakti/Sufi movements, Mughal administration (Dahsala, mansabdari), regional kingdoms. PYQ-first. Afternoon: 2 Mains answers on GS1 History themes.",
+ am:"8:00 AM · The Hindu. CA tag.\n8:35 AM · 15 PYQs on Medieval India: Bhakti/Sufi, Mughal revenue, Vijayanagara, Delhi Sultanate.",
+ mid:"9:30 AM · Spectrum / Old NCERT Medieval selectively. Add Study Hub: 'Mughal administration — UPSC most-tested features.'\n10:30 AM · History backbone check: Ancient ✓ Medieval ✓ Modern ✓ Art&Culture ✓.\n11:00 AM · Sandhan: 30 Qs History mixed.",
+ pm:"8:00 PM · Mains AW: 'Bhakti and Sufi movements contributed to India's composite culture' (GS1, 10-mark, 8 min) + 'Art and culture as India's soft power' (GS1, 10-mark, 8 min).\n8:20 PM · Compare both Vision approaches. Log in tracker.",
+ mains:"History complete. Mains AW total: 11. Study Hub: 40+."},
+
+{d:"17 May Sun",wk:"Week 3",day:21,type:"MIX",subj:"Review",focus:"Week 3 review + Geography preview",
+ chips:["Review","Planning"],
+ approach:"System day. Fill Week 3 tracker. Mid-month check: Economy ✓ Polity ✓ History ✓ Geography (starting Week 4) Environment (starting Week 4). Mains AW: 12. Study Hub: 40+.",
+ am:"8:00 AM · The Hindu. CA review.\n8:35 AM · History revision: 20 mixed PYQs across all History sub-clusters. Target 60%+ accuracy.",
+ mid:"9:30 AM · Week 3 tracker fill: clusters, Study Hub count, Mains AW.\n10:30 AM · Optional: can you draw IC + isoquant + monopoly + Pareto + distribution from memory? If not — redraw all.",
+ pm:"8:00 PM · Mains AW: 'Geopolitics is reshaping India's neighbourhood policy — evaluate.' (GS2, 15-mark, 12 min, Themes 3+33).\n8:15 PM · Compare Vision approach.\n8:45 PM · Sunday review with A: share Study Hub count (target 40+), 1 answer for A to question.",
+ mains:"Week 3: History complete. Mains AW: 12. Study Hub: 40+."},
+
+// ── WEEK 4: May 18–24 · GEOGRAPHY + ENVIRONMENT + Vision Test 4 ──
+{d:"18 May Mon",wk:"Week 4",day:22,type:"P",subj:"Geography",focus:"Physical Geography — climate, monsoon, drainage",
+ chips:["PYQ-first","Mind map"],
+ approach:"Geography is visual learning. PYQ-first reveals UPSC's vocabulary: monsoon onset/withdrawal, Western disturbances, Brahmaputra drainage, mountain passes. Draw the Indian monsoon diagram after reading — test yourself.",
+ am:"8:00 AM · The Hindu. Geography/disaster/climate story. Tag Geography + Mains Theme 6.\n8:35 AM · 20 PYQs on Indian monsoon mechanism, drainage systems, cyclones, Western disturbances.",
+ mid:"9:30 AM · Check answers. NCERT 11th Physical Geography Ch 4–5 selectively. Add Study Hub: 'Indian drainage systems — UPSC map questions cheat sheet.'\n10:30 AM · Draw monsoon diagram from memory. Label: SW monsoon, NE monsoon, onset/withdrawal.",
+ pm:"8:00 PM · Mains AW: 'India's monsoon — role in economy and society.' (GS1, 13 min). Include % of rain-fed agriculture data.\n8:15 PM · Compare Vision approach.\n8:50 PM · Study Hub target: 43 entries.",
+ mains:"GS1: Physical Geography application. Study Hub: 43."},
+
+{d:"19 May Tue",wk:"Week 4",day:23,type:"P",subj:"Geography",focus:"Indian soils, agriculture, resources + World Geography",
+ chips:["PYQ-first","CA-anchor"],
+ approach:"Indian economic geography and world geography together. Soils and agro-climatic zones are consistent topics. World geography via PYQs: UPSC asks about straits, international rivers, resource-rich regions. Use Atlas today.",
+ am:"8:00 AM · The Hindu. Climate change story → Env + Mains Themes 6+15.\n8:35 AM · 15 PYQs on soil types, agro-climatic zones, Ramsar sites.",
+ mid:"9:30 AM · NCERT 12th India People & Economy Ch 4–5 selectively. Add Study Hub: 'Soil types — Prelims colour summary.'\n10:30 AM · 10 World Geography PYQs: straits, international rivers, Ring of Fire. Atlas: mark 5 key straits.",
+ pm:"8:00 PM · Econ Optional: Macro — National income + IS-LM introduction. H.L. Ahuja Macro Ch 1–3. Draw IS and LM curves. Add Study Hub entry.\n8:50 PM · Study Hub target: 45 entries.",
+ mains:"Optional Macro: National income + IS-LM started. Study Hub: 45."},
+
+{d:"20 May Wed",wk:"Week 4",day:24,type:"MIX",subj:"Environment",focus:"Biodiversity + protected areas + treaties + Mains AW",
+ chips:["PYQ-first","CA-anchor","Answer-write"],
+ approach:"Environment: 13-21 Qs every Prelims. Almost entirely CA-anchored. Biodiversity and protected areas via PYQs. Afternoon Mains answer on biodiversity — links Prelims cluster to Mains Theme 15.",
+ am:"8:00 AM · The Hindu. Biodiversity/environment story. Tag Env + Mains Theme 15.\n8:35 AM · 15 PYQs on CITES, Ramsar, CBD, Project Tiger, biosphere reserves.",
+ mid:"9:30 AM · Vision IAS Environment Notes — biodiversity section. Add Study Hub: 'Environmental treaties — Prelims cheat list.'\n10:30 AM · Sandhan: 20 Qs Environment.",
+ pm:"8:00 PM · Mains AW: 'Biodiversity loss poses an existential challenge — evaluate India's conservation framework.' (GS3, Theme 15, 13 min).\n8:15 PM · Compare Vision approach.\n8:50 PM · Study Hub target: 47 entries.",
+ mains:"Env Theme: Biodiversity & conservation (Theme 15). Study Hub: 47."},
+
+{d:"21 May Thu",wk:"Week 4",day:25,type:"P",subj:"Environment",focus:"Climate change, pollution, environmental laws + Disaster Management",
+ chips:["CA-anchor","PYQ-first"],
+ approach:"Environmental laws and climate policy. Also: Disaster Management — a GAP topic now fixed. NDMA, Sendai Framework, NDRF are tested in both Prelims and Mains GS3. CA-anchor on any environmental law or disaster story.",
+ am:"8:00 AM · The Hindu. Environment/climate story. 3-line Mains note → Themes 6+18.\n8:35 AM · 15 PYQs on Paris Agreement, NDCs, EIA, EPR, NGT, pollution laws.",
+ mid:"9:30 AM · Vision IAS Env Notes — climate + pollution sections. Add Study Hub: 'Environmental laws — UPSC hierarchy.'\n10:30 AM · 8 PYQs on disaster management: NDMA, Sendai Framework, NDRF. Add Study Hub: 'Disaster management — key institutions (GAP topic fixed).'",
+ pm:"8:00 PM · Econ Optional: Macro — Inflation theories + Phillips curve. H.L. Ahuja Macro. Draw short-run vs long-run Phillips curve. Add Study Hub entry.\n8:50 PM · Study Hub target: 49 entries.",
+ mains:"Disaster Management covered (GAP fixed). Optional Macro: Inflation + Phillips curve. Study Hub: 49."},
+
+{d:"22 May Fri",wk:"Week 4",day:26,type:"MIX",subj:"Environment + Geography wrap",focus:"Environment wrap + Public Economics Optional + Mains AW",
+ chips:["CA-anchor","Answer-write"],
+ approach:"Environment and Geography wrap. Check backbone: both clusters green. Optional: Public Economics (externalities, public goods, taxation theory) — a gap topic. Evening Mains combining environment and governance.",
+ am:"8:00 AM · The Hindu. Environment or governance story. Tag.\n8:35 AM · Environment backbone final: any remaining gaps from yesterday. Internal security basics — linkage between development and extremism (8 PYQs). GAP topic, brief treatment.",
+ mid:"9:30 AM · Econ Optional: Public Economics. H.L. Ahuja Public Econ section. Public goods, externalities (Pigou), taxation theory. GAP topic. PYQ count?\n10:30 AM · Add Study Hub: 'Public goods vs merit goods vs private goods — UPSC distinctions.'",
+ pm:"8:00 PM · Mains AW: 'Climate change has made disaster management a critical governance challenge — examine.' (GS3, Themes 6+18, 13 min).\n8:15 PM · Compare Vision approach.\n8:50 PM · Study Hub target: 51 entries.",
+ mains:"GS3 Themes: Climate (6) + Disaster management (18). Public Economics Optional: done. Study Hub: 51."},
+
+{d:"23 May Sat",wk:"Week 4",day:27,type:"MIX",subj:"Vision Test 4 + Study Hub revision",focus:"Vision Test 4 (Geography II) + Revision Cycle 0",
+ chips:["Test-driven","Review"],
+ approach:"Vision Test 4 covers economic and human geography. Attempt cold — the test teaches. After error analysis: Revision Cycle 0 — go through all 50+ Study Hub entries, check recall on each. This is the first systematic revision pass.",
+ am:"8:00 AM · The Hindu. CA tag.\n8:35 AM · Vision Prelims Test 4 [15604] — Geography II Economic & Human — 2 hours. Exam conditions.",
+ mid:"10:35 AM · Error analysis (90 min): every wrong → NCERT 12th / Ramesh Singh → Study Hub entry.\n12:15 PM · Lunch.",
+ pm:"8:00 PM · Study Hub Revision Cycle 0 (30 min): scroll through all entries. Mark Red (can't recall), Amber (patchy), Green (solid). Set revised review dates for Red/Amber.\n8:35 PM · Mains AW: 'India's demographic dividend is a closing window — examine policy imperatives.' (GS3, Theme 30, 12 min).",
+ mains:"Test 4 done. Revision Cycle 0 complete. Mains AW: 16. Study Hub: 53+."},
+
+{d:"24 May Sun",wk:"Week 4",day:28,type:"MIX",subj:"Review",focus:"Week 4 review + Month 1 preparation",
+ chips:["Review","Planning"],
+ approach:"System day. Fill Week 4 tracker. Month-end prep: check all clusters (target 13+/16 green/amber). Mains AW: 16+. Study Hub: 53+. Optional Micro complete, Macro 50%. Plan: May 25 audit + backup. May 26-31 travel, CA only.",
+ am:"8:00 AM · The Hindu. CA review.\n8:35 AM · Mixed PYQs: 10 Economy + 10 Geography. Timed at exam pace. Target 60%+.",
+ mid:"9:30 AM · Week 4 tracker fill: all metrics.\n10:30 AM · Optional: draw IS-LM, Phillips curve, isoquant from memory. Redraw any that don't come easily.",
+ pm:"8:00 PM · Mains AW: 'Rural economy and migration are interlinked challenges requiring integrated policy.' (GS3, Theme 36, 12 min).\n8:45 PM · Sunday review with A: share full month stats. Plan May 25 audit.",
+ mains:"Week 4: Geography + Environment complete. Mains AW: 17. Study Hub: 53+."},
+
+// ── WEEK 5: May 25 (study) + Jun 1 (return from travel) ──
+{d:"25 May Mon",wk:"Week 5",day:29,type:"MIX",subj:"Month 1 audit",focus:"Full audit + Study Hub backup before travel",
+ chips:["Review","Planning"],
+ approach:"Last study day before travel (May 26-31). One job: audit and back up. Open UPSC syllabus PDF + Study Hub. Rate every covered topic Green/Amber/Red. Write the gaps list for June 1 restart. Back up Study Hub JSON. Tell A the numbers. Travel mode begins tomorrow — no structured study, CA reading only.",
+ am:"8:00 AM · The Hindu. Final CA log before travel.\n8:35 AM · Month 1 backbone audit: Economy ✓ Polity ✓ History ✓ Geography ✓ Environment ✓. Any red clusters? Note for June 1.",
+ mid:"9:30 AM · Study Hub audit: rate all entries Red/Amber/Green. Count each colour.\n10:30 AM · Write June 1 restart plan: which 3 subjects/clusters need immediate attention on return?",
+ pm:"8:00 PM · Download Study Hub JSON backup. Send stats to A: entries, tests done, answers written.\n8:30 PM · Optional: note Econ Optional Macro topics not yet covered (Mathematical Economics, Growth theories) — Phase 2 Week 1 priorities.\n8:55 PM · Travel mode begins tomorrow. Rest is preparation.",
+ mains:"Month 1 complete. All targets checked. Study Hub backed up. Ready for travel."},
+
+{d:"01 Jun Mon",wk:"Week 5",day:30,type:"P",subj:"Cross-subject revision",focus:"Return from travel — Economy + Polity cross-revision",
+ chips:["PYQ-first","Review"],
+ approach:"Back from travel. Day 30. Revision only — no new topics. Economy and Polity are the strongest clusters. 20 mixed PYQs. Target 65%+ accuracy: proof that Month 1 learning has consolidated during travel rest. Evening: plan Phase 2 Week 1 in detail.",
+ am:"8:00 AM · The Hindu. Catch up on CA from travel week (scan Vision Monthly if available).\n8:35 AM · 20 mixed PYQs: 10 Economy + 10 Polity. Timed at exam pace. Score honestly.",
+ mid:"9:30 AM · Error analysis: Bucket A (forgotten), B (confused), C (elimination error). Study Hub entries for any Bucket A.\n10:30 AM · Review Study Hub entries set for revision this week.",
+ pm:"8:00 PM · Plan Phase 2 Week 1: Day 31 = Science & Tech (CA-anchor). Write tomorrow's specific AM, Prelims, and Mains blocks.\n8:45 PM · Text A: Month 1 done. Share accuracy score from today's PYQs.",
+ mains:"Day 30 complete. Month 1 done. Phase 2 begins tomorrow: Science & Tech + IR + World History."}
+];
+const CHECKS = ["Vision IAS quiz done","Insights brief read","Morning block done","Midday block done","Evening block done","Tracker updated","Example Bank updated","A check-in done"];
+const CHIP_CLASS = {"CA-anchor":"chip-ca","PYQ-first":"chip-pyq","Answer-write":"chip-aw","Teach-back":"chip-tb","Mind map":"chip-mm","Test-driven":"chip-td","Video":"chip-vid","Review":"chip-rev","Planning":"chip-rev","Anki":"chip-ca","Video+recall":"chip-vid","Model-compare":"chip-aw","Example bank":"chip-mm"};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let state = {};
+let _saveTimer = null;
+
+async function loadFromFirebase() {
+  try {
+    const { doc, getDoc } = window._fsDoc;
+    const snap = await getDoc(doc(window._db, 'planner', 'state'));
+    if (snap.exists()) state = snap.data();
+    updateStats();
+    renderAll();
+  } catch(e) { console.error('Firebase load error:', e); }
+}
+
+function renderAll() {
+  // Re-render all day cards if function exists
+  if (typeof renderDays === 'function') renderDays();
+  updateStats();
+}
+
+async function _doSave() {
+  try {
+    const { doc, setDoc } = window._fsDoc;
+    await setDoc(doc(window._db, 'planner', 'state'), state);
+    const lbl = document.getElementById('save-indicator');
+    const ts = new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+    if (lbl) { lbl.textContent = '☁️ Saved ' + ts; setTimeout(() => { lbl.textContent = ''; }, 3000); }
+    localStorage.setItem('planner_last_backup', Date.now());
+  } catch(e) {
+    console.error('Firebase save error:', e);
+    const lbl = document.getElementById('save-indicator');
+    if (lbl) { lbl.textContent = '⚠️ Save failed'; lbl.style.color = '#ff8080'; setTimeout(() => { lbl.textContent = ''; lbl.style.color = ''; }, 4000); }
+  }
+}
+
+async function manualBackup() {
+  const lbl = document.getElementById('save-indicator');
+  if (lbl) { lbl.textContent = '⏳ Saving…'; }
+  await _doSave();
+}
+
+function save() {
+  updateStats();
+  // Debounce saves — wait 800ms after last change
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(_doSave, 800);
+}
+
+if (window._fsDoc) { loadFromFirebase(); }
+else { window.addEventListener('firebase-ready', loadFromFirebase); }
+
+function getDayState(dayNum) {
+  if (!state[dayNum]) state[dayNum] = { done: false, checks: {}, notes: '' };
+  return state[dayNum];
+}
+
+// ── TODAY DETECTION ───────────────────────────────────────────────────────────
+function getTodayDayNum() {
+  const today = new Date();
+  const start = new Date(2026, 3, 27); // Apr 27 2026
+  const diff = Math.floor((today - start) / 86400000);
+  return diff >= 0 && diff < 30 ? diff + 1 : -1;
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────────
+function updateStats() {
+  let done = 0, blocks = 0, mains = 0, pDays = 0, streak = 0, curStreak = 0;
+  for (let i = 1; i <= 30; i++) {
+    const ds = getDayState(i);
+    if (ds.done) { done++; curStreak++; if (curStreak > streak) streak = curStreak; }
+    else { curStreak = 0; }
+    blocks += Object.values(ds.checks || {}).filter(Boolean).length;
+    if (ds.done && DAYS[i-1].type === 'MIX') mains++;
+    if (ds.done && DAYS[i-1].type === 'P') pDays++;
+    // update sidebar dot
+    const dot = document.querySelector(`.day-check[data-day="${i}"]`);
+    if (dot) dot.className = `day-check${ds.done ? ' checked' : ''}`;
+    const link = document.querySelector(`.day-link[data-day="${i}"]`);
+    if (link) link.className = `day-link${ds.done ? ' done' : ''}${document.getElementById('day-'+i) && document.getElementById('day-'+i).closest('.active-view') ? ' active' : ''}`;
+    // update done button
+    const btn = document.getElementById(`done-btn-${i}`);
+    if (btn) btn.className = `done-btn${ds.done ? ' checked' : ''}`;
+  }
+  document.getElementById('stat-days').textContent = `${done}/30`;
+  document.getElementById('stat-blocks').textContent = blocks;
+  document.getElementById('stat-mains').textContent = mains;
+  document.getElementById('stat-p').textContent = pDays;
+  document.getElementById('m-done').textContent = done;
+  document.getElementById('m-pct').textContent = Math.round(done/30*100)+'%';
+  document.getElementById('m-mains').textContent = mains;
+  document.getElementById('m-streak').textContent = streak;
+  document.getElementById('progress-bar').style.width = (done/30*100)+'%';
+  document.getElementById('topbar-progress').textContent = `${done} / 30 days`;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderDay(day, isOpen) {
+  const ds = getDayState(day.day);
+  const todayNum = getTodayDayNum();
+  const isToday = day.day === todayNum;
+  const typeLabel = day.type === 'P' ? 'PRELIMS' : day.type === 'M' ? 'MAINS' : 'P + M';
+
+  const chipsHtml = day.chips.map(c => `<span class="chip ${CHIP_CLASS[c]||'chip-rev'}">${c}</span>`).join('');
+  const checksHtml = CHECKS.map((ck, i) => {
+    const checked = ds.checks && ds.checks[i];
+    return `<div class="check-item${checked?' done':''}" onclick="toggleCheck(${day.day},${i},this)">
+      <div class="ci-box">${checked?'<svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none"/></svg>':''}</div>
+      <span>${ck}</span>
+    </div>`;
+  }).join('');
+
+  const savedNotes = ds.notes || '';
+
+  return `
+<div class="day-card${ds.done?' completed':''}${isToday?' today':''}" id="card-${day.day}">
+  <div class="day-header" onclick="toggleDay(${day.day})">
+    <div class="day-num">Day ${day.day}</div>
+    <span class="type-badge type-${day.type}">${typeLabel}</span>
+    <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;padding:0 8px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="day-date">${day.d}</span>
+        ${isToday?'<span class="today-badge">TODAY</span>':''}
+      </div>
+      <span class="day-focus">${day.subj} — ${day.focus}</span>
+    </div>
+    <button class="done-btn${ds.done?' checked':''}" id="done-btn-${day.day}" onclick="event.stopPropagation();toggleDone(${day.day})" title="Mark day complete">
+      <svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="${ds.done?'white':'#B4B2A9'}" stroke-width="2" fill="none"/></svg>
+    </button>
+    <span class="chevron${isOpen?' open':''}">▼</span>
+  </div>
+  <div class="day-body${isOpen?' open':''}" id="day-${day.day}">
+    <div class="approach-box">
+      <div class="lbl">How to approach today</div>
+      <p>${day.approach}</p>
+    </div>
+    <div class="chips">${chipsHtml}</div>
+    <div class="blocks-grid">
+      <div class="block block-am">
+        <div class="block-lbl">CA · 8:00–8:45</div>
+        ${day.am.split('\n').map(l=>{
+          const parts=l.split('·');
+          return parts.length>1?`<div class="block-task"><span class="block-time">${parts[0].trim()}</span> ${parts.slice(1).join('·').trim()}</div>`:`<div class="block-task">${l}</div>`;
+        }).join('')}
+      </div>
+      <div class="block block-mid">
+        <div class="block-lbl">Prelims · 9:30–11AM</div>
+        ${day.mid.split('\n').map(l=>{
+          const parts=l.split('·');
+          return parts.length>1?`<div class="block-task"><span class="block-time">${parts[0].trim()}</span> ${parts.slice(1).join('·').trim()}</div>`:`<div class="block-task">${l}</div>`;
+        }).join('')}
+      </div>
+      <div class="block block-pm">
+        <div class="block-lbl">Mains · 8:00–9:00PM</div>
+        ${day.pm.split('\n').map(l=>{
+          const parts=l.split('·');
+          return parts.length>1?`<div class="block-task"><span class="block-time">${parts[0].trim()}</span> ${parts.slice(1).join('·').trim()}</div>`:`<div class="block-task">${l}</div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="mains-note"><strong>Mains / Tracker note:</strong> ${day.mains}</div>
+    <div class="checklist" id="cl-${day.day}">${checksHtml}</div>
+    <div style="margin-top:12px">
+      <div class="notes-lbl">Your notes for this day</div>
+      <textarea class="notes-area" id="notes-${day.day}" placeholder="Add your notes, scores, gaps, or reflections here..." onchange="saveNotes(${day.day},this.value)">${savedNotes}</textarea>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderSidebar() {
+  const container = document.getElementById('sidebar-days');
+  let html = '';
+  let lastWeek = '';
+  const todayNum = getTodayDayNum();
+  DAYS.forEach(day => {
+    const ds = getDayState(day.day);
+    if (day.wk !== lastWeek) {
+      const wkColors = {'Week 1':'var(--teal-lt)','Week 2':'var(--purple-lt)','Week 3':'var(--blue-lt)','Week 4':'var(--amber-lt)','Week 5':'var(--coral-lt)'};
+      const wkFg = {'Week 1':'var(--teal)','Week 2':'var(--purple)','Week 3':'var(--blue)','Week 4':'var(--amber)','Week 5':'var(--coral)'};
+      html += `<div class="week-label"><span>${day.wk}</span><span class="wk-tag" style="background:${wkColors[day.wk]||'var(--gray-lt)'};color:${wkFg[day.wk]||'var(--gray)'}">Apr–May</span></div>`;
+      lastWeek = day.wk;
+    }
+    const isToday = day.day === todayNum;
+    html += `<div class="day-link${ds.done?' done':''}" data-day="${day.day}" onclick="scrollToDay(${day.day})">
+      <div class="day-check${ds.done?' checked':''}" data-day="${day.day}">
+        ${ds.done?'<svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none"/></svg>':''}
+      </div>
+      <span style="flex:1;font-size:11px">${isToday?'<strong>'+day.d+'</strong>':day.d}</span>
+      <span class="type-badge type-${day.type}" style="font-size:8px">${day.type}</span>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderMain() {
+  const container = document.getElementById('days-container');
+  let html = '';
+  let lastWeek = '';
+  const todayNum = getTodayDayNum();
+  const weekDates = {'Week 1':'27 Apr – 03 May','Week 2':'04–10 May','Week 3':'11–17 May','Week 4':'18–24 May','Week 5':'25 May – 01 Jun'};
+  DAYS.forEach(day => {
+    if (day.wk !== lastWeek) {
+      html += `<div class="week-divider"><span class="wk-name">${day.wk}</span><span class="wk-dates">${weekDates[day.wk]||''}</span></div>`;
+      lastWeek = day.wk;
+    }
+    const isOpen = day.day === todayNum;
+    html += renderDay(day, isOpen);
+  });
+  container.innerHTML = html;
+}
+
+// ── INTERACTIONS ──────────────────────────────────────────────────────────────
+function toggleDay(dayNum) {
+  const body = document.getElementById(`day-${dayNum}`);
+  const header = body.previousElementSibling;
+  const chevron = header.querySelector('.chevron');
+  const isOpen = body.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.day-body.open').forEach(b => {
+    b.classList.remove('open');
+    b.previousElementSibling.querySelector('.chevron').classList.remove('open');
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    chevron.classList.add('open');
+  }
+}
+
+function toggleDone(dayNum) {
+  const ds = getDayState(dayNum);
+  ds.done = !ds.done;
+  save();
+  // Re-render just the button
+  const btn = document.getElementById(`done-btn-${dayNum}`);
+  btn.className = `done-btn${ds.done?' checked':''}`;
+  btn.innerHTML = `<svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="${ds.done?'white':'#B4B2A9'}" stroke-width="2" fill="none"/></svg>`;
+  const card = document.getElementById(`card-${dayNum}`);
+  if (ds.done) card.classList.add('completed'); else card.classList.remove('completed');
+  renderSidebar();
+  updateStats();
+}
+
+function toggleCheck(dayNum, checkIdx, el) {
+  const ds = getDayState(dayNum);
+  if (!ds.checks) ds.checks = {};
+  ds.checks[checkIdx] = !ds.checks[checkIdx];
+  const checked = ds.checks[checkIdx];
+  el.className = `check-item${checked?' done':''}`;
+  el.querySelector('.ci-box').innerHTML = checked ? '<svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none"/></svg>' : '';
+  save();
+}
+
+function saveNotes(dayNum, val) {
+  const ds = getDayState(dayNum);
+  ds.notes = val;
+  save();
+}
+
+function scrollToDay(dayNum) {
+  const card = document.getElementById(`card-${dayNum}`);
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Open it
+    const body = document.getElementById(`day-${dayNum}`);
+    if (!body.classList.contains('open')) toggleDay(dayNum);
+    // Highlight sidebar
+    document.querySelectorAll('.day-link').forEach(l => l.classList.remove('active'));
+    document.querySelector(`.day-link[data-day="${dayNum}"]`).classList.add('active');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderMain();
+renderSidebar();
+updateStats();
+
+// Auto-scroll to today
+const todayNum = getTodayDayNum();
+if (todayNum > 0) {
+  setTimeout(() => {
+    const card = document.getElementById(`card-${todayNum}`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 300);
+}
+</script>
+</body>
+</html>
